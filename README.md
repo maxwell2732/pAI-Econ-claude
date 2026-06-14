@@ -1,3 +1,4 @@
+<a href="https://doi.org/10.5281/zenodo.20686025"><img src="https://zenodo.org/badge/1268830527.svg" alt="DOI"></a>
 # pAI-Econ-claude
 
 <p align="center">
@@ -5,7 +6,6 @@
   <img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-skill-blueviolet">
   <img alt="Domain" src="https://img.shields.io/badge/domain-theoretical--economics-0A66C2">
   <img alt="Human in the Loop" src="https://img.shields.io/badge/human--in--the--loop-required-orange">
-  <img alt="Model Library" src="https://img.shields.io/badge/model--library-canonical--models-2E8B57">
   <img alt="License" src="https://img.shields.io/badge/license-MIT-lightgrey">
 </p>
 
