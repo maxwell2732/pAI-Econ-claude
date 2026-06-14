@@ -429,7 +429,33 @@ If invoked with `--resume <workspace_path>`:
 
 When Stage 10 completes:
 1. Set `"finished": true` in `state.json`
-2. Print completion summary:
+
+2. **Generate the manuscript PDF** from `outputs/manuscript_skeleton.md`:
+
+   a. Determine the absolute path to the `templates/` directory — it lives in the same directory as this SKILL.md file. Call it `<SKILL_DIR>/templates/`.
+
+   b. Extract the recommended title from `outputs/manuscript_skeleton.md` (look for the "Recommended title:" line under "## Title Candidates"). Use it as the PDF title. If none is found, use "Manuscript Skeleton".
+
+   c. Run the following pandoc command (substitute `<WORKSPACE>` and `<SKILL_DIR>` with absolute paths, and `<TITLE>` / `<DATE>` with the extracted values):
+
+   ```
+   pandoc <WORKSPACE>/outputs/manuscript_skeleton.md \
+     -o <WORKSPACE>/outputs/manuscript_skeleton.pdf \
+     --template=<SKILL_DIR>/templates/academic-econ.latex \
+     --pdf-engine=xelatex \
+     -M title="<TITLE>" \
+     -M date="<DATE>" \
+     -M author="Chen Zhu; Xiaolu Wang; Weilong Zhang" \
+     -M working-paper-note="Working Paper — Theoretical Economics Research Pipeline" \
+     --toc \
+     -V colorlinks=true
+   ```
+
+   d. If pandoc succeeds, confirm that `outputs/manuscript_skeleton.pdf` exists and record `"pdf_generation": "success"` in `state.json`.
+
+   e. If pandoc fails (non-zero exit code), record `"pdf_generation": "failed"` in `state.json`, print the error message, and include the manual fallback command in the completion summary so the researcher can run it themselves.
+
+3. Print completion summary:
 
 ```
 ================================================================
@@ -458,12 +484,14 @@ When Stage 10 completes:
     outputs/counterexamples_and_edge_cases.md
     outputs/economic_interpretation.md
     outputs/manuscript_skeleton.md
+    outputs/manuscript_skeleton.pdf          ← Academic PDF (XeLaTeX)
 
   Suggested next steps:
+    - Open manuscript_skeleton.pdf to review the formatted skeleton
     - Formalize proof sketches into complete proofs
     - Expand comparative statics
     - Run literature search using literature_positioning.md keywords
-    - Begin LaTeX draft from manuscript_skeleton.md
+    - Begin full LaTeX draft from manuscript_skeleton.md as scaffold
 ================================================================
 ```
 

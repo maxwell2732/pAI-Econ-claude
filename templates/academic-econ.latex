@@ -1,0 +1,215 @@
+%% academic-econ.latex — Pandoc LaTeX template for theoretical economics working papers
+%% Designed for: pAI-Econ-claude / theoretical-economics-claude-skill
+%% Style: NBER / AER working paper conventions
+
+\documentclass[12pt,letterpaper]{article}
+
+%% ── Encoding & fonts ──────────────────────────────────────────────────────────
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{newtxtext,newtxmath}   % Times-like serif + matching math
+\usepackage{microtype}             % Optical margin alignment
+
+%% ── Page geometry ─────────────────────────────────────────────────────────────
+\usepackage[letterpaper, margin=1.25in, top=1.1in, bottom=1.1in,
+            headheight=14pt]{geometry}
+
+%% ── Line spacing ──────────────────────────────────────────────────────────────
+\usepackage{setspace}
+\setstretch{1.4}
+
+%% ── Math ──────────────────────────────────────────────────────────────────────
+%% newtxmath (loaded via newtxtext,newtxmath above) already provides AMS symbols.
+%% We load only amsmath + amsthm here; amssymb is omitted to avoid redefinition.
+\let\openbox\relax          % guard against CTeX pre-defining \openbox
+\usepackage{amsmath,amsthm,mathtools}
+\usepackage{bm}                    % Bold math symbols
+
+%% ── Colors ────────────────────────────────────────────────────────────────────
+\usepackage[dvipsnames]{xcolor}
+\definecolor{econblue}{RGB}{0,51,102}
+\definecolor{lightgray}{RGB}{245,245,245}
+
+%% ── Headers and footers ───────────────────────────────────────────────────────
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\color{gray}\itshape $if(shorttitle)$$shorttitle$$else$$title$$endif$}
+\fancyhead[R]{\small\color{gray}\thepage}
+\renewcommand{\headrulewidth}{0.3pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{econblue!40}\leaders\hrule height \headrulewidth\hfill}}
+
+%% ── Section formatting ────────────────────────────────────────────────────────
+\usepackage{titlesec}
+\titleformat{\section}
+  {\large\bfseries\color{econblue}}{\thesection.}{0.6em}{}[\vspace{-0.2em}\color{econblue!30}\rule{\linewidth}{0.4pt}]
+\titleformat{\subsection}
+  {\normalsize\bfseries}{\thesubsection.}{0.5em}{}
+\titleformat{\subsubsection}
+  {\normalsize\itshape}{\thesubsubsection.}{0.5em}{}
+\titlespacing{\section}{0pt}{1.8ex plus .5ex minus .2ex}{0.8ex plus .1ex}
+\titlespacing{\subsection}{0pt}{1.2ex plus .5ex}{0.5ex plus .1ex}
+
+%% ── Economics theorem environments ───────────────────────────────────────────
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{corollary}{Corollary}[proposition]
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{assumption}{Assumption}
+\newtheorem{example}{Example}[section]
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+\newtheorem*{notation}{Notation}
+
+%% ── Lists ─────────────────────────────────────────────────────────────────────
+\usepackage{enumitem}
+\setlist[itemize]{leftmargin=1.5em, itemsep=0.2ex, topsep=0.4ex}
+\setlist[enumerate]{leftmargin=1.8em, itemsep=0.2ex, topsep=0.4ex}
+\setlist[description]{leftmargin=0em, font=\bfseries, style=nextline}
+
+%% ── Tables ────────────────────────────────────────────────────────────────────
+\usepackage{booktabs,tabularx,array,longtable}
+\renewcommand{\arraystretch}{1.2}
+
+%% ── Figures ───────────────────────────────────────────────────────────────────
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}
+\captionsetup{font=small, labelfont=bf, skip=4pt}
+
+%% ── Code blocks (LaTeX fragments in skeleton) ─────────────────────────────────
+\usepackage{listings}
+\lstset{
+  basicstyle=\small\ttfamily,
+  breaklines=true,
+  frame=single,
+  framesep=4pt,
+  backgroundcolor=\color{lightgray},
+  rulecolor=\color{gray!50},
+  xleftmargin=0.5em,
+  xrightmargin=0.5em,
+}
+
+%% ── Verbatim ──────────────────────────────────────────────────────────────────
+\usepackage{fancyvrb,framed}
+
+%% ── Hyperlinks ────────────────────────────────────────────────────────────────
+\usepackage[colorlinks=true,
+            linkcolor=econblue,
+            citecolor=econblue,
+            urlcolor=econblue,
+            bookmarks=true,
+            bookmarksnumbered=true,
+            pdfstartview=FitH]{hyperref}
+
+%% ── Paragraph formatting ──────────────────────────────────────────────────────
+\setlength{\parindent}{1.5em}
+\setlength{\parskip}{0.3ex}
+
+%% ── Abstract environment (manual — avoids \openbox conflict with amsthm) ──────
+\newenvironment{myabstract}{%
+  \begin{center}%
+    \begin{minipage}{0.85\textwidth}%
+      \begin{center}{\small\bfseries Abstract}\end{center}%
+      \small\setstretch{1.2}%
+}{%
+    \end{minipage}%
+  \end{center}%
+  \vspace{0.5em}%
+}
+
+%% ── Pandoc compatibility ──────────────────────────────────────────────────────
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+$if(highlighting-macros)$
+$highlighting-macros$
+$endif$
+
+$for(header-includes)$
+$header-includes$
+$endfor$
+
+%% ── Title block ───────────────────────────────────────────────────────────────
+\title{%
+  \vspace{-1.5em}%
+  {\color{econblue}\rule{\linewidth}{1.5pt}}\\[0.5em]
+  \LARGE\bfseries $title$%
+  $if(subtitle)$\\[0.4em]{\large\normalfont\itshape $subtitle$}$endif$\\[0.4em]
+  {\color{econblue}\rule{\linewidth}{0.5pt}}%
+}
+
+\author{%
+  $for(author)$%
+    $if(author.name)$%
+      \textbf{$author.name$}%
+      $if(author.affiliation)$\\[0.2em]{\small\itshape $author.affiliation$}$endif$%
+      $if(author.email)$\\[0.1em]{\small\ttfamily $author.email$}$endif$%
+    $else$%
+      $author$%
+    $endif$%
+    $sep$\quad\and\quad%
+  $endfor$%
+  $if(author)$$else$%
+    \textbf{Chen Zhu}\quad\and\quad
+    \textbf{Xiaolu Wang}\quad\and\quad
+    \textbf{Weilong Zhang}\\[0.2em]
+    {\small\itshape China Agricultural University \quad|\quad University of Cambridge}%
+  $endif$%
+}
+
+\date{%
+  $if(date)$$date$$else$\today$endif$%
+  $if(working-paper-note)$\\[0.3em]{\small\itshape $working-paper-note$}$endif$%
+}
+
+%% ══════════════════════════════════════════════════════════════════════════════
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+$if(abstract)$
+\begin{myabstract}
+\noindent $abstract$
+$if(keywords)$
+
+\smallskip
+\noindent\textbf{Keywords:} $keywords$%
+$endif$
+$if(jel)$
+
+\noindent\textbf{JEL Classification:} $jel$%
+$endif$
+\end{myabstract}
+\vspace{1em}
+$endif$
+
+$for(include-before)$
+$include-before$
+$endfor$
+
+$if(toc)$
+\setstretch{1.1}
+\tableofcontents
+\setstretch{1.4}
+\newpage
+$endif$
+
+$body$
+
+$for(include-after)$
+$include-after$
+$endfor$
+
+$if(bibliography)$
+\bibliographystyle{$if(biblio-style)$$biblio-style$$else$aer$endif$}
+\bibliography{$for(bibliography)$$bibliography$$sep$,$endfor$}
+$endif$
+
+\end{document}
