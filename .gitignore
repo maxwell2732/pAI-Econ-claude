@@ -1,0 +1,16 @@
+# Workspaces created by the skill
+research-*/
+workspace/
+results/
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/

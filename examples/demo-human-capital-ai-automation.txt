@@ -1,0 +1,36 @@
+Investigate the following research question using the theoretical economics pipeline:
+
+Artificial intelligence tools (large language models, code generation systems, automated analysis platforms) are increasingly capable of performing tasks that previously required significant cognitive investment from skilled workers — tasks such as drafting documents, writing software code, conducting literature reviews, and generating data analyses. This creates a novel human capital investment problem: workers who have invested in skills that are now partially automatable must decide whether and how much to invest in complementary skills (skills that raise their productivity when working with AI tools) versus whether to retrain toward entirely different occupational tasks.
+
+Research questions:
+
+1. Using the task-based production framework of Acemoglu and Restrepo, define the "AI automation frontier" — the set of tasks that AI tools can now perform at a cost below the wage of a skilled worker. Model the displacement effect: as AI automates tasks within the skilled worker's current task bundle, what happens to the skilled worker's marginal product and equilibrium wage?
+
+2. Embed a human capital adaptation problem (in the spirit of Ben-Porath) in this task-based framework. A worker at age a has a current skill vector s_a = (s_routine_cognitive, s_nonroutine_cognitive, s_interpersonal). AI automation reduces the market return to s_routine_cognitive. The worker can invest I_a units of time per period to shift the skill vector toward s_nonroutine_cognitive and s_interpersonal (skills complementary to AI). Derive:
+   (a) The optimal investment profile {I_a}_{a ∈ [age, retirement]} as a function of the worker's age, remaining career length, and the pace of AI automation.
+   (b) The threshold age a* beyond which adaptation investment is no longer profitable, given the amortization constraint over remaining working years.
+   (c) How does this threshold age depend on: (i) the speed of AI capability growth, (ii) the degree of dynamic complementarity between existing and new skills, and (iii) the cost of adaptation?
+
+3. Introduce worker heterogeneity: workers differ in their initial skill composition (θ_C, θ_N) — their current mix of routine cognitive and non-routine cognitive skills. Using a Roy model of selection into adaptation versus non-adaptation, characterize:
+   (a) Which workers will optimally adapt to AI automation and which will accept displacement?
+   (b) What is the equilibrium distribution of wages in the labor market after AI automation, distinguishing between adapters and non-adapters?
+   (c) Does AI automation widen or narrow the within-cohort skill premium?
+
+4. Consider the role of directed technical change. AI investment is partly endogenous: AI firms profit from developing tools that automate more skilled-worker tasks (market size effect) but also profit from developing tools that complement skilled-worker productivity (price effect: skilled workers are expensive). Under what conditions does the market direct AI R&D toward labor-replacing rather than labor-complementing tools, and when does this generate a social welfare loss?
+
+5. What is the optimal government policy in this environment? Specifically:
+   (a) Is there a justification for retraining subsidies for workers above age a*, where private adaptation is not profitable but social returns (externalities from a skilled workforce) remain positive?
+   (b) Does the optimal policy depend on the degree of dynamic complementarity between existing skills and AI-complementary skills?
+   (c) How does the optimal policy differ for workers displaced from routine cognitive tasks versus workers displaced from non-routine cognitive tasks?
+
+Target output: structured research documents suitable for beginning a theoretical economics working paper on the economics of human capital adaptation to AI automation.
+
+The intended research audience is labor economics / human capital economics / economics of innovation, with policy implications for workforce development, education, and technology regulation.
+
+This paper should engage with the following theoretical traditions:
+- Acemoglu-Restrepo task-based production framework (displacement, reinstatement, new task creation)
+- Ben-Porath lifecycle human capital investment model
+- Roy model of selection into adaptation
+- Becker human capital (general vs. specific skills and their financing)
+- Directed technical change (Acemoglu 2002)
+The Canonical Model Matching stage should identify which of these traditions forms the baseline and which are extensions, and should flag if the proposed model is primarily a synthesis rather than a novel contribution.

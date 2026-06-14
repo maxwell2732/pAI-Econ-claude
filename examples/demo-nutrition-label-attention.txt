@@ -1,0 +1,30 @@
+Investigate the following research question using the theoretical economics pipeline:
+
+When supermarket products display nutritional information on front-of-pack labels (e.g., traffic-light systems, calorie counts, nutrient scores), consumers must actively read and process this information before making a purchase decision. Reading a label takes time and cognitive effort. This creates a costly information acquisition / rational attention problem: the consumer must decide whether the expected benefit of knowing the nutritional content of a product is worth the attention cost of reading the label.
+
+Research questions:
+
+1. In a costly information acquisition model, derive the consumer's optimal decision rule for whether to read a nutritional label before purchasing a food product. How does this stopping rule depend on:
+   (a) the stakes of the dietary decision (e.g., the health consequences of eating the product regularly vs. occasionally),
+   (b) the informativeness of the label (how much the label reduces uncertainty about the product's nutritional quality), and
+   (c) the consumer's prior beliefs about the product's nutritional content (derived from brand recognition, category knowledge, etc.)?
+
+2. Compare two label formats:
+   - Format A: a detailed multi-nutrient table (high-information, high-effort to process)
+   - Format B: a simple single-number score (low-information, low-effort to process)
+
+   Under what conditions does Format B generate more label-reading behavior than Format A, even though it conveys less information per reading?
+
+3. Consider rational inattention as an alternative framework. If the consumer has a fixed attention capacity κ (bits), how should they optimally allocate attention across multiple products in a shopping basket? What predicts which products receive attention and which are purchased "automatically" without label inspection?
+
+4. What is the welfare implication of mandatory front-of-pack labeling when:
+   (a) consumers face cognitive costs of processing labels, and
+   (b) not all consumers have the same cognitive capacity (heterogeneous κ)?
+
+   In particular: can mandatory labeling reduce welfare for low-attention-capacity consumers if it creates information overload without corresponding improvements in dietary choices?
+
+5. Extend the model to consider a social learning / information cascade context: if consumers sequentially purchase products and can observe others' choices (e.g., what is in other shoppers' carts, online reviews, bestseller rankings), under what conditions does label information become irrelevant because consumers simply follow others' choices?
+
+Target output: structured research documents suitable for beginning a theoretical economics working paper on the economics of nutritional information and consumer attention allocation.
+
+The intended research audience is health economics / behavioral economics / industrial organization, with an empirical motivation in food policy and front-of-pack labeling regulation.
