@@ -282,11 +282,27 @@ Please organize them into a theoretical economics working paper skeleton.
 
 pAI-Econ-claude uses a staged, traceable human-AI collaboration process.
 
+**About Stage 2a — Empirical Reality Check:**
+
+After literature positioning and before entering theoretical modeling, the pipeline runs a minimal empirical reality check (Stage 2a) protected by **Gate 1b (Reality Fit Gate)**. The purpose is to verify — using web search — that the researcher's described real-world context is consistent with the factual requirements of the proposed model structure. Specifically, it checks:
+
+- Does the market's actual concentration data support a "dominant firm + atomistic fringe" structure, or is it actually an oligopoly?
+- Are important strategic competitors being omitted?
+- Is a differentiated-product market being incorrectly modeled as a homogeneous good?
+- Are distribution or regulatory constraints being mischaracterized as production capacity constraints?
+- Is there documented evidence for claimed urban-rural, regional, or group differences?
+
+Gate 1b produces three verdicts:
+- **PASS**: Factual assumptions match available evidence — proceed to Stage 3.
+- **CONDITIONAL PASS (REFRAME)**: Some assumptions are unverified — the pipeline can proceed, but the paper must explicitly describe a *stylized* market rather than claiming to describe a specific real market.
+- **FAIL (REROUTE)**: A core assumption is contradicted by evidence — loop back to Stage 1 to restate the research context, or redirect Stage 3b to a more appropriate canonical model family.
+
 ```mermaid
 flowchart TD
     A["0. Intake<br/>Research Idea"] --> B["1. Puzzle Refinement"]
     B --> C["2. Literature Positioning"]
-    C --> D["3. Persona Council<br/>Theory Review Committee"]
+    C --> C2["2a. Empirical Reality Check<br/>(Gate 1b)"]
+    C2 --> D["3. Persona Council<br/>Theory Review Committee"]
     D --> E["3b. Canonical Model Matching"]
     E --> F["4. Model Primitives"]
     F --> G["5. Assumption Audit"]
@@ -306,6 +322,7 @@ flowchart TD
 | 0 | Intake | `research_intake.md` |
 | 1 | Puzzle Refinement | `research_puzzle.md` |
 | 2 | Literature Positioning | `literature_positioning.md` |
+| **2a** | **Empirical Reality Check** | `empirical_reality_check.md` |
 | 3 | Theory Persona Council | `persona_council.md` |
 | 3b | Canonical Model Matching | `canonical_model_match.md` |
 | 4 | Model Primitives | `model_primitives.md` |

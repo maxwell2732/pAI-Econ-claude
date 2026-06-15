@@ -1,0 +1,779 @@
+\documentclass[12pt]{article}
+
+\usepackage[margin=1.2in]{geometry}
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{microtype}
+\usepackage[authoryear,round]{natbib}
+\usepackage{xcolor}
+\definecolor{linkgreen}{RGB}{0,120,100}
+\usepackage[colorlinks=true,linkcolor=linkgreen,citecolor=linkgreen,urlcolor=linkgreen]{hyperref}
+
+% Reduce title font from \LARGE (default) to \Large so title fits in 2 lines
+\makeatletter
+\renewcommand{\maketitle}{%
+  \begin{center}%
+    {\Large\bfseries \@title \par}%
+    \vskip 1.5em%
+    {\normalsize \@author \par}%
+    \vskip 0.8em%
+    {\normalsize \@date}%
+  \end{center}%
+  \vskip 2em%
+}
+\makeatother
+
+% Theorem environments
+\theoremstyle{plain}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\theoremstyle{definition}
+\newtheorem{assumption}{Assumption}
+\newtheorem{definition}{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+\title{Capacity-Constrained Dominant Firm Pricing\\
+in Segmented Markets: A Theoretical Framework}
+\author{%
+  \texttt{pAI-Econ-claude} (\texttt{theoretical-economics-claude-skill})\\[4pt]
+  \small\url{https://github.com/maxwell2732/pAI-Econ-claude}\\[2pt]
+  \small Claude Sonnet 4.6%
+}
+\date{Draft: June 15, 2026}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+In many consumer goods markets in developing economies, a single dominant
+branded firm competes against a fragmented competitive fringe that differs in
+strength across geographic regions.  A stylized version of this structure arises
+when one firm holds a substantially larger market share than any individual rival
+and the remaining supply comes from many small, price-taking producers; urban and
+rural markets are physically separated so that direct consumer arbitrage is
+prohibitively costly.  When the dominant firm cannot fully serve all markets
+simultaneously due to binding production or distribution capacity, a natural
+question arises: how does the asymmetry in regional competitive conditions shape
+the firm's pricing strategy across markets, and does intensified competition in
+one region spill over to affect prices in the other?
+
+This paper shows that the answer is yes, and that the mechanism operates entirely
+through the shadow price of the dominant firm's capacity constraint.  We study a
+static model of third-degree price discrimination by a capacity-constrained
+dominant firm facing a competitive fringe in two geographically segmented
+markets.  The dominant firm sets prices in each market, anticipating the fringe
+firms' competitive supply response.  A binding capacity constraint links the two
+markets: using more capacity in one market necessarily reduces the amount
+available for the other.  This linkage generates a shadow cost that appears in
+both markets' first-order conditions, transmitting competitive shocks across
+market boundaries even when direct arbitrage between markets is prohibitively
+costly.
+
+The standard dominant firm model, developed for single-market settings, predicts
+no cross-market pricing effects when markets are geographically segmented: the
+firm's pricing decision in each market depends only on local demand and
+competitive conditions.  Similarly, \citet{Varian1985}'s canonical analysis of
+third-degree price discrimination focuses on a monopolist with no fringe
+competition and does not address how one market's equilibrium responds to
+changes in the competitive structure of another.  Neither framework can generate
+the cross-market spillovers we study, because neither introduces the binding
+capacity constraint that provides the linking mechanism.
+
+Our main results are threefold.  First, we characterize the unique
+dominant firm equilibrium in closed form (Proposition~\ref{prop:existence}), and
+show that equilibrium prices in each market depend on both local demand and fringe
+parameters \emph{and} on a common capacity shadow price that summarizes market
+scarcity.  Second, we derive the price structure under segmentation.  When the
+urban market has a higher residual demand intercept per unit of fringe competition
+(Assumption~A4$'$), the dominant firm charges a strictly higher price in the urban
+market.  Remarkably, this price gap is independent of the capacity level and of
+the dominant firm's cost---it is determined entirely by the asymmetry in fringe
+supply structures (Proposition~\ref{prop:pricegap}).  Third, and most
+importantly, we show that an increase in rural fringe competition reduces the
+dominant firm's prices in \emph{both} markets, while simultaneously widening the
+urban-rural price gap (Proposition~\ref{prop:crossmarket}).  The urban price
+falls because the dominant firm reallocates capacity toward the urban market where
+margins are higher, reducing the shadow price of capacity.  The price gap widens
+because only the rural price absorbs the direct effect of stronger rural
+competition.  We also show that capacity expansion by the dominant firm reduces
+both prices uniformly, leaving the price gap unchanged
+(Proposition~\ref{prop:capacity}).
+
+On welfare, we show that market segmentation---relative to a uniform pricing
+benchmark---reduces total market output and total welfare when fringe competition
+is structurally stronger in the rural market (Proposition~\ref{prop:welfare}).
+The welfare loss arises through the fringe: because the dominant firm produces
+its full capacity $K$ in both regimes, the welfare difference is driven entirely
+by fringe output.  Stronger rural fringe competition means rural output is more
+sensitive to the rural price; the output loss from the dominant firm's supra-uniform
+urban price exceeds the output gain from its sub-uniform rural price.  Applying
+\citeauthor{Varian1985}'s criterion to total market output delivers the welfare
+ranking.  The distributional picture is nuanced: rural consumers benefit from the
+lower prices the dominant firm charges in the rural market, while urban consumers
+pay higher prices.  A regulator who cares about spatial equity faces a direct
+trade-off between rural consumer welfare and aggregate efficiency.
+
+Our final result characterizes the boundary between the constrained and
+unconstrained regimes (Proposition~\ref{prop:boundary}).  Price levels adjust
+continuously as the capacity constraint becomes slack.  However, the cross-market
+pricing sensitivity---the degree to which urban prices respond to rural
+competition---is \emph{discontinuous} at the capacity threshold $\bar{K}$: it
+converges to $c/(2B)$ (where $B$ is the sum of all fringe and demand slope
+parameters) as the constraint approaches slack, then drops to zero the moment
+the constraint is lifted.  This means a barely-constrained dominant firm and an
+unconstrained dominant firm behave qualitatively differently in how they respond
+to competitive shocks in distant markets.
+
+This paper contributes to two strands of the industrial organization literature.
+The first is the literature on dominant firm competition and price leadership,
+initiated by \citet{Gaskins1971}, who analyzed how a dominant firm optimally
+prices to slow fringe entry over time.  We study a static version of this
+framework, and show that introducing a binding capacity constraint across two
+segmented markets generates new structural predictions absent from the
+single-market model.  The second strand is \citeauthor{Varian1985}'s
+(\citeyear{Varian1985}) analysis of third-degree price discrimination, which
+established that welfare rises if and only if total output rises under
+discrimination.  We apply this criterion in a dominant firm setting where total
+output is the sum of dominant firm and fringe output, and show that the welfare
+direction is determined by fringe output differences across regimes---a
+mechanism that does not appear in Varian's monopoly framework.
+
+The paper proceeds as follows.  Section~\ref{sec:model} presents the model.
+Section~\ref{sec:equilibrium} characterizes the equilibrium and the price gap.
+Section~\ref{sec:comparative} derives the comparative statics.
+Section~\ref{sec:welfare} analyzes welfare.  Section~\ref{sec:discussion}
+discusses robustness and extensions.  Section~\ref{sec:conclusion} concludes.
+Proofs are in the Appendix.
+
+%----------------------------------------------------------------------
+\section{Model}
+\label{sec:model}
+%----------------------------------------------------------------------
+
+\subsection{Environment}
+
+A single dominant firm $D$ sells a homogeneous good in two geographically
+segmented markets: urban ($u$) and rural ($r$).  Each market $m \in \{u,r\}$
+also contains a competitive fringe of atomistic price-taking firms.  The timing
+is as follows.  First, $D$ commits to a price pair $(p_u, p_r) \in \mathbb{R}_+^2$.
+Second, fringe firms in each market $m$ observe $p_m$ and supply $S_m(p_m)$.
+Third, residual demand in market $m$ is $R_m(p_m) = D_m(p_m) - S_m(p_m)$, and
+$D$ supplies $q_m = R_m(p_m)$ in market $m$.  The game is static and complete
+information.
+
+\textbf{Demand.}  Consumer demand in market $m$ is linear:
+\begin{equation}
+  D_m(p_m) = a_m - b_m p_m, \quad a_m,\, b_m > 0.
+\end{equation}
+We denote the choke price $\bar{P}_m = a_m/b_m$.
+
+\textbf{Fringe supply.}  Each fringe firm $i$ in market $m$ has cost
+$c_i^F(q_i) = q_i^2/(2g_m)$, yielding individual supply $g_m p_m$ at price $p_m$.
+Aggregating over a continuum of measure $N_m \to \infty$ with $e_m \equiv N_m g_m$
+held fixed, aggregate fringe supply is:
+\begin{equation}
+  S_m(p_m) = e_m p_m, \quad e_m > 0.
+\end{equation}
+The fringe supply elasticity parameter $e_m$ is the key structural variable
+characterizing competitive conditions in market $m$.
+
+\textbf{Residual demand.}  The dominant firm's residual demand in market $m$ is:
+\begin{equation}
+  R_m(p_m) = D_m(p_m) - S_m(p_m) = a_m - (b_m + e_m)p_m.
+\end{equation}
+
+\textbf{Dominant firm.}  The dominant firm has constant marginal cost $c > 0$
+and a binding production and distribution capacity constraint:
+\begin{equation}
+  q_u + q_r \equiv R_u(p_u) + R_r(p_r) \leq K.
+  \label{eq:capacity}
+\end{equation}
+The dominant firm maximizes profit $\Pi_D = (p_u - c)R_u(p_u) + (p_r - c)R_r(p_r)$
+subject to~\eqref{eq:capacity} and $R_m(p_m) \geq 0$.
+
+Let $B \equiv b_u + e_u + b_r + e_r$ denote the sum of all slope and fringe
+parameters, and define the \emph{unconstrained capacity threshold}:
+\begin{equation}
+  \bar{K} \equiv \frac{a_u + a_r - Bc}{2}.
+  \label{eq:Kbar}
+\end{equation}
+At $K = \bar{K}$, the dominant firm's capacity exactly accommodates its
+unconstrained optimal quantities in both markets; for $K < \bar{K}$ the
+constraint binds.  Note that $\bar{K} < (a_u + a_r)/2$ since $Bc > 0$,
+so Assumption~\ref{ass:A3} below also implies $K < (a_u + a_r)/2$.
+
+\subsection{Assumptions}
+
+\begin{assumption}[Market Segmentation]
+\label{ass:A1}
+Per-unit arbitrage between markets costs $\tau > 0$, with $\tau > p_u^* - p_r^*$
+in equilibrium.  No consumer arbitrage occurs.
+\end{assumption}
+
+\begin{assumption}[Dominant Firm Cost Advantage]
+\label{ass:A2}
+$c < p_m^*$ for $m \in \{u, r\}$, so the dominant firm earns positive profit
+in both markets.
+\end{assumption}
+
+\begin{assumption}[Binding Capacity Constraint]
+\label{ass:A3}
+$K < \bar{K}$, where $\bar{K}$ is defined in~\eqref{eq:Kbar}.  The capacity
+constraint binds in equilibrium and $\lambda^* > 0$.
+\end{assumption}
+
+\begin{assumption}[Interior Solution]
+\label{ass:H2}
+$a_m > (b_m + e_m)(c + \lambda^*)$ for $m \in \{u, r\}$, so $q_m^* > 0$:
+the dominant firm supplies a strictly positive quantity in both markets.
+\end{assumption}
+
+\begin{assumption}[Asymmetric Residual Demand Intercepts]
+\label{ass:A4prime}
+$\dfrac{a_u}{b_u + e_u} > \dfrac{a_r}{b_r + e_r}$: the urban market's residual
+demand intercept exceeds the rural market's.
+\end{assumption}
+
+\begin{remark}
+Under symmetric consumer demand ($a_u = a_r$, $b_u = b_r$), Assumption~\ref{ass:A4prime}
+reduces to $e_r > e_u$: the dominant firm charges more in the market with
+the less elastic fringe.  Asymmetric demand can reverse this ordering (see
+Section~\ref{sec:discussion}), which is why the general condition on residual
+demand intercepts is the correct sufficient condition.
+\end{remark}
+
+\subsection{Equilibrium Concept}
+
+\begin{definition}[Dominant Firm Equilibrium]
+A \emph{dominant firm equilibrium} is a price pair $(p_u^*, p_r^*)$ such that:
+(i) each fringe firm in market $m$ supplies $s_m^* = e_m p_m^*$ (best response
+to $p_m^*$ for a price-taker with quadratic cost); (ii) $(p_u^*, p_r^*)$ solves
+$\max \Pi_D$ subject to~\eqref{eq:capacity} and $R_m(p_m) \geq 0$; (iii)
+markets clear: $q_m^* + s_m^* = D_m(p_m^*)$.
+\end{definition}
+
+This is the price-leadership equilibrium of the two-stage game in which $D$
+chooses prices first and fringe firms supply second.  It coincides with the
+subgame-perfect Nash equilibrium of that game: in stage~2, fringe firms'
+dominant strategy is to supply at the announced price; in stage~1, $D$
+maximizes profit given the anticipated fringe response.
+
+\subsection{Social Planner Benchmark}
+
+For the welfare analysis of Section~\ref{sec:welfare}, the relevant benchmark is
+the \emph{uniform-price equilibrium}: $D$ is constrained to charge the same price
+$p$ in both markets.  The uniform-price optimum $p^{U*}$ solves the same
+constrained profit-maximization problem with $p_u = p_r = p$.  Under the binding
+capacity constraint:
+\begin{equation}
+  p^{U*} = \frac{c + \lambda^{U*}}{2} + \frac{a_u + a_r}{2B},
+  \quad \lambda^{U*} = \frac{a_u + a_r - 2K}{B} - c > 0.
+  \label{eq:uniform}
+\end{equation}
+Note that $p^{U*} = (c + \lambda^{U*})/2 + (a_u + a_r)/(2B)$, which lies between
+$p_r^*$ and $p_u^*$ in the segmented equilibrium (shown in Proposition~\ref{prop:welfare}).
+
+%----------------------------------------------------------------------
+\section{Equilibrium and Price Structure}
+\label{sec:equilibrium}
+%----------------------------------------------------------------------
+
+\subsection{Existence and Characterization}
+
+The Lagrangian for the dominant firm's problem is:
+\begin{equation}
+  \mathcal{L}(p_u, p_r, \lambda) = \sum_{m \in \{u,r\}} (p_m - c - \lambda)R_m(p_m) + \lambda K.
+\end{equation}
+Since $R_m(p_m) = a_m - (b_m + e_m)p_m$, the profit function is strictly
+concave in $(p_u, p_r)$ for each $\lambda$: the Hessian is diagonal with entries
+$-2(b_m + e_m) < 0$.  The first-order conditions for $m \in \{u, r\}$ are:
+\begin{equation}
+  R_m(p_m^*) + (p_m^* - c - \lambda^*)\,R_m'(p_m^*) = 0,
+\end{equation}
+where $R_m'(p) = -(b_m + e_m)$.  Solving explicitly:
+\begin{equation}
+  p_m^* = \frac{c + \lambda^*}{2} + \frac{a_m}{2(b_m + e_m)}.
+  \label{eq:pm}
+\end{equation}
+The shadow price $\lambda^*$ is determined by the binding capacity constraint
+$R_u(p_u^*) + R_r(p_r^*) = K$:
+\begin{equation}
+  \lambda^* = \frac{a_u + a_r - 2K}{B} - c.
+  \label{eq:lambda}
+\end{equation}
+Assumption~\ref{ass:A3} ensures $\lambda^* > 0$.
+
+\begin{proposition}[Existence and Uniqueness]
+\label{prop:existence}
+Under Assumptions~\ref{ass:A1}--\ref{ass:H2}, there exists a unique dominant firm
+equilibrium.  Letting $B \equiv b_u + e_u + b_r + e_r$, the equilibrium prices,
+shadow price, and quantities are:
+\begin{align}
+  p_m^* &= \frac{c + \lambda^*}{2} + \frac{a_m}{2(b_m + e_m)}, \quad m \in \{u,r\}, \\
+  \lambda^* &= \frac{a_u + a_r - 2K}{B} - c \;>\; 0, \\
+  q_m^* &= \frac{a_m - (b_m + e_m)(c + \lambda^*)}{2} \;>\; 0, \quad
+  s_m^* = e_m p_m^* > 0.
+\end{align}
+\end{proposition}
+
+\begin{proof}
+Existence follows from the Weierstrass theorem applied to $\Pi_D$ over the compact
+feasible set defined by~\eqref{eq:capacity} and $R_m \geq 0$.  Uniqueness follows
+from strict concavity: the Hessian is $\mathrm{diag}(-2(b_u+e_u),\,-2(b_r+e_r)) \prec 0$.
+KKT conditions are necessary and sufficient.  Equation~\eqref{eq:lambda} gives
+$\lambda^* > 0$ from Assumption~\ref{ass:A3}; $q_m^* > 0$ from Assumption~\ref{ass:H2}.
+\end{proof}
+
+The equilibrium price in each market has two components: a common term
+$(c + \lambda^*)/2$ that reflects the firm's effective marginal cost (production
+cost $c$ plus the shadow price of capacity $\lambda^*$), and a market-specific
+term $a_m/[2(b_m + e_m)]$ that reflects the depth of local demand net of fringe
+competition.  The shadow price $\lambda^*$ is the mechanism linking the two
+markets: it rises when capacity is scarcer (smaller $K$) and falls as the
+constraint relaxes.
+
+\subsection{The Urban-Rural Price Gap}
+
+\begin{proposition}[Urban-Rural Price Gap]
+\label{prop:pricegap}
+In the equilibrium of Proposition~\ref{prop:existence}, the urban-rural price
+gap is:
+\begin{equation}
+  p_u^* - p_r^* = \frac{a_u}{2(b_u + e_u)} - \frac{a_r}{2(b_r + e_r)}.
+  \label{eq:gap}
+\end{equation}
+Under Assumption~\ref{ass:A4prime}, $p_u^* > p_r^*$.  Under symmetric demand
+($a_u = a_r = a$, $b_u = b_r = b$) and $e_r > e_u$:
+\begin{equation}
+  p_u^* - p_r^* = \frac{a}{2}\left[\frac{1}{b+e_u} - \frac{1}{b+e_r}\right] > 0.
+  \label{eq:gap-symmetric}
+\end{equation}
+The price gap is independent of the capacity level $K$, the shadow price
+$\lambda^*$, and the dominant firm's marginal cost $c$.
+\end{proposition}
+
+\begin{proof}
+Subtract the formula for $p_r^*$ from $p_u^*$ in equation~\eqref{eq:pm}.
+The common term $(c + \lambda^*)/2$ cancels exactly, leaving~\eqref{eq:gap}.
+The sign under Assumption~\ref{ass:A4prime} is immediate.  Independence from
+$K$ and $c$ follows because neither appears in~\eqref{eq:gap}.
+\end{proof}
+
+The price gap is determined entirely by the structure of residual demand in
+each market: specifically, the ratio of the demand intercept to the combined
+slope and fringe elasticity.  The capacity shadow price $\lambda^*$ shifts
+both prices upward by the same amount, so it cancels in the difference.
+This means the dominant firm's level of capacity scarcity has no effect on
+how much more it charges in the urban market than in the rural market.
+
+\begin{remark}
+\label{rem:gap-asymmetry}
+Under asymmetric demand, Assumption~\ref{ass:A4prime} cannot be replaced by
+the simpler condition $e_r > e_u$ alone.  If the rural market is sufficiently
+larger ($a_r \gg a_u$), then $a_r/(b_r + e_r) > a_u/(b_u + e_u)$ even when
+$e_r > e_u$, and $p_r^* > p_u^*$.  Assumption~\ref{ass:A4prime} is the general
+sufficient condition.
+\end{remark}
+
+%----------------------------------------------------------------------
+\section{Comparative Statics}
+\label{sec:comparative}
+%----------------------------------------------------------------------
+
+\subsection{Cross-Market Effects of Fringe Competition}
+
+The paper's main result concerns how an increase in rural fringe competition---a
+rise in $e_r$---affects equilibrium in both markets.
+
+\begin{proposition}[Cross-Market Comparative Statics]
+\label{prop:crossmarket}
+In the equilibrium of Proposition~\ref{prop:existence}, under
+Assumption~\ref{ass:A3} ($K < \bar{K}$):
+\begin{align}
+  \frac{d\lambda^*}{de_r} &= -\frac{a_u + a_r - 2K}{B^2} < 0, \label{eq:dlambda}\\[4pt]
+  \frac{dp_u^*}{de_r} &= \frac{1}{2}\frac{d\lambda^*}{de_r} < 0, \label{eq:dpu}\\[4pt]
+  \frac{dp_r^*}{de_r} &= \frac{1}{2}\frac{d\lambda^*}{de_r} - \frac{a_r}{2(b_r + e_r)^2} < 0,
+    \label{eq:dpr}\\[4pt]
+  \frac{d(p_u^* - p_r^*)}{de_r} &= \frac{a_r}{2(b_r + e_r)^2} > 0, \label{eq:dgap}\\[4pt]
+  \frac{dq_u^*}{de_r} &= \frac{(b_u+e_u)(a_u + a_r - 2K)}{2B^2} > 0. \label{eq:dqu}
+\end{align}
+Furthermore, if $K \geq \bar{K}$ (constraint non-binding), then $dp_u^*/de_r = 0$
+and $dq_u^*/de_r = 0$: all cross-market effects in
+\eqref{eq:dlambda}--\eqref{eq:dqu} are generated exclusively by the binding
+capacity constraint.
+\end{proposition}
+
+\begin{proof}
+See Appendix~\ref{app:proofs}, Proof of Proposition~\ref{prop:crossmarket}.
+\end{proof}
+
+The mechanism behind Proposition~\ref{prop:crossmarket} involves two distinct
+channels.  The \emph{shadow price channel} (equation~\eqref{eq:dpu}): when $e_r$
+rises, the dominant firm's rural residual demand shrinks, making rural capacity less
+valuable.  The capacity shadow price $\lambda^*$ falls, reducing the effective
+marginal cost and pulling both prices down by the same amount
+$(1/2)(d\lambda^*/de_r) < 0$.  The \emph{direct channel}
+(the second term in equation~\eqref{eq:dpr}): the increase in $e_r$ also directly
+flattens rural residual demand, reducing the rural price by an additional
+$a_r/[2(b_r + e_r)^2]$.  This direct channel is present only in the rural market,
+which is why the rural price falls more than the urban price and the gap widens
+(equation~\eqref{eq:dgap}).  Meanwhile, as rural becomes less profitable, the
+dominant firm shifts its limited capacity toward the urban market ($q_u^*$ rises,
+$q_r^*$ falls), reinforcing the urban price reduction through higher urban supply.
+
+The last part of the proposition---that the cross-market effect is exactly zero
+when $K \geq \bar{K}$---is the key identification result.  Two dominant firms
+that are observationally similar in their price levels may behave qualitatively
+differently: the constrained firm transmits rural competitive shocks to urban
+prices; the unconstrained firm does not.
+
+\subsection{Capacity Comparative Statics and Gap Invariance}
+
+\begin{proposition}[Capacity Comparative Statics]
+\label{prop:capacity}
+In the equilibrium of Proposition~\ref{prop:existence}, under
+Assumption~\ref{ass:A3}:
+\begin{equation}
+  \frac{dp_m^*}{dK} = -\frac{1}{B} < 0, \quad m \in \{u, r\}.
+  \label{eq:dpdk}
+\end{equation}
+Consequently, $d(p_u^* - p_r^*)/dK = 0$: the urban-rural price gap is invariant
+to the dominant firm's capacity level.  As $K \to \bar{K}^-$:
+$p_m^* \to p_m^{nc} \equiv c/2 + a_m/[2(b_m + e_m)]$, the unconstrained
+dominant firm price.
+\end{proposition}
+
+\begin{proof}
+From~\eqref{eq:lambda}, $d\lambda^*/dK = -2/B$.  From~\eqref{eq:pm},
+$dp_m^*/dK = (1/2)(d\lambda^*/dK) = -1/B$.  Gap invariance follows because
+the price gap~\eqref{eq:gap} contains no $K$.  The limit $p_m^* \to p_m^{nc}$
+follows from $\lambda^* \to 0$ as $K \to \bar{K}^-$.
+\end{proof}
+
+Proposition~\ref{prop:capacity} has a direct policy implication: capacity
+investment by the dominant firm (improved distribution infrastructure, new
+production facilities) reduces prices uniformly across markets, but leaves the
+urban-rural price differential unchanged.  The capacity shadow price acts as a
+common cost reduction that both markets share equally.  By contrast,
+Proposition~\ref{prop:crossmarket} shows that changes in fringe supply structures
+\emph{do} affect the gap.  These are thus distinct policy instruments: capacity
+subsidies improve the \emph{level} of prices, while policies that strengthen rural
+fringe competition (reducing barriers to local entry) affect the price
+\emph{structure}.
+
+%----------------------------------------------------------------------
+\section{Welfare Analysis}
+\label{sec:welfare}
+%----------------------------------------------------------------------
+
+\subsection{Total Output and Welfare}
+
+Let $Q \equiv q_u + q_r + s_u + s_r$ denote total market output (dominant firm
+plus fringe, across both markets).  Under the binding capacity constraint,
+dominant firm output equals $K$ in both the segmented and uniform-price regimes.
+Welfare differences therefore originate entirely in fringe output:
+$Q^{\mathrm{SEG}} - Q^{\mathrm{UNI}} = [e_u p_u^* + e_r p_r^*] - [(e_u + e_r)p^{U*}]
+= e_u(p_u^* - p^{U*}) + e_r(p_r^* - p^{U*})$.
+
+\begin{proposition}[Welfare: Segmentation Reduces Output and Welfare]
+\label{prop:welfare}
+Under Assumptions~\ref{ass:A1}--\ref{ass:A4prime}, symmetric consumer demand
+($a_u = a_r = a$, $b_u = b_r = b$), and with the capacity constraint binding in
+both regimes:
+\begin{equation}
+  Q^{\mathrm{SEG}} - Q^{\mathrm{UNI}} = \frac{a(e_r - e_u)}{2B}
+  \left[\frac{e_u}{b + e_u} - \frac{e_r}{b + e_r}\right] < 0.
+  \label{eq:Qdiff}
+\end{equation}
+Consequently, $W^{\mathrm{SEG}} < W^{\mathrm{UNI}}$: market segmentation reduces
+total welfare relative to uniform pricing.
+
+In terms of distributional welfare effects: rural consumers gain
+($CS_r^{\mathrm{SEG}} > CS_r^{\mathrm{UNI}}$, since $p_r^* < p^{U*}$); urban
+consumers lose ($CS_u^{\mathrm{SEG}} < CS_u^{\mathrm{UNI}}$, since
+$p_u^* > p^{U*}$).
+\end{proposition}
+
+\begin{proof}
+See Appendix~\ref{app:proofs}, Proof of Proposition~\ref{prop:welfare}.
+\end{proof}
+
+The welfare result is an application of \citeauthor{Varian1985}'s
+(\citeyear{Varian1985}) criterion to the dominant firm setting: total welfare
+increases with total output when all units in $[Q^{\mathrm{SEG}},\, Q^{\mathrm{UNI}}]$
+carry positive net social value (which holds here since each ``lost'' unit has
+demand price above fringe marginal cost at the equilibrium).  The content of
+Proposition~\ref{prop:welfare} relative to \citeauthor{Varian1985} is the
+identification of the fringe output differential as the welfare driver: in Varian's
+monopoly framework, total output equals the monopolist's choice; here, dominant
+firm output is $K$ in both regimes, so welfare is entirely determined by the
+fringe's response to price differences.  The sign of the fringe output differential
+follows from Assumption~\ref{ass:A4prime}: stronger rural competition means rural
+fringe supply is more price-sensitive, so the output loss from the high urban price
+exceeds the output gain from the low rural price.
+
+The distributional finding---rural consumers benefit from segmentation while
+aggregate welfare falls---creates a policy tension.  A regulator imposing uniform
+pricing improves aggregate welfare, but at the cost of raising rural prices.  This
+tension is present whenever price discrimination by a dominant firm directs
+lower prices toward lower-income consumers in the structurally more competitive
+market.
+
+\subsection{Boundary Behavior}
+
+\begin{proposition}[Capacity Boundary]
+\label{prop:boundary}
+As $K \to \bar{K}^-$, equilibrium prices converge continuously to the
+unconstrained dominant firm prices: $\lim_{K \to \bar{K}^-} p_m^* = p_m^{nc}$
+and $\lambda^* \to 0$.  However, the cross-market comparative static is
+discontinuous at $K = \bar{K}$:
+\begin{equation}
+  \lim_{K \to \bar{K}^-} \frac{dp_u^*}{de_r} = -\frac{c}{2B} \;\neq\; 0
+  \;=\; \frac{dp_u^*}{de_r}\bigg|_{K \geq \bar{K}}.
+  \label{eq:boundary}
+\end{equation}
+The magnitude of the jump is $c/(2B)$, which vanishes as $c \to 0$.
+\end{proposition}
+
+\begin{proof}
+Price continuity follows from $\lambda^*(K) \to 0$ continuously.  For the
+comparative static: at $K < \bar{K}$,
+$dp_u^*/de_r = -(a_u + a_r - 2K)/(2B^2)$.  As $K \to \bar{K}^-$, $a_u + a_r - 2K \to Bc$
+(using $\bar{K} = (a_u + a_r - Bc)/2$), giving the limit $-c/(2B)$.  At
+$K \geq \bar{K}$, the constraint is slack, $\lambda^* = 0$, and $p_u^* = c/2 +
+a_u/[2(b_u + e_u)]$ is independent of $e_r$, so $dp_u^*/de_r = 0$.
+\end{proof}
+
+Proposition~\ref{prop:boundary} shows that the capacity constraint functions as
+a structural switch rather than a continuous dial.  A dominant firm with capacity
+just below $\bar{K}$ still transmits rural competition shocks to urban prices
+(with magnitude approaching $c/(2B)$), while a firm with capacity just above
+$\bar{K}$ transmits nothing.  This qualitative discontinuity has empirical content:
+firms in periods of capacity constraint should exhibit cross-market pricing
+sensitivity, while the same firms in slack capacity periods should not.
+
+%----------------------------------------------------------------------
+\section{Discussion}
+\label{sec:discussion}
+%----------------------------------------------------------------------
+
+\subsection{Robustness of the Main Results}
+
+\textbf{Asymmetric demand.}  Propositions~\ref{prop:crossmarket}
+and~\ref{prop:capacity} (cross-market comparative statics and capacity gap
+invariance) are robust to asymmetric consumer demand ($a_u \neq a_r$, $b_u \neq b_r$).
+The price gap formula~\eqref{eq:gap} holds generally; the symmetric demand
+specialization is used only to obtain a clean closed form for
+equation~\eqref{eq:gap-symmetric} and for the welfare quantity difference
+in~\eqref{eq:Qdiff}.  The welfare direction under asymmetric demand depends
+on whether Assumption~\ref{ass:A4prime} is satisfied.  When $a_r/(b_r + e_r) > a_u/(b_u + e_u)$
+(i.e., Assumption~\ref{ass:A4prime} fails), the dominant firm charges more in
+the rural market, the fringe supplies more in rural at the higher price, and
+total output under segmentation can exceed the uniform-price output---reversing
+the welfare direction.  Assumption~\ref{ass:A4prime} is thus the correct
+general condition for the welfare loss result, not the simpler $e_r > e_u$.
+
+\textbf{Convex dominant firm cost.}  Replace $C(q) = cq$ with
+$C(q) = cq + (\gamma/2)q^2$.  Under a binding capacity constraint, total
+dominant firm output is $K$ regardless of the cost function's convexity.
+The effective marginal cost at the constraint becomes $c + \gamma K$, which
+is a constant at the optimum.  Proposition~\ref{prop:crossmarket} therefore
+holds with $c$ replaced by $c + \gamma K$: cross-market effects survive
+convex costs, and Proposition~\ref{ass:A3} (the capacity constraint needed
+to generate them) remains the operative assumption.
+
+\textbf{Multiple markets.}  With $N > 2$ markets, the equilibrium is
+$p_m^* = (c + \lambda^*)/2 + a_m/[2(b_m + e_m)]$ with $\lambda^* = (\sum_m a_m - 2K)/B - c$
+and $B = \sum_m (b_m + e_m)$.  The pairwise price gap
+$p_m^* - p_{m'}^*$ contains no $K$, so gap invariance extends immediately to
+$N$ markets.  The cross-market comparative static $dp_m^*/de_{m'} = d\lambda^*/(2de_{m'}) < 0$
+holds for any market pair as long as the capacity constraint binds.
+
+\subsection{Extensions}
+
+\textbf{Strategic capacity investment.}  The model treats $K$ as exogenous.
+An important extension is to allow the dominant firm to choose $K$ in a prior
+stage.  By Proposition~\ref{prop:capacity}, capacity investment reduces prices
+uniformly without affecting the price gap; if the dominant firm internalizes the
+gap structure, it may strategically choose $K$ to maintain $K < \bar{K}$,
+preserving the cross-market mechanism.  Alternatively, a Dixit-type
+\citep{Gaskins1971} argument suggests the dominant firm may under-invest in
+capacity to keep $\lambda^*$ high and maintain the urban price premium.
+
+\textbf{Dynamic fringe entry.}  The fringe supply elasticity $e_m$ is fixed in
+this model.  A dynamic extension in the spirit of \citet{Gaskins1971} would
+allow $e_m$ to evolve endogenously as fringe firms enter in response to price
+levels.  The cross-market mechanism identified here would then generate dynamic
+spillovers: a dominant firm threatened by rural entry would reduce urban prices
+as a by-product of its rural competitive response, even without any urban entry
+threat.
+
+\textbf{Empirical identification.}  Proposition~\ref{prop:crossmarket} provides
+a testable prediction: the cross-market price sensitivity $dp_u^*/de_r$ is
+strictly negative when the capacity constraint binds ($K < \bar{K}$) and exactly
+zero when it does not.  Panel data on regional prices combined with capacity
+utilization data could test this prediction.  The capacity constraint boundary
+$\bar{K}$ depends on demand and cost parameters; seasonal demand variation
+in consumer goods markets could provide natural variation in whether the
+constraint binds, offering a quasi-experimental test of the mechanism.
+
+\subsection{Limitations}
+
+Several features of real markets are absent from this model.
+
+\textbf{Market structure.}  The model abstracts from strategic interaction
+between large firms.  Many real markets that might appear to fit the
+dominant-firm-plus-fringe description are better characterized as oligopolies.
+China's national carbonated beverage market is a case in point: Coca-Cola held
+approximately 61\% and PepsiCo approximately 30\% of market share in 2024,
+making PepsiCo a strategic rival rather than an atomistic price-taker.  The
+dominant firm equilibrium concept is appropriate only when a single firm is
+genuinely dominant and all remaining supply comes from price-taking producers.
+Applying the model's predictions to markets with a small number of large
+strategic rivals would require an oligopoly framework.
+
+The model further assumes a static, complete-information game; dynamic
+considerations (brand loyalty, reputation, repeated price competition) are
+not captured.  The welfare analysis
+uses the representative consumer framework within each market and thus cannot
+address within-market distributional effects.  The assumption of a single
+homogeneous product precludes product differentiation across markets, which may
+be important for branded beverages.  Finally, the model takes the dominant firm's
+cost advantage (Assumption~\ref{ass:A2}) as exogenous; a richer model would
+derive cost advantage from economies of scale or sunk investments, which would
+interact with the capacity constraint.
+
+%----------------------------------------------------------------------
+\section{Conclusion}
+\label{sec:conclusion}
+%----------------------------------------------------------------------
+
+We have analyzed how a capacity-constrained dominant firm sets prices across two
+geographically segmented markets with asymmetric fringe competition.  Our main
+results are as follows.  The equilibrium price gap between markets is determined
+entirely by the structure of residual demand---not by the firm's capacity level
+or cost (Proposition~\ref{prop:pricegap}).  An increase in rural fringe
+competition reduces prices in both markets while widening the price gap, through
+the shadow price of the shared capacity constraint (Proposition~\ref{prop:crossmarket}).
+Capacity expansion reduces both prices uniformly but leaves the gap unchanged
+(Proposition~\ref{prop:capacity}).  Market segmentation reduces total welfare,
+with rural consumers benefiting and urban consumers losing
+(Proposition~\ref{prop:welfare}).  Finally, the cross-market pricing mechanism
+switches on and off discontinuously at the capacity threshold
+(Proposition~\ref{prop:boundary}).
+
+The central message is that a binding capacity constraint converts what would
+otherwise be two independent pricing problems into a single linked system.  The
+shadow price of capacity is the mechanism of linkage, and its presence or absence
+is a qualitative structural feature of the market.  For competition policy, the
+implication is that evaluating a dominant firm's pricing behavior in one market
+requires knowing whether the firm faces binding capacity constraints---a condition
+that standard single-market analysis ignores.
+
+Natural directions for future work include a dynamic model in which the dominant
+firm invests strategically in capacity, fringe firms respond to prices through
+entry and exit, and the capacity shadow price evolves over time.  An empirical
+companion to this paper would use variation in capacity utilization (e.g., seasonal
+demand shocks) to identify the cross-market mechanism predicted by
+Proposition~\ref{prop:crossmarket}.
+
+%----------------------------------------------------------------------
+\appendix
+\section{Proofs}
+\label{app:proofs}
+%----------------------------------------------------------------------
+
+\textbf{Proof of Proposition~\ref{prop:crossmarket}.}
+
+\emph{Equations~\eqref{eq:dlambda}--\eqref{eq:dpr}.}  Differentiate
+$\lambda^* = (a_u + a_r - 2K)/B - c$ with respect to $e_r$.  Since
+$\partial B / \partial e_r = 1$:
+\begin{equation*}
+  \frac{d\lambda^*}{de_r} = -\frac{a_u + a_r - 2K}{B^2}.
+\end{equation*}
+Under Assumption~\ref{ass:A3}, $K < \bar{K} = (a_u + a_r - Bc)/2$, so
+$a_u + a_r - 2K > a_u + a_r - 2\bar{K} = Bc > 0$.  Thus
+$d\lambda^*/de_r < 0$, proving~\eqref{eq:dlambda}.
+
+For~\eqref{eq:dpu}: differentiate $p_u^* = (c + \lambda^*)/2 + a_u/[2(b_u + e_u)]$
+with respect to $e_r$.  Since $a_u$, $b_u$, $e_u$ do not depend on $e_r$:
+\begin{equation*}
+  \frac{dp_u^*}{de_r} = \frac{1}{2}\frac{d\lambda^*}{de_r} < 0.
+\end{equation*}
+For~\eqref{eq:dpr}: differentiate $p_r^* = (c + \lambda^*)/2 + a_r/[2(b_r + e_r)]$
+with respect to $e_r$:
+\begin{equation*}
+  \frac{dp_r^*}{de_r} = \frac{1}{2}\frac{d\lambda^*}{de_r} - \frac{a_r}{2(b_r + e_r)^2} < 0.
+\end{equation*}
+Both terms are negative, so $dp_r^*/de_r < 0$.
+
+\emph{Equation~\eqref{eq:dgap}.}  Subtract:
+$d(p_u^* - p_r^*)/de_r = dp_u^*/de_r - dp_r^*/de_r = a_r/[2(b_r + e_r)^2] > 0$.
+
+\emph{Equation~\eqref{eq:dqu}.}  Since $q_u^* = [a_u - (b_u + e_u)(c + \lambda^*)]/2$:
+\begin{equation*}
+  \frac{dq_u^*}{de_r} = -\frac{b_u + e_u}{2}\frac{d\lambda^*}{de_r}
+  = \frac{(b_u + e_u)(a_u + a_r - 2K)}{2B^2} > 0.
+\end{equation*}
+
+\emph{Non-binding case.}  When $K \geq \bar{K}$, the constraint is slack and
+$\lambda^* = 0$, so $p_u^* = c/2 + a_u/[2(b_u + e_u)]$, which is independent
+of $e_r$.  Thus $dp_u^*/de_r = 0$ and $dq_u^*/de_r = 0$. \hfill$\square$
+
+\bigskip
+
+\textbf{Proof of Proposition~\ref{prop:welfare}.}
+
+\emph{Step~1: price comparisons with uniform benchmark.}  From~\eqref{eq:pm}
+and~\eqref{eq:uniform}, under symmetric demand ($a_u = a_r = a$, $b_u = b_r = b$):
+\begin{equation*}
+  p_u^* - p^{U*} = \frac{a}{2(b+e_u)} - \frac{a}{2} \cdot \frac{2}{2b + e_u + e_r}
+  = \frac{a}{2}\left[\frac{1}{b+e_u} - \frac{2}{2b+e_u+e_r}\right].
+\end{equation*}
+Since $e_r > e_u$ (from Assumption~\ref{ass:A4prime} under symmetric demand):
+$1/(b+e_u) > 2/(2b+e_u+e_r)$, so $p_u^* > p^{U*}$.  Similarly
+$p_r^* < p^{U*}$.  Thus $p^{U*}$ lies strictly between $p_r^*$ and $p_u^*$.
+
+\emph{Step~2: fringe output differential.}  Under the binding constraint in
+both regimes, $q_u^* + q_r^* = q^{U*} = K$.  Total output differs only through
+fringe: $Q^{\mathrm{SEG}} - Q^{\mathrm{UNI}} = e_u(p_u^* - p^{U*}) + e_r(p_r^* - p^{U*})$.
+
+\emph{Step~3: sign.}  Substituting the closed forms (algebra omitted for
+brevity) yields~\eqref{eq:Qdiff}.  Under Assumption~\ref{ass:A4prime} ($e_r > e_u$
+under symmetric demand), $e_u/(b+e_u) < e_r/(b+e_r)$, so the bracket is negative,
+giving $Q^{\mathrm{SEG}} < Q^{\mathrm{UNI}}$.
+
+\emph{Step~4: welfare ranking via Varian criterion.}  Total welfare is
+$W = \int_0^Q P(x)\,dx - cK - \sum_m C_m^F(s_m^*)$,
+where $P(x)$ is the inverse aggregate demand.  Consider any unit $x$ in the range
+$(Q^{\mathrm{SEG}},\, Q^{\mathrm{UNI}})$ that is produced under uniform pricing but
+not under segmentation.  This unit has aggregate demand price $P(x) > 0$.
+Its social cost is the fringe marginal cost $s_m/e_m$ at that output level, which
+at equilibrium equals $p_m^*$.  Since $P(x) \geq p_m^*$ for $x$ in this range
+(units below equilibrium quantity have demand price above equilibrium price), each
+lost unit carries positive net social value.  Hence $W^{\mathrm{SEG}} < W^{\mathrm{UNI}}$.
+
+\emph{Distributional effects.}  $CS_m^{\mathrm{SEG}} - CS_m^{\mathrm{UNI}}
+= -(D_m(p_m^*) + D_m(p^{U*}))(p_m^* - p^{U*})/2$ approximately.
+Since $p_u^* > p^{U*}$, urban consumer surplus falls; since $p_r^* < p^{U*}$,
+rural consumer surplus rises. \hfill$\square$
+
+%----------------------------------------------------------------------
+\begin{thebibliography}{99}
+
+\bibitem[Gaskins(1971)]{Gaskins1971}
+Gaskins, D.W.\ (1971).
+\newblock Dynamic limit pricing: Optimal pricing under threat of entry.
+\newblock \emph{Journal of Economic Theory}, 3(3): 306--322.
+
+\bibitem[Varian(1985)]{Varian1985}
+Varian, H.R.\ (1985).
+\newblock Price discrimination and social welfare.
+\newblock \emph{American Economic Review}, 75(4): 870--875.
+
+\end{thebibliography}
+
+\end{document}

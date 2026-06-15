@@ -279,11 +279,29 @@ Please organize them into a theoretical economics working paper skeleton.
 
 pAI-Econ-claude 使用一个分阶段、可回溯的人机协作流程。
 
+**关于 Stage 2a — Empirical Reality Check（现实背景校验）：**
+
+在文献定位完成后、进入理论建模之前，pipeline 会先执行一次最小必要的现实背景校验（Stage 2a），并通过 **Gate 1b（Reality Fit Gate）** 进行把关。
+
+这一步的目的是：在模型结构确定之前，检查用户描述的市场结构、制度情境或群体差异，是否与拟采用的理论模型家族的事实性假设相匹配。具体包括：
+
+- 市场集中度是否支持"单一主导企业 + 原子化 fringe"结构，还是实际上是寡头市场？
+- 是否有重要的战略竞争者被忽视？
+- 产品是否被错误地当成同质品？
+- 约束条件是否被错误识别（如分销渠道约束被写成生产产能约束）？
+- 城乡、地区或群体差异的声明是否有公开数据支持？
+
+Gate 1b 的三种结果：
+- **PASS**：事实性假设与现实证据匹配，直接进入 Stage 3。
+- **CONDITIONAL PASS (REFRAME)**：部分假设无法验证，但模型仍可继续，前提是论文明确将研究情境描述为"风格化假想市场"，而非声称描述具体现实市场。
+- **FAIL (REROUTE)**：核心假设与现实数据矛盾，须先回到 Stage 1 修正研究问题，或重新在 Stage 3b 选择更合适的典范模型家族。
+
 ```mermaid
 flowchart TD
     A["0. Intake<br/>研究想法摄入"] --> B["1. Puzzle Refinement<br/>研究问题精炼"]
     B --> C["2. Literature Positioning<br/>文献定位与检索计划"]
-    C --> D["3. Persona Council<br/>理论评审委员会"]
+    C --> C2["2a. Empirical Reality Check<br/>现实背景校验（Gate 1b）"]
+    C2 --> D["3. Persona Council<br/>理论评审委员会"]
     D --> E["3b. Canonical Model Matching<br/>典范模型匹配"]
     E --> F["4. Model Primitives<br/>模型原语"]
     F --> G["5. Assumption Audit<br/>假设审计"]
@@ -303,6 +321,7 @@ flowchart TD
 | 0 | Intake | `research_intake.md` |
 | 1 | Puzzle Refinement | `research_puzzle.md` |
 | 2 | Literature Positioning | `literature_positioning.md` |
+| **2a** | **Empirical Reality Check** | `empirical_reality_check.md` |
 | 3 | Theory Persona Council | `persona_council.md` |
 | 3b | Canonical Model Matching | `canonical_model_match.md` |
 | 4 | Model Primitives | `model_primitives.md` |

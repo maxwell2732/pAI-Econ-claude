@@ -18,7 +18,7 @@ When this skill is first invoked, print this banner BEFORE anything else:
   Human-in-the-Loop Theoretical Economics Research Pipeline
 ================================================================
 
-  Stages 0–10 + Stage 3b | 7 Quality Gates | 6 Human Checkpoints
+  Stages 0–10 + Stages 2a + 3b | 8 Quality Gates | 6 Human Checkpoints
 
   Authors:
     Chen Zhu        (China Agricultural University)
@@ -93,6 +93,7 @@ Exploration/
     │   ├── research_intake.md                   # Stage 0
     │   ├── research_puzzle.md                   # Stage 1
     │   ├── literature_positioning.md            # Stage 2
+    │   ├── empirical_reality_check.md           # Stage 2a
     │   ├── persona_council.md                   # Stage 3
     │   ├── canonical_model_match.md             # Stage 3b
     │   ├── model_primitives.md                  # Stage 4
@@ -106,6 +107,7 @@ Exploration/
     │   └── manuscript.pdf                       # Stage 10 — academic PDF (pdflatex)
     ├── gates/
     │   ├── gate-01-novelty-risk.md              # After Stage 2
+    │   ├── gate-01b-reality-fit.md              # After Stage 2a
     │   ├── gate-02b-canonical-fit.md            # After Stage 3b
     │   ├── gate-02c-theory-lineage.md           # After Stage 3b
     │   ├── gate-02-model-coherence.md           # After Stage 4
@@ -125,6 +127,7 @@ Exploration/
 | 0 | Intake | research_intake.md | — | — |
 | 1 | Puzzle Refinement | research_puzzle.md | — | **HiL-1** |
 | 2 | Literature Positioning | literature_positioning.md | **Gate 1** | **HiL-2** |
+| **2a** | **Empirical Reality Check** | empirical_reality_check.md | **Gate 1b** | — |
 | 3 | Theory Persona Council | persona_council.md | — | **HiL-3** |
 | **3b** | **Canonical Model Matching** | canonical_model_match.md | **Gate 2b + 2c** | — |
 | 4 | Model Primitives | model_primitives.md | **Gate 2** | **HiL-4 ★ HARD STOP** |
@@ -137,9 +140,28 @@ Exploration/
 
 ---
 
+## ⚠️ Standing Rule: Empirical Claims in Any Stage Output
+
+**Before using a real-world market, institution, country, policy, or industry as the motivating example — in any stage output, any manuscript section, or any introduction paragraph — the skill must explicitly distinguish between these four categories:**
+
+| Category | Definition | Required treatment |
+|----------|-----------|-------------------|
+| **(1) Stylized assumption** | A simplification that is known to deviate from the real world, adopted for tractability | Label it: "We assume for tractability that…" or "As a stylization, we treat…" |
+| **(2) Publicly supported fact** | A claim confirmed by web search in the current session (market share data, policy text, survey statistics) | Cite the source; record it in `empirical_reality_check.md` |
+| **(3) Unverified contextual claim** | A claim that sounds plausible but has not been confirmed by web search | Label it: "We conjecture that…" or describe the setting as hypothetical |
+| **(4) Potentially false assumption** | A claim contradicted by available evidence | Do NOT include it as empirical motivation; the paper must reframe or the pipeline must reroute |
+
+**The model may proceed only if:**
+- All unsupported claims are explicitly labeled as stylized assumptions or hypothetical context, AND
+- No potentially false assumption is presented as an established fact about a named real-world setting.
+
+**This rule applies to every stage output**, not only Stage 2a. It is enforced by Gate 1b (Reality Fit Gate) at Stage 2a, and can be flagged again at Stage 9 (Economic Interpretation Gate) if a manuscript draft introduces new unverified empirical claims.
+
+---
+
 ## Quality Gate Logic
 
-Seven gates protect the pipeline. Each gate runs immediately after its assigned stage. Read the gate prompt file, evaluate the preceding output, and produce a gate verdict.
+Eight gates protect the pipeline. Each gate runs immediately after its assigned stage. Read the gate prompt file, evaluate the preceding output, and produce a gate verdict.
 
 **Gate PASS:** continue to the next stage.
 
@@ -163,6 +185,7 @@ Wait for the researcher's explicit decision. If they proceed with caveat, append
 | Gate | Name | Prompt File | Runs After | Recommended Loopback |
 |------|------|------------|-----------|----------------------|
 | 1 | Novelty Risk Gate | `prompts/gate-01-novelty-risk.md` | Stage 2 | Stage 1 (reframe puzzle) |
+| 1b | Reality Fit Gate | `prompts/02a-empirical-reality-check.md` (Gate 1b section) | Stage 2a | Stage 1 (restate context) or Stage 3b (change model family) |
 | 2b | Canonical Fit Gate | `prompts/gate-02b-canonical-fit.md` | Stage 3b | Stage 3b (revise matching) |
 | 2c | Theory Lineage Gate | `prompts/gate-02c-theory-lineage.md` | Stage 3b | Stage 3b (complete lineage) |
 | 2 | Model Coherence Gate | `prompts/gate-02-model-coherence.md` | Stage 4 | Stage 4 (revise primitives) |
@@ -192,11 +215,11 @@ Please choose one:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-### HiL-2 — Literature Positioning + Novelty Review (after Stage 2 + Gate 1)
+### HiL-2 — Literature Positioning + Novelty Review + Reality Check (after Stage 2 + Gate 1 + Stage 2a + Gate 1b)
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  HiL-2 | Literature Positioning + Novelty Review
+  HiL-2 | Literature Positioning + Novelty Review + Reality Check
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Gate 1 result: [PASS / FAIL — one-line reason]
@@ -204,10 +227,20 @@ Gate 1 result: [PASS / FAIL — one-line reason]
 Key positioning findings:
 [3-5 bullet summary of literature_positioning.md]
 
+Gate 1b (Reality Fit) result: [PASS / CONDITIONAL PASS (REFRAME) / FAIL — one-line reason]
+
+Reality check summary:
+  Supported facts:       [list]
+  Unsupported:           [list]
+  Potentially false:     [list]
+  Recommendation:        [PROCEED / REFRAME / REROUTE]
+
 Please choose one:
   APPROVE     — Proceed to Stage 3 (Persona Council)
   ADJUST      — Specify which positioning to change; I will revise
   SCOPE DOWN  — Narrow the claim to sidestep the novelty risk; specify
+  REFRAME     — Confirm the paper will describe a stylized market (not the real market)
+  REROUTE     — Specify the corrected empirical setting or alternative model family
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
@@ -365,10 +398,26 @@ Mark each citation as one of:
 
 LLMs hallucinate plausible-sounding but nonexistent papers, especially for applied/empirical China literature. A citation that looks real is not the same as a citation that is real. Never include a citation in any output without web verification.
 
+### Stage 2a — Empirical Reality Check / Institutional Context Check
+- Prompt: `prompts/02a-empirical-reality-check.md`
+- Output: `outputs/empirical_reality_check.md`
+- Inputs: `outputs/research_puzzle.md`, `outputs/literature_positioning.md`
+- Gate: **Gate 1b** (Reality Fit Gate — defined inside `prompts/02a-empirical-reality-check.md`) | HiL: none
+
+**Purpose:** Before committing to a model structure, verify that the real-world context described by the researcher matches the factual requirements of the proposed model family. Use web search to check market concentration data, institutional rules, and evidence for claimed group or regional differences. This stage does NOT build a model — it only checks that the model's implicit factual assumptions are not contradicted by publicly available evidence.
+
+**Gate 1b verdict logic:**
+- **PASS**: All key factual assumptions SUPPORTED or WEAKLY SUPPORTED → proceed to Stage 3.
+- **CONDITIONAL PASS (REFRAME)**: 1–2 assumptions UNSUPPORTED but not POTENTIALLY FALSE → proceed with a caveat: the paper must describe the setting as stylized, not claim to describe a specific real market. Document the reframing in `empirical_reality_check.md`.
+- **FAIL (REROUTE — Stage 1)**: Any assumption POTENTIALLY FALSE, or 3+ UNSUPPORTED → stop; researcher must restate the puzzle with a corrected or explicitly hypothetical setting.
+- **FAIL (REROUTE — Stage 3b)**: The proposed canonical model family is inconsistent with verified market structure → redirect Stage 3b to a different model family.
+
+**⚠️ If Gate 1b fails, do NOT proceed to Stage 3.** Present the gate failure in the standard format and wait for the researcher to decide: loop back to Stage 1, commit to a hypothetical/stylized framing, or redirect to an alternative model family.
+
 ### Stage 3 — Theory Persona Council
 - Prompt: `prompts/03-persona-council.md`
 - Output: `outputs/persona_council.md`
-- Inputs: `outputs/research_puzzle.md`, `outputs/literature_positioning.md`
+- Inputs: `outputs/research_puzzle.md`, `outputs/literature_positioning.md`, `outputs/empirical_reality_check.md`
 - Gate: none | HiL: **HiL-3**
 
 ### Stage 3b — Canonical Model Matching
@@ -559,6 +608,7 @@ When Stage 10 completes:
   Stages completed: 11 (0–10)
   Gate results:
     Gate 1  (Novelty Risk):       [PASS / FAIL+caveat]
+    Gate 1b (Reality Fit):        [PASS / REFRAME / FAIL+caveat]
     Gate 2b (Canonical Fit):      [PASS / FAIL+caveat]
     Gate 2c (Theory Lineage):     [PASS / FAIL+caveat]
     Gate 2  (Model Coherence):    [PASS / FAIL+caveat]
@@ -569,6 +619,7 @@ When Stage 10 completes:
   Output files:
     outputs/research_puzzle.md
     outputs/literature_positioning.md
+    outputs/empirical_reality_check.md
     outputs/persona_council.md
     outputs/canonical_model_match.md
     outputs/model_primitives.md

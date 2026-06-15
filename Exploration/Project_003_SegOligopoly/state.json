@@ -1,0 +1,44 @@
+{
+  "campaign_id": "Project_003_SegOligopoly",
+  "workspace": "Exploration/Project_003_SegOligopoly",
+  "hypothesis": "Phenomenon-to-model: China urban-rural carbonated beverage market — oligopoly with fringe firms and market segmentation",
+  "current_stage": 0,
+  "stage_status": "in_progress",
+  "completed_stages": [],
+  "failed_stages": [],
+  "gate_results": {
+    "gate_1": null,
+    "gate_2b": null,
+    "gate_2c": null,
+    "gate_2": null,
+    "gate_3": null,
+    "gate_4": null,
+    "gate_5": null
+  },
+  "human_decisions": {
+    "hil_1": null,
+    "hil_2": null,
+    "hil_3": null,
+    "hil_4": null,
+    "hil_5": null,
+    "hil_6": null
+  },
+  "caveats": [],
+  "gate_retry_counts": {
+    "gate_1": 0,
+    "gate_2b": 0,
+    "gate_2c": 0,
+    "gate_2": 0,
+    "gate_3": 0,
+    "gate_4": 0,
+    "gate_5": 0
+  },
+  "loopback_history": [],
+  "active_propositions": [],
+  "deferred_propositions": [],
+  "equilibrium_concept": null,
+  "social_planner_benchmark": null,
+  "finished": false,
+  "started_at": "2026-06-15",
+  "last_checkpoint": ""
+}
