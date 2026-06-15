@@ -1,72 +1,76 @@
-# Persona Council Details (Phase 1)
+# Persona Council Details (Stage 3)
 
-This file is read by the orchestrator when executing Phase 1 (persona_council).
+This file documents Stage 3 of the pipeline (Theory Persona Council). The authoritative execution instructions live in `prompts/03-persona-council.md`; this file exists for human readers who want to understand the design.
 
 ---
 
-Phase 1 runs **3 to 5 debate rounds** before producing a final proposal. Multiple rounds force the personas to sharpen their critiques and the synthesis to genuinely address them.
+## Overview
 
-## Vision Seeding (ALL rounds)
+Stage 3 convenes a **five-persona review council** that evaluates the research puzzle and literature positioning from five distinct expert perspectives. The council runs **two rounds** before producing a synthesis recommendation.
 
-Prepend to ALL persona prompts in EVERY round (before any other context):
+---
 
-```
-VISION: Read vision.md in the project root FIRST. This is the researcher's
-original vision and it is immutable — it defines the paper's scope.
+## The Five Personas
 
-Your evaluation MUST answer (include a section "## Scope vs. Vision"):
-1. Does this proposal address the FULL scope of the vision, or has it narrowed?
-2. If narrowed: is this a justified deepening (richer treatment of fewer elements)
-   or an unjustified retreat (concepts dropped because they're hard to prove)?
-3. Which vision elements are NOT YET covered? These are research goals, not cuts.
-```
+| Persona | Background | Mission |
+|---------|-----------|---------|
+| **Mechanism Theorist** | Senior researcher in contract theory, mechanism design, and information economics | Evaluate whether the mechanism or result is economically interesting and theoretically sound |
+| **Mathematical Referee** | Associate editor at a top theory journal | Assess whether the research puzzle is likely to yield to formal analysis with existing mathematical tools |
+| **Economic Intuition Referee** | Senior faculty known for strong economic judgment | Determine whether the proposed research will generate genuine economic insight |
+| **Journal Positioning Referee** | Former area editor at Econometrica and AER | Assess what journal this paper could realistically target and what is needed to get there |
+| **Brutal Skeptic** | Anonymous referee known for rigorous skepticism | Find every reason this research might fail, be wrong, or be uninteresting |
 
-## Round structure (3 rounds minimum, up to 5)
+The **Brutal Skeptic's** role is not to support the project but to attack it. A REJECT from the Brutal Skeptic carries extra weight in the synthesis rules. An ACCEPT from the Brutal Skeptic is meaningful — it means the research passed the hardest test.
 
-For each round:
+Each persona issues one of three verdicts: **ACCEPT | CONCERN | REJECT**.
 
-1. **Practical persona** (prompts/01-persona-practical.md): Evaluates the current proposal. Writes `paper_workspace/persona_practical_round_N.md`.
-2. **Rigor persona** (prompts/02-persona-rigor.md): Evaluates the current proposal. Writes `paper_workspace/persona_rigor_round_N.md`.
-3. **Narrative persona** (prompts/03-persona-narrative.md): Evaluates the current proposal. Writes `paper_workspace/persona_narrative_round_N.md`.
-4. **Synthesis** (prompts/04-persona-synthesis.md): Reads ALL persona outputs from this round plus any prior rounds. Produces an updated `research_proposal.md`.
+---
 
-## Round flow
+## Round Structure (2 rounds)
 
-- **Round 1:** Each persona evaluates the raw task/hypothesis. Synthesis produces initial `research_proposal.md`.
-- **Round 2:** Each persona evaluates the Round 1 proposal -- they should be HARDER now, checking whether their Round 1 concerns were actually addressed. Synthesis refines `research_proposal.md`.
-- **Round 3:** Each persona evaluates the Round 2 proposal for final sharpening. Synthesis produces the final `research_proposal.md`.
+### Round 1 — Independent Evaluation
 
-## Context injection for Rounds 2+
+Each persona evaluates the research puzzle independently, without seeing the other personas' assessments. Each produces:
 
-Prepend to persona prompts:
+- A paragraph-length assessment (3–5 sentences)
+- A numbered list of 2–4 specific concerns or questions
+- A verdict: ACCEPT / CONCERN / REJECT
+- One concrete suggestion for strengthening the research
 
-```
-This is debate round N of up to 5. You have already reviewed this proposal in previous rounds.
-Your previous evaluation is in: paper_workspace/persona_<name>_round_<N-1>.md
-The proposal was revised after your feedback: paper_workspace/research_proposal.md
+### Round 2 — Cross-Evaluation and Synthesis
 
-Be HARDER this round. Check whether your previous concerns were genuinely addressed
-or merely papered over. Raise NEW concerns you missed before. Do not repeat praise
-for things already acknowledged.
+Each persona reads all Round 1 verdicts and responds:
 
-AMBITION CHECK: Each successive round must EXPAND the proposal's explanatory
-reach, not narrow it. "Harder" means "explain MORE of the vision at the same
-quality level," not "cut what you can't immediately prove." If a concept from
-the vision is missing, your job is to figure out how to include it — not to
-accept its absence.
-```
+- If their own verdict is challenged by another persona, address the challenge directly
+- If another persona raised a concern they missed, either endorse it or explain why they disagree
+- Finalize their Round 2 verdict (may change from Round 1)
 
-## Exit rules
+The **Synthesis** section then integrates the five Round 2 verdicts into a unified recommendation.
 
-- **ALL THREE accept in Round 3**: Exit. Proposal is ready.
-- **Any persona still REJECTS after Round 3**: Extend to Rounds 4 and 5.
-- **After Round 5**: Exit regardless. Concerns are documented in round files.
-- Do NOT exit before Round 3 even if all accept early.
+---
 
-## Artifacts produced
+## Synthesis Rules
 
-- `paper_workspace/persona_practical_round_1.md` through `round_N.md`
-- `paper_workspace/persona_rigor_round_1.md` through `round_N.md`
-- `paper_workspace/persona_narrative_round_1.md` through `round_N.md`
-- `paper_workspace/research_proposal.md` (final synthesis)
-- `paper_workspace/novelty_assessment.json`
+After Round 2:
+
+- **4–5 personas ACCEPT → Strong Accept:** Proceed with high confidence
+- **3 ACCEPT, rest CONCERN → Conditional Accept:** Proceed, but address concerns in Stage 4
+- **2 ACCEPT → Weak Accept:** Proceed, but flag specific concerns as open risks
+- **2+ REJECT → Reject:** Do NOT proceed to Stage 4 without researcher input; present the rejection with specific reasons; researcher must decide whether to revise the puzzle (go back to Stage 1) or override
+
+The Brutal Skeptic's REJECT carries extra weight: a Brutal Skeptic REJECT combined with a CONCERN from another persona is treated as a "Weak Accept" rather than a normal acceptance.
+
+---
+
+## Artifacts Produced
+
+- `outputs/persona_council.md` — full council transcript: Round 1 evaluations, Round 2 cross-evaluations, and final synthesis
+- HiL-3 checkpoint follows Stage 3; see `SKILL.md` for the checkpoint format
+
+---
+
+## Human Checkpoint (HiL-3)
+
+After Stage 3, the pipeline pauses for researcher review. The HiL-3 format presents a verdict summary for all five personas and the council synthesis, then asks the researcher to APPROVE, OVERRIDE a specific verdict, or REVISE the puzzle.
+
+See `SKILL.md § HiL-3` for the exact checkpoint template.

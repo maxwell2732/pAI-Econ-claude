@@ -418,6 +418,7 @@ LLMs hallucinate plausible-sounding but nonexistent papers, especially for appli
 - Prompt: `prompts/03-persona-council.md`
 - Output: `outputs/persona_council.md`
 - Inputs: `outputs/research_puzzle.md`, `outputs/literature_positioning.md`, `outputs/empirical_reality_check.md`
+- Council format: 5 personas, 2-round council — independent assessment (Round 1) followed by cross-review and synthesis (Round 2)
 - Gate: none | HiL: **HiL-3**
 
 ### Stage 3b — Canonical Model Matching
