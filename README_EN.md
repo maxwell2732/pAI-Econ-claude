@@ -675,22 +675,6 @@ pAI-Econ-claude/
 
 ---
 
-## Known Limitations
-
-1. **Citation verification requires researcher oversight.**
-   Stage 2 now uses web search to verify that proposed citations actually exist, and a mandatory verification gate runs before PDF generation. However, researchers must still judge whether the literature positioning is accurate and whether recent papers are covered. LLM-generated citations can be hallucinated (plausible author, title, and journal but wrong details); the pipeline's verification steps are a safeguard, not a substitute for researcher judgment.
-
-2. **Proof sketches are not formal proofs.**
-   Steps marked `GAP` or `FALSE_RISK` must be further derived by the researcher.
-
-3. **The model library is not an encyclopedia.**
-   `model_library/` is a modeling template library, not a complete textbook. The library includes only structural models with economic equilibrium concepts and provable propositions — econometric identification frameworks (e.g., MTE, Heckman Selection) are intentionally excluded.
-
-4. **Theoretical contribution requires researcher judgment.**
-   Gates can flag novelty risk but cannot ultimately determine a paper's contribution.
-
----
-
 ## Contributing
 
 Contributions are welcome in the following areas:
