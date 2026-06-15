@@ -578,6 +578,15 @@ pAI-Econ-claude/
 │   ├── principal-agent.md
 │   ├── general-equilibrium-basics.md
 │   ├── political-economy-collective-choice.md
+│   ├── comparative-advantage-ricardian.md
+│   ├── heckscher-ohlin.md
+│   ├── new-trade-theory-krugman.md
+│   ├── melitz-firm-heterogeneity.md
+│   ├── io/
+│   │   ├── oligopoly-competition.md
+│   │   ├── entry-deterrence.md
+│   │   ├── two-sided-markets-platforms.md
+│   │   └── price-discrimination.md
 │   └── human_capital_and_labor/
 │       ├── becker-human-capital.md
 │       ├── ben-porath-lifecycle.md
