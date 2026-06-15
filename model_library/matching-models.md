@@ -101,3 +101,34 @@ A matching is unstable if a blocking pair exists: a worker-firm pair who would b
 - When agents do not have well-defined preferences over partners (use anonymous market models)
 - When the matching is many-to-many and substitutes conditions fail (stability is complex or may not exist)
 - When the primary question is about information asymmetry between partners rather than preference compatibility
+
+## Empirical Paper Caution
+
+**Use with caution in empirical paper settings.** Matching models carry a high
+risk of producing either a trivially thin or excessively complex theoretical
+section when combined with empirical analysis.
+
+Two failure modes observed in practice:
+1. **Too thin:** The mechanism reduces to "agents sort assortatively" or
+   "match surplus is maximized." This adds nothing beyond labeling the OLS
+   coefficient as a "matching equilibrium."
+2. **Too complex:** A full Gale-Shapley stability analysis with blocking-pair
+   conditions, proposer-optimality, and strategyproofness proofs has no
+   counterpart in standard IV/DiD/RD identification — reviewers will ask what
+   the theory is doing in the paper.
+
+**Specific sub-model guidance:**
+- *Assignment / TU matching (Becker 1973):* The most empirically tractable
+  variant. Supermodularity of v(θ_w, θ_f) → positive assortative matching is a
+  testable comparative static. Use this narrow formulation if the paper tests
+  for sorting patterns.
+- *Allocation / market design:* Requires data on a real centralized mechanism
+  (school choice, residency match). Without this, the allocation mechanism
+  floats free of the empirical analysis. **Do not use** unless the empirical
+  setting IS the mechanism.
+
+**AI execution risk:** AI systems tend to invoke matching vocabulary (stability,
+DA algorithm, blocking pairs) without connecting these concepts to the specific
+estimating equations in the paper. If invoked here, require an explicit bridge
+statement in Stage 4 explaining which proposition maps to which reduced-form
+coefficient.

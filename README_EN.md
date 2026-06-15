@@ -92,6 +92,41 @@ The theoretical analysis component of economics research often stalls not at "ho
 
 ---
 
+## Target Users & Usage Responsibility
+
+### Target Users
+
+This Skill is designed for **junior researchers with foundational training in economic theory**, including:
+
+- Graduate students (Master's or PhD) in economics, management, or related fields
+- Assistant professors or postdoctoral researchers whose primary work is empirical but who want to strengthen theoretical mechanisms
+- Researchers familiar with microeconomic foundations (utility maximization, equilibrium concepts, information structures)
+
+Using this Skill requires the following baseline competencies:
+
+- Ability to independently judge whether an equilibrium concept (e.g., BNE, SPE, competitive equilibrium) is appropriate for a given research setting
+- Ability to assess whether a proposition is non-trivial or merely implied by assumptions
+- Ability to evaluate whether a theoretical mechanism has a meaningful correspondence with an empirical identification strategy
+
+**This Skill is not designed for researchers with no background in economic theory modeling.** Users who cannot independently assess the quality of AI-generated model structures and propositions cannot take appropriate academic responsibility for the outputs.
+
+### Usage Responsibility
+
+> **Users bear full responsibility for any work they publish.**
+
+This Skill is an assistive tool. All outputs — including model primitives, propositions, proof sketches, manuscript frameworks, and references — must be independently reviewed by the user before being used for any academic writing or publication purpose.
+
+Specifically:
+
+- **Proof sketches are not formal proofs.** Steps labeled `GAP` or `FALSE_RISK` must be independently derived and verified by the researcher before being written into a paper.
+- **References must be independently verified.** Although Stage 2 and the pre-PDF generation step include mandatory web verification nodes, the researcher bears full responsibility for the accuracy of the final published citation list.
+- **Theoretical contribution requires researcher judgment.** AI cannot determine whether a proposition has sufficient novelty to meet journal standards — this judgment must be made by the researcher and collaborators based on thorough knowledge of the relevant literature.
+- **Model selection requires researcher evaluation.** Canonical Model Matching recommendations are advisory only; the researcher must make the final selection based on their own understanding of the relevant theoretical tradition.
+
+The authors of this project accept no responsibility for the accuracy, originality, or sufficiency of any content generated using this Skill in academic publication.
+
+---
+
 ## Quick Start
 
 ### Installation

@@ -101,3 +101,35 @@ With finite attention capacity, agents cannot track all dimensions of θ precise
 - When the primary friction is strategic information transmission (one informed party communicating with an uninformed party)
 - When information is literally inaccessible (not just costly to process) — use Search Models or exogenous information structure
 - When the attention cost is not naturally measured in bits (e.g., physical effort or financial cost of acquiring data)
+
+## Empirical Paper Caution
+
+**High risk of superficial use in empirical papers.** Rational Inattention is
+technically demanding (Shannon mutual information, endogenous signal structure)
+and its empirical predictions are often observationally equivalent to simpler
+bounded-rationality or noisy-signal models.
+
+Two failure modes observed in practice:
+1. **Concept only, no structure:** The "model" amounts to: "let κ be an
+   attention capacity; agents with low κ respond less." This uses RI language
+   but contains none of the information-theoretic content (no endogenous channel
+   choice, no stochastic choice result). It does not constitute a Sims RI model
+   and should not cite Sims (2003).
+2. **Gaussian machinery with no empirical bridge:** Full RI generates predictions
+   about the *joint distribution* of actions and states. Standard empirical
+   designs estimate conditional means (OLS/IV). The mapping is rarely made
+   explicit.
+
+**When RI is defensible in an empirical paper:**
+- The paper directly estimates an agent's information capacity (e.g., via
+  structural estimation of the posterior variance)
+- The paper's identifying variation is specifically about *selective* attention
+  (which dimensions agents choose to track), not just imperfect response
+- The paper uses a Matejka-McKay (2015) discrete-choice RI formulation, which
+  has a clean logit-like empirical counterpart
+
+**AI execution risk:** AI will default to "add a κ ≤ κ̄ constraint" and call it
+rational inattention. Unless the research question is specifically about the
+structure of attention allocation (not just "agents don't respond fully"), prefer
+**Costly Information Acquisition** (more general, easier to connect to empirics)
+or simply model imperfect information with an exogenous noise term.

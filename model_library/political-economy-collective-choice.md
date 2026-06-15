@@ -114,3 +114,35 @@ When groups of agents with heterogeneous preferences must make a collective deci
 - When the primary friction is information asymmetry within the collective (voters don't know each other's preferences) rather than aggregation of known preferences
 - When the question concerns market outcomes rather than political decisions (use market competition models)
 - When the policy space is genuinely multidimensional and single-dimensionality cannot be defended (Median Voter Theorem does not apply)
+
+## Empirical Paper Caution
+
+**Limited empirical connectors in most applied economics settings.** Political
+economy models require a collective decision-making channel as a first-order
+object of analysis. If the paper does not directly study voting behavior,
+electoral outcomes, redistribution policy, or institutional design, the political
+economy frame will be an orphan.
+
+Two failure modes observed in practice:
+1. **Median voter as policy justification:** The paper needs a reason why some
+   policy variable is what it is. AI adds "the policy is set by a median voter"
+   as a theoretical foundation. Unless the paper can test or exploit variation in
+   the political equilibrium (e.g., using electoral data or quasi-experiments on
+   political constraints), this adds no empirical traction.
+2. **Meltzer-Richard without distributional data:** The paper studies inequality
+   and policy; AI models it as Meltzer-Richard (higher mean/median income ratio →
+   higher redistribution). Without data on voter income distributions and policy
+   outcomes across comparable jurisdictions, the mechanism is untestable.
+
+**When Political Economy is defensible in an empirical paper:**
+- The paper directly studies the effect of political variables (election results,
+  legislative composition, voter turnout) on economic outcomes
+- The identification strategy exploits exogenous variation in political
+  constraints (e.g., close elections, term limits, electoral district boundaries)
+- The paper is about institutional design and the political process is the
+  mechanism of interest
+
+**AI execution risk:** AI has a strong prior toward adding a median voter
+theorem whenever "government" appears in the research question. Unless the
+collective decision-making process IS the phenomenon under study, exclude this
+model family from consideration.

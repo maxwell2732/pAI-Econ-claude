@@ -319,10 +319,20 @@ For each stage:
 3. Read all specified input files
 4. Execute the stage — generate output following the prompt's template
 5. Write output to `outputs/<filename>.md`
-6. Append a one-line entry to `logs/stage-log.md`: `[STAGE N] completed at <time>`
+6. Append a structured entry to `logs/stage-log.md`:
+   `[STAGE N — Stage Name] <ISO timestamp> | completed`
 7. Update `state.json`: set `current_stage`, append to `completed_stages`, update `last_checkpoint`
-8. If a gate follows: read the gate prompt file, evaluate the output, write gate result to `gates/gate-0N-*.md`
-9. If a HiL follows: present the checkpoint and wait for researcher input
+8. If a gate follows: read the gate prompt file, evaluate the output, write gate result to `gates/gate-0N-*.md`.
+   Then append to `logs/stage-log.md`:
+   - On pass: `[GATE Nb — Gate Name] <ISO timestamp> | PASS`
+   - On fail: `[GATE Nb — Gate Name] <ISO timestamp> | FAIL [SEVERITY] — <one-line reason>`
+   After the researcher decides, append the decision:
+   - `[GATE Nb — Gate Name] <ISO timestamp> | researcher: LOOP BACK TO STAGE X`
+   - `[GATE Nb — Gate Name] <ISO timestamp> | researcher: PROCEED WITH CAVEAT — <note or "no note">`
+9. If a HiL follows: present the checkpoint and wait for researcher input. After receiving the response,
+   append to `logs/stage-log.md`:
+   `[HiL-N — Checkpoint Name] <ISO timestamp> | researcher: <choice> — <notes or "no notes">`
+   Also record the decision in `state.json` under `human_decisions`.
 
 ### Stage 0 — Intake
 - Prompt: `prompts/00-intake.md`
