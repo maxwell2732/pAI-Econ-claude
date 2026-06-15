@@ -354,6 +354,28 @@ This step is critical because theoretical economics research should not start fr
 
 ---
 
+### Industrial Organization Library
+
+| Model Family | Applicable Questions |
+|---|---|
+| Oligopoly Competition | Cournot quantity competition, Bertrand price competition, Stackelberg first-mover advantage |
+| Entry Deterrence | Limit pricing, capacity commitment, deterrence vs. accommodation |
+| Two-Sided Markets / Platforms | Platform pricing, indirect network effects, platform competition |
+| Price Discrimination | First/second/third-degree PD, versioning, market segmentation |
+
+---
+
+### International Trade Library
+
+| Model Family | Applicable Questions |
+|---|---|
+| Comparative Advantage / Ricardian | Comparative advantage, trade specialization, technology-driven trade patterns |
+| Heckscher-Ohlin | Factor endowments and trade patterns, Stolper-Samuelson, Rybczynski, factor price equalization |
+| New Trade Theory / Krugman (1980) | Intra-industry trade, economies of scale, variety gains, home market effect |
+| Melitz (2003) — Firm Heterogeneity | Firm heterogeneity, export thresholds, selection effect, productivity reallocation gains from trade |
+
+---
+
 ### Human Capital and Labor Economics Library
 
 For human capital, education, labor markets, automation, and AI impact, the Skill includes a specialized library of structural theoretical models — all with explicit equilibrium concepts and provable propositions.

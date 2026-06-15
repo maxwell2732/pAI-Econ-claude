@@ -377,6 +377,8 @@ LLMs hallucinate plausible-sounding but nonexistent papers, especially for appli
 - Inputs: `outputs/research_puzzle.md`, `outputs/literature_positioning.md`, `outputs/persona_council.md`, `model_library/` (all files)
 - Gate: **Gate 2b** (Canonical Fit) then **Gate 2c** (Theory Lineage) — run both sequentially | HiL: none → proceed to Stage 4
 - Note: if the research involves human capital, labor, automation, or AI-labor topics, the prompt explicitly requires checking `model_library/human_capital_and_labor/`
+- Note: if the research involves market structure, pricing, platforms, or entry/competition topics, check `model_library/io/`
+- Note: if the research involves trade patterns, trade liberalization, exporter behavior, or gains from trade, check `model_library/comparative-advantage-ricardian.md`, `model_library/heckscher-ohlin.md`, `model_library/new-trade-theory-krugman.md`, `model_library/melitz-firm-heterogeneity.md`
 
 ### Stage 4 — Model Primitives
 - Prompt: `prompts/04-model-primitives.md`
