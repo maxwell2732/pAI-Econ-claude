@@ -321,7 +321,7 @@ flowchart TD
 | 0 | Intake | `research_intake.md` |
 | 1 | Puzzle Refinement | `research_puzzle.md` |
 | 2 | Literature Positioning | `literature_positioning.md` |
-| **2a** | **Empirical Reality Check** | `empirical_reality_check.md` |
+| 2a | Empirical Reality Check | `empirical_reality_check.md` |
 | 3 | Theory Persona Council | `persona_council.md` |
 | 3b | Canonical Model Matching | `canonical_model_match.md` |
 | 4 | Model Primitives | `model_primitives.md` |
@@ -671,22 +671,6 @@ pAI-Econ-claude/
 - 自动确认文献 novelty
 - 自动生成可直接投稿的论文
 - 替代研究者做理论判断
-
----
-
-## 已知限制
-
-1. **文献验证需要研究者参与**  
-   Stage 2 会通过联网搜索核查拟引用文献的真实性，但 researcher 仍需自行判断文献定位是否准确、最新文献是否已被覆盖。LLM 生成的引用可能存在幻觉（作者、标题、期刊看似真实但细节有误），Stage 2 和 PDF 生成前均设有强制验证节点。
-
-2. **Proof sketch 不是正式证明**  
-   标记为 `GAP` 或 `FALSE_RISK` 的部分必须由研究者进一步推导。
-
-3. **模型库不是百科全书**  
-   `model_library/` 是建模模板库，不是完整教材。模型库仅收录具有经济均衡概念和可证命题的结构模型，计量识别框架（如 MTE、Heckman Selection）不在其中。
-
-4. **理论贡献需要研究者判断**  
-   Gate 可以提示 novelty risk，但不能最终决定论文贡献。
 
 ---
 
