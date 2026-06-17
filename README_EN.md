@@ -57,7 +57,7 @@ Reference:
 - [pAI/MSc: ML Theory Research with Humans on the Loop](https://arxiv.org/abs/2604.20622)
 - [PoggioAI_MSc GitHub Repository](https://github.com/PoggioAI/PoggioAI_MSc-claude)
 
-**Feedback:  Gin**
+**Feedback:  Gin, Luo Zijun**
 
 ---
 
