@@ -54,7 +54,7 @@ Reference:
 - [PoggioAI_MSc GitHub Repository](https://github.com/PoggioAI/PoggioAI_MSc-claude)
 
 
-**反馈与优化:  Gin**
+**反馈与优化:  Gin，Luo Zijun**
 
 ---
 
