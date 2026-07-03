@@ -1,0 +1,4 @@
+check,expected,result,status
+CES dE_I/dp / (lam*N*D),1 - eps0,1 - eps0,PASS
+CES branch dW/dp at p=c/(1-lam),0,0,PASS
+Linear E_I peak at s,a/(2b),a/(2*b),PASS

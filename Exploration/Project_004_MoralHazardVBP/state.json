@@ -1,0 +1,60 @@
+{
+  "campaign_id": "Project_004_MoralHazardVBP",
+  "workspace": "Exploration/Project_004_MoralHazardVBP",
+  "hypothesis": "请基于医疗保险道德风险模型，讨论中国药品集采制度的理论影响。请先做现实背景校验：哪些事实需要公开资料支持，哪些只是建模假设；然后构建一个简单模型，分析集采降低药价如何影响患者用药需求、医保支出、企业参与约束、原研药退出风险、药品可及性和社会福利。",
+  "current_stage": 0,
+  "stage_status": "in_progress",
+  "completed_stages": [],
+  "failed_stages": [],
+  "gate_results": {
+    "gate_1": null,
+    "gate_1b": null,
+    "gate_2b": null,
+    "gate_2c": null,
+    "gate_2": null,
+    "gate_3": null,
+    "gate_4": null,
+    "gate_5": null
+  },
+  "human_decisions": {
+    "hil_1": null,
+    "hil_2": null,
+    "hil_3": null,
+    "hil_4": null,
+    "hil_5": null,
+    "hil_n1": "YES — T2 integration test (2026-07-03)",
+    "hil_n2": "APPROVE PLAN (2026-07-03)",
+    "hil_n3": "ACCEPT RESULTS + WEAKEN P2 (restrict domain) (2026-07-03); figure decision amended same day: USE FIGURES IN MANUSCRIPT (2 demonstration figures) superseding initial DO NOT USE RESULTS",
+    "hil_6": "ADOPT P2' (WEAKEN CLAIM: domain restricted to [c_g, p_O_max]) + REGENERATE manuscript (2026-07-03)"
+  },
+  "caveats": [],
+  "gate_retry_counts": {
+    "gate_1": 0,
+    "gate_1b": 0,
+    "gate_2b": 0,
+    "gate_2c": 0,
+    "gate_2": 0,
+    "gate_3": 0,
+    "gate_4": 0,
+    "gate_5": 0
+  },
+  "loopback_history": [],
+  "active_propositions": [],
+  "deferred_propositions": [],
+  "equilibrium_concept": null,
+  "social_planner_benchmark": null,
+  "numerical_simulation": {
+    "decision": "YES",
+    "plan_approved": true,
+    "executed": true,
+    "gate_4b": "CONDITIONAL PASS [MAJOR]",
+    "results_review": ["ACCEPT RESULTS", "WEAKEN PROPOSITION P2 (restrict domain to [c_g, p_O_max])", "USE FIGURES IN MANUSCRIPT (amended 2026-07-03; supersedes DO NOT USE RESULTS)"],
+    "figures_authorized_for_manuscript": "main_text (welfare_linear_interior.pdf, regime_map.pdf)",
+    "blocked_propositions": [],
+    "block_resolution": "P2 -> P2' adopted at HiL-6 (2026-07-03): biconditional restricted to [c_g, p_O_max]; upper-boundary counterexample disclosed in manuscript Remark (rem:upperboundary); block lifted",
+    "pdf_regeneration": "success (2026-07-03; pdflatex clean; model attribution corrected to Claude Fable 5)"
+  },
+  "finished": false,
+  "started_at": "2026-06-23T00:00:00Z",
+  "last_checkpoint": "2026-07-03T00:00:00Z"
+}

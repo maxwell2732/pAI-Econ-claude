@@ -1,0 +1,9 @@
+package,version
+python,3.9.1
+numpy,2.0.2
+scipy,1.13.1
+pandas,2.3.3
+matplotlib,3.9.4
+sympy,1.14.0
+platform,Windows-10-10.0.22621-SP0
+seed,20260703

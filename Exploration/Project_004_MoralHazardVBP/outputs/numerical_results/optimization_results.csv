@@ -1,0 +1,21 @@
+family,objective,method,p_star,value,regime,n_local_maxima,converged,thresholds
+ces,max W,grid,6.6655,0.7999999846821393,INTERIOR_ORIGINATOR,2.0,True,2.222222;20.000000
+ces,max W,scipy_bounded,6.666666763735048,0.7999999999999999,INTERIOR_ORIGINATOR,2.0,True,agrees_with_grid=True
+ces,min E_I,grid,10.0,0.7777777777777776,UPPER_CORNER,0.0,True,2.222222;20.000000
+ces,max W,analytical_branch_generic,3.333333333333333,0.30000000000000004,branch FOC (1-lam)p=c,,True,
+ces,max W,analytical_branch_originator,6.666666666666666,0.8,branch FOC (1-lam)p=c,,True,
+ces,max W,grid_finegrid,6.66775,0.7999999868011649,INTERIOR_ORIGINATOR,2.0,True,2.222222;20.000000
+ces,max W,scipy_bounded_finegrid,6.666666763735048,0.7999999999999999,INTERIOR_ORIGINATOR,2.0,True,agrees_with_grid=True
+ces,min E_I,grid_finegrid,10.0,0.7777777777777776,UPPER_CORNER,0.0,True,2.222222;20.000000
+ces,max W,analytical_branch_generic_finegrid,3.333333333333333,0.30000000000000004,branch FOC (1-lam)p=c,,True,
+ces,max W,analytical_branch_originator_finegrid,6.666666666666666,0.8,branch FOC (1-lam)p=c,,True,
+linear,max W,grid,2.053,40.426233595000014,AT_KINK,2.0,True,2.053282;33.280051
+linear,max W,scipy_bounded,2.053281938783526,40.426266079228995,AT_KINK,2.0,True,agrees_with_grid=True
+linear,min E_I,grid,1.0,6.789999999999999,LOWER_CORNER,0.0,True,2.053282;33.280051
+linear,max W,analytical_branch_generic,3.333333333333333,31.8,branch FOC (1-lam)p=c,,True,
+linear,max W,analytical_branch_originator,6.666666666666666,32.3,branch FOC (1-lam)p=c,,True,
+linear,max W,grid_finegrid,2.053,40.426233595000014,AT_KINK,2.0,True,2.053282;33.280051
+linear,max W,scipy_bounded_finegrid,2.053281938783526,40.426266079228995,AT_KINK,2.0,True,agrees_with_grid=True
+linear,min E_I,grid_finegrid,1.0,6.789999999999999,LOWER_CORNER,0.0,True,2.053282;33.280051
+linear,max W,analytical_branch_generic_finegrid,3.333333333333333,31.8,branch FOC (1-lam)p=c,,True,
+linear,max W,analytical_branch_originator_finegrid,6.666666666666666,32.3,branch FOC (1-lam)p=c,,True,
