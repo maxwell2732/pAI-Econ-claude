@@ -6,6 +6,10 @@ All notable changes to **pAI-Econ-claude** are documented here.
 
 ## [v1.2.1] — 2026-07-03
 
+### Added
+
+- **Two model library entries for dynamic spatial models** (PR #3, contributed by [hayeszhou](https://github.com/hayeszhou)): `model_library/dynamic-spatial-general-equilibrium.md` (Kleinman, Liu & Redding 2023, *Econometrica* 91(2): 385–424) and `model_library/trade-labor-dynamics-china-shock.md` (Caliendo, Dvorkin & Parro 2019, *Econometrica* 87(3): 741–835). Both citations and headline quantitative claims were web-verified before merge. Stage 3b routing notes in `SKILL.md` and the README model library trees now include the new entries.
+
 ### Fixed
 
 - **`templates/state.json` was missing gate keys**: `gate_results` and `gate_retry_counts` lacked `gate_1b`, `gate_2b`, and `gate_2c`, so every pipeline run (Projects 002–005) had to improvise these keys at runtime, producing inconsistent state files across projects. The template now lists all nine gates in pipeline order.

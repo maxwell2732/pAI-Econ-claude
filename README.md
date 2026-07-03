@@ -56,6 +56,8 @@ Reference:
 
 **反馈与优化:  Gin，Luo Zijun**
 
+**模型库贡献: [hayeszhou](https://github.com/hayeszhou)**（空间动态一般均衡与贸易-劳动力动态模型条目，PR #3）
+
 ---
 
 ## 项目简介
@@ -644,6 +646,8 @@ pAI-Econ-claude/
 │   ├── heckscher-ohlin.md
 │   ├── new-trade-theory-krugman.md
 │   ├── melitz-firm-heterogeneity.md
+│   ├── dynamic-spatial-general-equilibrium.md    # Kleinman-Liu-Redding (2023)
+│   ├── trade-labor-dynamics-china-shock.md       # Caliendo-Dvorkin-Parro (2019)
 │   ├── io/
 │   │   ├── oligopoly-competition.md
 │   │   ├── entry-deterrence.md

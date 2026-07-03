@@ -59,6 +59,8 @@ Reference:
 
 **Feedback:  Gin, Luo Zijun**
 
+**Model library contributions: [hayeszhou](https://github.com/hayeszhou)** (spatial DSGE and trade–labor dynamics entries, PR #3)
+
 ---
 
 ## Overview
@@ -643,6 +645,8 @@ pAI-Econ-claude/
 │   ├── heckscher-ohlin.md
 │   ├── new-trade-theory-krugman.md
 │   ├── melitz-firm-heterogeneity.md
+│   ├── dynamic-spatial-general-equilibrium.md    # Kleinman-Liu-Redding (2023)
+│   ├── trade-labor-dynamics-china-shock.md       # Caliendo-Dvorkin-Parro (2019)
 │   ├── io/
 │   │   ├── oligopoly-competition.md
 │   │   ├── entry-deterrence.md

@@ -550,6 +550,7 @@ LLMs hallucinate plausible-sounding but nonexistent papers, especially for appli
 - Note: if the research involves human capital, labor, automation, or AI-labor topics, the prompt explicitly requires checking `model_library/human_capital_and_labor/`
 - Note: if the research involves market structure, pricing, platforms, or entry/competition topics, check `model_library/io/`
 - Note: if the research involves trade patterns, trade liberalization, exporter behavior, or gains from trade, check `model_library/comparative-advantage-ricardian.md`, `model_library/heckscher-ohlin.md`, `model_library/new-trade-theory-krugman.md`, `model_library/melitz-firm-heterogeneity.md`
+- Note: if the research involves regional/spatial dynamics, internal migration, regional convergence, local labor market adjustment, or the dynamic effects of trade shocks across regions, check `model_library/dynamic-spatial-general-equilibrium.md` and `model_library/trade-labor-dynamics-china-shock.md`
 
 ### Stage 4 — Model Primitives
 - Prompt: `prompts/04-model-primitives.md`
