@@ -1,0 +1,46 @@
+{
+  "campaign_id": "Project_005_WorkLeisureMatch",
+  "workspace": "Exploration/Project_005_WorkLeisureMatch",
+  "hypothesis": "mode: phenomenon_to_model — 分析中国城市青年加班文化（内卷）如何通过挤压leisure time，降低恋爱匹配机会、推迟结婚并降低生育意愿",
+  "current_stage": 10,
+  "stage_status": "completed",
+  "completed_stages": [0,1,"1v2","2","2a","3","3b",4,5,6,7,8,9,10],
+  "failed_stages": [],
+  "gate_results": {
+    "gate_1": "PASS",
+    "gate_1b": "PASS",
+    "gate_2b": "PASS",
+    "gate_2c": "PASS",
+    "gate_2": "CONDITIONAL_PASS",
+    "gate_3": "CONDITIONAL_PASS",
+    "gate_4": "CONDITIONAL_PASS",
+    "gate_5": "CONDITIONAL_PASS"
+  },
+  "human_decisions": {
+    "hil_1": "REDIRECT_then_APPROVE",
+    "hil_2": "APPROVE",
+    "hil_3": "APPROVE",
+    "hil_4": "CONFIRM_STNE",
+    "hil_5": "APPROVE_ALL",
+    "hil_6": "APPROVE"
+  },
+  "caveats": [],
+  "gate_retry_counts": {
+    "gate_1": 0,
+    "gate_1b": 0,
+    "gate_2b": 0,
+    "gate_2c": 0,
+    "gate_2": 0,
+    "gate_3": 0,
+    "gate_4": 0,
+    "gate_5": 0
+  },
+  "loopback_history": [],
+  "active_propositions": ["L_SC","P_E1","P_C1","P_C2","P_W1","P_M1","P_U1","P_B1"],
+  "deferred_propositions": [],
+  "equilibrium_concept": "Symmetric Threshold Nash Equilibrium (STNE)",
+  "social_planner_benchmark": "first-best threshold theta_SP maximizing aggregate welfare",
+  "finished": true,
+  "started_at": "2026-06-29T00:00:00Z",
+  "last_checkpoint": "2026-06-29T00:29:00Z"
+}
