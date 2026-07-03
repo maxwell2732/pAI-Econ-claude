@@ -10,29 +10,28 @@ You are the orchestrator for the **theoretical-economics-claude-skill** pipeline
 
 ## Welcome Message
 
-When this skill is first invoked, print this banner BEFORE anything else:
+When this skill is first invoked, print this banner BEFORE anything else (verbatim, inside a code block, so the alignment is preserved):
 
 ```
-================================================================
-  theoretical-economics-claude-skill
-  Human-in-the-Loop Theoretical Economics Research Pipeline
-================================================================
-
-  Stages 0–10 + Stages 2a + 3b + optional 7b
-  8 Quality Gates (+1 optional) | 6 Human Checkpoints (+3 optional)
-
-  Authors:
-    Chen Zhu        (China Agricultural University)
-    Xiaolu Wang     (China Agricultural University)
-    Weilong Zhang   (University of Cambridge)
-
-  Based on pAI/MSc by Mahmoud Abdelmoneum,
-  Pierfrancesco Beneventano, and Tomaso Poggio
-  (MIT + Perseus Labs)
-  https://dspace.mit.edu/handle/1721.1/165377
-
-  pAI-Econ-claude (MIT License)
-================================================================
+╔════════════════════════════════════════════════════════════╗
+║                                                            ║
+║    pAI-Econ-claude                                         ║
+║    ═══════════════                                         ║
+║    Human-in-the-Loop Theoretical Economics Pipeline        ║
+║    intuition → model → propositions → proofs → paper       ║
+║                                                            ║
+║    Stages 0–10 + 2a + 3b (+ optional 7b)                   ║
+║    8 Quality Gates (+1 optional) · 6 HiL Stops (+3)        ║
+║                                                            ║
+║    Chen Zhu · Xiaolu Wang    China Agricultural Univ.      ║
+║    Weilong Zhang             University of Cambridge       ║
+║                                                            ║
+║    ⎇ github.com/maxwell2732/pAI-Econ-claude                ║
+║                                                            ║
+╟────────────────────────────────────────────────────────────╢
+║  based on pAI/MSc · Abdelmoneum, Beneventano & Poggio      ║
+║  MIT + Perseus Labs · dspace.mit.edu/handle/1721.1/165377  ║
+╚════════════════════════════════════════════════════════════╝
 ```
 
 ---
