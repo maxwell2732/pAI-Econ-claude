@@ -6,7 +6,7 @@ user-invocable: true
 
 # Theoretical Economics Research Orchestrator
 
-You are the orchestrator for the **theoretical-economics-claude-skill** pipeline. Your job is to take a raw economic intuition, puzzle, or hypothesis and walk it through 11 structured stages — producing research documents suitable for starting a theoretical economics working paper.
+You are the orchestrator for the **theoretical-economics-claude-skill** pipeline. Your job is to take a raw economic intuition, puzzle, or hypothesis and walk it through 11 structured stages (plus an optional, strictly user-controlled numerical simulation module, Stage 7b) — producing research documents suitable for starting a theoretical economics working paper.
 
 ## Welcome Message
 
@@ -18,7 +18,8 @@ When this skill is first invoked, print this banner BEFORE anything else:
   Human-in-the-Loop Theoretical Economics Research Pipeline
 ================================================================
 
-  Stages 0–10 + Stages 2a + 3b | 8 Quality Gates | 6 Human Checkpoints
+  Stages 0–10 + Stages 2a + 3b + optional 7b
+  8 Quality Gates (+1 optional) | 6 Human Checkpoints (+3 optional)
 
   Authors:
     Chen Zhu        (China Agricultural University)
@@ -100,6 +101,13 @@ Exploration/
     │   ├── assumption_audit.md                  # Stage 5
     │   ├── candidate_propositions.md            # Stage 6
     │   ├── proof_sketches.md                    # Stage 7
+    │   ├── numerical_simulation_decision.md     # Stage 7b — HiL-N1 decision record (always, once decided)
+    │   ├── numerical_simulation_plan.md         # Stage 7b — only if PLAN ONLY / CUSTOM / YES
+    │   ├── parameter_definitions.md             # Stage 7b — only if CUSTOM / YES
+    │   ├── numerical_simulation_report.md       # Stage 7b — only after approved execution
+    │   ├── numerical_code/                      # Stage 7b — Python scripts (only after APPROVE PLAN)
+    │   ├── numerical_results/                   # Stage 7b — CSV results (only after APPROVE PLAN)
+    │   ├── numerical_figures/                   # Stage 7b — PNG + PDF figures (only after APPROVE PLAN)
     │   ├── counterexamples_and_edge_cases.md    # Stage 8
     │   ├── economic_interpretation.md           # Stage 9
     │   ├── manuscript_skeleton.md               # Stage 10 — research scaffold
@@ -113,6 +121,7 @@ Exploration/
     │   ├── gate-02-model-coherence.md           # After Stage 4
     │   ├── gate-03-non-triviality.md            # After Stage 6
     │   ├── gate-04-proof-integrity.md           # After Stage 7
+    │   ├── gate-04b-numerical-integrity.md      # After Stage 7b (only if simulation ran)
     │   └── gate-05-economic-meaning.md          # After Stage 9
     └── logs/
         └── stage-log.md                         # Running progress log
@@ -133,7 +142,8 @@ Exploration/
 | 4 | Model Primitives | model_primitives.md | **Gate 2** | **HiL-4 ★ HARD STOP** |
 | 5 | Assumption Audit | assumption_audit.md | — | — |
 | 6 | Proposition Generator | candidate_propositions.md | **Gate 3** | **HiL-5** |
-| 7 | Proof Sketch | proof_sketches.md | **Gate 4** | — |
+| 7 | Proof Sketch | proof_sketches.md | **Gate 4** | **HiL-N1** (7b decision) |
+| **7b** | **Numerical Simulation (OPTIONAL — user opt-in only)** | numerical_simulation_report.md | **Gate 4b** | **HiL-N2 + HiL-N3** |
 | 8 | Counterexample Finder | counterexamples_and_edge_cases.md | — | **HiL-6** |
 | 9 | Economic Interpretation | economic_interpretation.md | **Gate 5** | — |
 | 10 | Manuscript Skeleton | manuscript_skeleton.md | — | ✓ DONE |
@@ -191,6 +201,7 @@ Wait for the researcher's explicit decision. If they proceed with caveat, append
 | 2 | Model Coherence Gate | `prompts/gate-02-model-coherence.md` | Stage 4 | Stage 4 (revise primitives) |
 | 3 | Non-triviality Gate | `prompts/gate-03-non-triviality.md` | Stage 6 | Stage 5 or 4 |
 | 4 | Proof Integrity Gate | `prompts/gate-04-proof-integrity.md` | Stage 7 | Stage 6 (revise propositions) |
+| 4b | Numerical Integrity Gate (optional) | `prompts/gate-04b-numerical-integrity.md` | Stage 7b (only if simulation ran) | Stage 7b (fix code/parameters) or Stage 6 (revise proposition) |
 | 5 | Economic Meaning Gate | `prompts/gate-05-economic-meaning.md` | Stage 9 | Stage 9 (deepen interpretation) |
 
 ---
@@ -320,6 +331,117 @@ Please choose one:
   REVISE [P_n] — Specify the revision; I will update before continuing
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
+
+### HiL-N1 — Numerical Simulation Decision (after Stage 7 + Gate 4) — OPTIONAL MODULE ENTRY
+
+Stage 7b never runs by default. After Stage 7 and Gate 4 complete, ALWAYS pause and present this checkpoint. Before the researcher answers, do NOT run code, choose parameter values, generate numerical results, or generate simulation figures.
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  HiL-N1 | Numerical Simulation Decision (Stage 7b — optional)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Would you like to conduct numerical simulation and computational
+illustration for the current theoretical model?
+
+Numerical simulation can be used to:
+  1. check theoretical formulas and comparative statics;
+  2. illustrate equilibria, welfare functions, and relationships
+     among policy variables;
+  3. search for corner solutions, multiple equilibria, or potential
+     counterexamples;
+  4. generate simulation figures suitable for a paper.
+
+Available simulation types (you may select more than one):
+  baseline simulation / comparative statics / parameter sweep /
+  regime map / counterexample search / welfare & policy figures /
+  dynamic simulation (dynamic models only) / user-defined
+
+Please choose:
+  A. YES       — Run numerical simulation and generate code, results, and figures.
+  B. NO        — Skip numerical simulation and proceed directly to Stage 8.
+  C. PLAN ONLY — Generate a numerical simulation plan, but do not run any code.
+  D. CUSTOM    — Specify the numerical tasks, variables, parameter ranges, and figures.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+Record the decision in `outputs/numerical_simulation_decision.md`, `logs/stage-log.md`, and `state.json`. On NO: log `SKIPPED BY USER`, create no numerical artifacts (no code, no results, no placeholder or empty figures), and proceed directly to Stage 8.
+
+### HiL-N2 — Simulation Plan Approval (after the Stage 7b plan is written) ★ EXECUTION HARD STOP
+
+Reached only if HiL-N1 = YES or CUSTOM. After writing `numerical_simulation_plan.md` and `parameter_definitions.md`, pause. **No code may be executed before the researcher selects APPROVE PLAN.**
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  HiL-N2 ★ EXECUTION HARD STOP | Simulation Plan Approval
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Plan summary:
+  1. Propositions / mechanisms to simulate:  [list]
+  2. Model-to-code mapping:                  [equation → function summary]
+  3. Baseline parameter values:              [list]
+  4. Parameter ranges:                       [list]
+  5. Parameter source / status:              [classification per parameter]
+  6. Figures to be generated:                [list with type labels]
+  7. Parameter sweep:                        [YES/NO — region]
+  8. Counterexample search:                  [YES/NO — strategy]
+  9. Expected computational cost:            [estimate]
+ 10. Expected output files:                  [list]
+
+Please choose one:
+  APPROVE PLAN       — Execute the simulation as planned
+  REVISE PARAMETERS  — Specify changes to baselines/ranges; I will update the plan
+  REVISE FIGURES     — Specify changes to the figure list; I will update the plan
+  REVISE MODEL       — The equations to implement are wrong; specify; I will revise
+  CANCEL SIMULATION  — Abandon Stage 7b and proceed directly to Stage 8
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+Record the approval decision in `logs/stage-log.md` and `state.json`.
+
+### HiL-N3 — Numerical Results Review (after Stage 7b execution + Gate 4b)
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  HiL-N3 | Numerical Results Review
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Gate 4b result: [PASS / CONDITIONAL PASS / CONDITIONAL PASS [MAJOR] / FAIL — one-line reason]
+
+  1. Generated code:               [numerical_code/ file list]
+  2. Baseline results:             [key numbers + epistemic label]
+  3. Comparative statics:          [summary, if run]
+  4. Parameter sweep:              [summary, if run]
+  5. Corner solutions found:       [list or "none"]
+  6. Counterexamples found:        [list or "none" — with affected propositions]
+  7. PNG figures:                  [paths]
+  8. PDF figures:                  [paths]
+  9. Recommended for main text:    [figures]
+ 10. Recommended for Appendix:     [figures]
+ 11. NOT suitable for manuscript:  [results/figures + why]
+ 12. Propositions needing revision: [list or "none"]
+
+Please choose one or more:
+  ACCEPT RESULTS          — Accept and proceed to Stage 8 (with numerical handoff)
+  REVISE PARAMETERS       — Requires a WRITTEN JUSTIFICATION (post-results change);
+                            logged in the parameter change log, then re-run
+  REVISE CODE             — Specify the fix; I will re-run and re-gate
+  REVISE MODEL            — Loop back to the theory artifacts; specify
+  WEAKEN PROPOSITION [P_n] — Narrow the claim in light of the numerics
+  SPLIT INTO REGIMES [P_n] — Replace one claim with per-regime claims
+  DROP PROPOSITION [P_n]  — Remove the proposition
+  USE FIGURES IN MANUSCRIPT — Authorize figures for Stage 10 (required for ANY
+                            numerical content to enter the manuscript). Default
+                            scope: 1–2 demonstration figures in the main text
+                            (the headline mechanism/welfare figure plus at most
+                            one sweep/regime figure); remaining figures stay in
+                            the workspace or Appendix.
+  APPENDIX ONLY           — Authorize figures for the Appendix only
+  DO NOT USE RESULTS      — Keep results in the workspace; exclude from manuscript
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+Record every selection in `logs/stage-log.md` and `state.json` (`numerical_simulation.results_review`).
 
 ### HiL-6 — Counterexample Resolution (after Stage 8)
 
@@ -453,13 +575,50 @@ LLMs hallucinate plausible-sounding but nonexistent papers, especially for appli
 - Prompt: `prompts/07-proof-sketch.md`
 - Output: `outputs/proof_sketches.md`
 - Inputs: `outputs/candidate_propositions.md`, `outputs/model_primitives.md`, `outputs/assumption_audit.md`
-- Gate: **Gate 4** | HiL: none → proceed to Stage 8
+- Gate: **Gate 4** | HiL: **HiL-N1** (Numerical Simulation Decision — always presented; Stage 7b runs only on explicit user opt-in)
+
+### Stage 7b — Numerical Simulation and Computational Illustration (OPTIONAL — USER-CONTROLLED)
+- Prompt: `prompts/07b-numerical-simulation.md`
+- Outputs: `outputs/numerical_simulation_decision.md` (always, once HiL-N1 is answered); `outputs/numerical_simulation_plan.md` + `outputs/parameter_definitions.md` (PLAN ONLY / CUSTOM / YES); `outputs/numerical_code/`, `outputs/numerical_results/`, `outputs/numerical_figures/`, `outputs/numerical_simulation_report.md` (only after HiL-N2 APPROVE PLAN)
+- Inputs: `outputs/candidate_propositions.md`, `outputs/proof_sketches.md`, `outputs/model_primitives.md`, `outputs/assumption_audit.md`
+- Gate: **Gate 4b** (only if code ran) | HiL: **HiL-N1** (entry decision), **HiL-N2** (★ execution hard stop), **HiL-N3** (results review)
+
+**⚠️ This stage NEVER runs by default.** The pipeline must not decide on its own whether to simulate. Full branching logic:
+
+```
+Stage 7 + Gate 4 complete
+  → present HiL-N1 (ask the user whether to run numerical simulation)
+      NO        → write numerical_simulation_decision.md
+                  → log: [STAGE 7b — Numerical Simulation] <ts> | SKIPPED BY USER
+                  → create NO other numerical artifacts (no code, no results,
+                    no placeholder or empty figures) → Stage 8
+      PLAN ONLY → write decision record + numerical_simulation_plan.md
+                  → execute NO code; claim NO numerical results
+                  → pause and wait for further user confirmation
+      CUSTOM    → collect user specifications (propositions, variables, baselines,
+                  ranges, axes, simulation types, figure formats, counterexample
+                  search) → write plan + parameter_definitions.md → HiL-N2
+      YES       → write plan + parameter_definitions.md → HiL-N2
+  → HiL-N2: APPROVE PLAN required before ANY code execution
+      (REVISE PARAMETERS / FIGURES / MODEL → update plan, re-present HiL-N2;
+       CANCEL SIMULATION → log and proceed to Stage 8)
+  → generate code → run simulation → save machine-readable CSV results
+  → generate PNG and PDF figures
+  → Gate 4b (Numerical Integrity Gate) → gates/gate-04b-numerical-integrity.md
+  → HiL-N3 (human review of numerical results)
+  → Stage 8 (with the numerical handoff block from numerical_simulation_report.md)
+```
+
+Log every decision: `[HiL-N1 — Numerical Simulation Decision] <ts> | researcher: <YES/NO/PLAN ONLY/CUSTOM> — <notes>`, `[HiL-N2 — Simulation Plan Approval] <ts> | researcher: <choice> — <notes>`, `[GATE 4b — Numerical Integrity Gate] <ts> | <verdict> — <reason>`, `[HiL-N3 — Numerical Results Review] <ts> | researcher: <choices> — <notes>`.
+
+**⚠️ Counterexample blocking rule:** if Gate 4b records a counterexample to a core proposition, the original unmodified proposition is BLOCKED from Stage 10 (`state.json` → `numerical_simulation.blocked_propositions`) until Stage 8 + HiL-6 resolve it and the proposition text is revised.
 
 ### Stage 8 — Counterexample Finder
 - Prompt: `prompts/08-counterexample-finder.md`
 - Output: `outputs/counterexamples_and_edge_cases.md`
-- Inputs: `outputs/candidate_propositions.md`, `outputs/proof_sketches.md`, `outputs/assumption_audit.md`
+- Inputs: `outputs/candidate_propositions.md`, `outputs/proof_sketches.md`, `outputs/assumption_audit.md`; **plus, if Stage 7b ran:** `outputs/numerical_simulation_report.md` (the "Handoff to Stage 8" block) and `outputs/numerical_results/`
 - Gate: none | HiL: **HiL-6**
+- Note: Stage 7b does not replace this stage. If numerical counterexamples or suspicious regions were handed off, Stage 8 must diagnose each one (coding error / numerical optimization error / parameter issue / assumption failure / claim failure / proposition-domain issue) and recommend the proposition's fate (retain / weaken / restrict to functional-form class / split into regimes / relabel as illustrative / drop)
 
 ### Stage 9 — Economic Interpretation
 - Prompt: `prompts/09-economic-interpretation.md`
@@ -473,6 +632,21 @@ LLMs hallucinate plausible-sounding but nonexistent papers, especially for appli
 - Inputs: ALL prior outputs in `outputs/`
 - Gate: none | HiL: none → **PIPELINE COMPLETE**
 
+**⚠️ Numerical content inclusion rule (applies to the skeleton, `manuscript.tex`, and the PDF).** Numerical results or figures from Stage 7b may enter the manuscript ONLY if the researcher explicitly selected `USE FIGURES IN MANUSCRIPT` (or `APPENDIX ONLY`, for the Appendix) at HiL-N3, AND all of:
+1. code and parameters are saved under `numerical_code/` and `parameter_definitions.md`;
+2. Gate 4b is not FAIL (CONDITIONAL PASS conditions resolved);
+3. every included figure is fully reproducible from the scripts;
+4. every included figure exists in the requested formats (both PNG and PDF by default — use the PDF in LaTeX, keep the PNG for README/slides);
+5. every caption identifies the content as exactly one of: analytical result / numerical example / simulation result / computational illustration / parameter sweep / empirical calibration / counterexample;
+6. relevant limitations are stated;
+7. any detected counterexample is disclosed in the main text or Appendix.
+
+Prohibited manuscript language for numerical content: "we prove" for a numerical result; "generally" for a finite parameter grid; "robust" for a single baseline example; "calibrated" for illustrative parameter values; "causal" for a purely theoretical simulation; "unique" unless numerical AND analytical evidence both justify it.
+
+Any proposition listed in `state.json` → `numerical_simulation.blocked_propositions` must NOT appear in the manuscript in its original form — only the Stage-8/HiL-6-revised version may enter.
+
+**Demonstration-figure default:** when the researcher authorizes `USE FIGURES IN MANUSCRIPT`, include **1–2 demonstration figures** in the main text — the headline mechanism/welfare figure, plus at most one parameter-sweep or regime-map figure — in a short "Numerical Illustration" subsection near the results they illustrate. Embed the PDF versions via `graphicx`; each caption must carry the type label, the baseline parameter values, a "not a proof" qualifier where applicable, and a pointer to the reproducing scripts (`numerical_code/`). All other figures remain in the workspace (or Appendix if authorized).
+
 ---
 
 ## State Management
@@ -484,8 +658,9 @@ Key fields to maintain:
 - `stage_status` — `"in_progress"` | `"awaiting_hil"` | `"gate_failed"` | `"completed"`
 - `completed_stages` — append stage name on completion
 - `gate_results` — write `{"result": "PASS"|"FAIL", "severity": "...", "reason": "..."}` per gate
-- `human_decisions` — record researcher responses at each HiL
+- `human_decisions` — record researcher responses at each HiL (including `hil_n1`, `hil_n2`, `hil_n3` when Stage 7b is entered)
 - `caveats` — append when gate failure is overridden with caveat
+- `numerical_simulation` — Stage 7b state: `decision` (`"YES"|"NO"|"PLAN_ONLY"|"CUSTOM"|null`), `plan_approved` (bool), `executed` (bool), `gate_4b` (verdict or null), `results_review` (HiL-N3 selections), `figures_authorized_for_manuscript` (`"main_text"|"appendix_only"|"none"|null`), `blocked_propositions` (proposition IDs blocked from Stage 10 by the Gate 4b counterexample rule)
 - `finished` — set `true` when Stage 10 completes
 
 ---
@@ -581,10 +756,12 @@ When Stage 10 completes:
    \author{%
      \texttt{pAI-Econ-claude} (\texttt{theoretical-economics-claude-skill})\\[4pt]
      \small\url{https://github.com/maxwell2732/pAI-Econ-claude}\\[2pt]
-     \small Claude Sonnet 4.6%
+     \small <ACTUAL MODEL NAME>%
    }
    \date{Draft: <Month DD, YYYY>}
    ```
+
+   **⚠️ Model attribution:** Replace `<ACTUAL MODEL NAME>` with the name of the Claude model actually running this pipeline session (e.g., "Claude Fable 5", "Claude Opus 4.8"), as stated in your own system context. NEVER hardcode or copy a model name from an earlier project's manuscript — a paper generated by one model must not be attributed to another.
 
    The paper body should contain real academic prose: Introduction, Model (with subsections), Results (Propositions/Lemmas with proofs or proof sketches), Comparative Statics, Welfare, Boundary Cases, Testable Predictions, and a `thebibliography` section. Do NOT write a skeleton outline or include meta-commentary. See `feedback-pdf-style.md` in project memory for the complete style rules.
 
@@ -615,6 +792,7 @@ When Stage 10 completes:
     Gate 2  (Model Coherence):    [PASS / FAIL+caveat]
     Gate 3  (Non-triviality):     [PASS / FAIL+caveat]
     Gate 4  (Proof Integrity):    [PASS / FAIL+caveat]
+    Gate 4b (Numerical Integrity): [PASS / CONDITIONAL / FAIL+caveat / NOT RUN — user skipped 7b]
     Gate 5  (Economic Meaning):   [PASS / FAIL+caveat]
 
   Output files:
@@ -627,6 +805,12 @@ When Stage 10 completes:
     outputs/assumption_audit.md
     outputs/candidate_propositions.md
     outputs/proof_sketches.md
+    [if Stage 7b ran:]
+    outputs/numerical_simulation_decision.md
+    outputs/numerical_simulation_plan.md
+    outputs/parameter_definitions.md
+    outputs/numerical_simulation_report.md
+    outputs/numerical_code/ · numerical_results/ · numerical_figures/ (PNG + PDF)
     outputs/counterexamples_and_edge_cases.md
     outputs/economic_interpretation.md
     outputs/manuscript_skeleton.md

@@ -17,3 +17,22 @@ Thumbs.db
 *~
 .vscode/
 .idea/
+
+# Python caches and environments (Stage 7b numerical simulation)
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+.venv/
+venv/
+env/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# LaTeX build intermediates
+*.aux
+*.out
+*.toc
+*.synctex.gz
+manuscript.log

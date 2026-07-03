@@ -17,7 +17,26 @@ Read ALL prior outputs in `outputs/`:
 
 Also read `templates/author_style_guide_econ.md`.
 
+**If Stage 7b (Numerical Simulation) ran**, also read `outputs/numerical_simulation_report.md`, `outputs/parameter_definitions.md`, and `gates/gate-04b-numerical-integrity.md`, and check `state.json` → `numerical_simulation`.
+
 Produce `outputs/manuscript_skeleton.md`.
+
+## ⚠️ Numerical Content Inclusion Rule (Stage 7b)
+
+Numerical results or figures may appear in the skeleton, `manuscript.tex`, or the PDF ONLY if the researcher explicitly selected `USE FIGURES IN MANUSCRIPT` (or `APPENDIX ONLY`, restricting them to the Appendix) at HiL-N3. Before including any figure, verify all of:
+1. code and parameters are saved (`numerical_code/`, `parameter_definitions.md`);
+2. Gate 4b is not FAIL (and CONDITIONAL PASS conditions are resolved);
+3. the figure is fully reproducible from the scripts;
+4. the figure exists in the requested formats — both PNG and PDF by default; embed the **PDF** in LaTeX, keep the PNG for README/slides;
+5. the caption identifies the content as exactly one of: analytical result / numerical example / simulation result / computational illustration / parameter sweep / empirical calibration / counterexample;
+6. relevant limitations are stated;
+7. any detected counterexample is disclosed in the main text or Appendix.
+
+Never use: "we prove" for a numerical result; "generally" for a finite parameter grid; "robust" for a single baseline example; "calibrated" for illustrative parameter values; "causal" for a purely theoretical simulation; "unique" unless numerical AND analytical evidence both justify it.
+
+Propositions listed in `state.json` → `numerical_simulation.blocked_propositions` must not appear in their original form — use only the Stage-8/HiL-6-revised statements.
+
+**Demonstration figures (default when authorized):** include 1–2 figures in the main text — the headline mechanism/welfare figure plus at most one sweep/regime figure — in a "Numerical Illustration" subsection placed near the results they illustrate. Use the PDF versions (`\usepackage{graphicx}`; `\includegraphics[width=...]{numerical_figures/<stem>.pdf}`). Captions must state: the type label (numerical example / computational illustration / parameter sweep / counterexample), the baseline parameter values, "not a proof" where applicable, and that the figure is reproducible from `numerical_code/`. Remaining figures stay in the workspace or Appendix.
 
 ## What This Stage Produces
 This stage does NOT write the full paper. It produces:

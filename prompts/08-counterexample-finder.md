@@ -7,6 +7,7 @@ You are an adversarial mathematical economist. Your job is to try to BREAK each 
 
 ## Task
 Read `outputs/candidate_propositions.md`, `outputs/proof_sketches.md`, and `outputs/assumption_audit.md`.
+**If Stage 7b (Numerical Simulation) ran**, also read `outputs/numerical_simulation_report.md` (especially its "Handoff to Stage 8" block) and consult `outputs/numerical_results/` as needed.
 Produce `outputs/counterexamples_and_edge_cases.md`.
 
 ## What to Try
@@ -51,6 +52,20 @@ Can an agent gain by deviating from the equilibrium in a way the model does not 
 
 ### 8. Existence Failure
 Is it possible that the equilibrium whose properties are characterized does not exist in some region of the parameter space? Identify any such region.
+
+### 9. Numerical Handoff Triage (only if Stage 7b ran)
+For EACH numerical counterexample, suspicious parameter region, corner/regime finding, and optimization failure listed in the Stage 7b handoff, diagnose analytically what it is:
+
+- **Coding error** — the script does not implement the model (check against the equation–code mapping)
+- **Numerical optimization error** — solver artifact (tolerance, starting point, local trap)
+- **Parameter issue** — the parameter combination violates a maintained assumption or feasibility condition, so it is not a valid counterexample
+- **Assumption failure** — the proposition's assumptions hold, but a hidden or missing assumption (e.g., a curvature condition) is what actually drives the claimed result
+- **Claim failure** — the proposition as stated is false on part of its stated domain
+- **Proposition-domain issue** — the claim is true but its stated domain is broader than what the proof supports
+
+Then, for each affected proposition, recommend exactly one resolution and justify it:
+**retained / weakened / restricted to a functional-form class / split into multiple regimes / relabeled as illustrative / dropped.**
+Feed these recommendations into the HiL-6 checkpoint. A numerical counterexample confirmed here as an assumption or claim failure keeps the original unmodified proposition blocked from Stage 10 (Gate 4b counterexample rule) until the researcher resolves it at HiL-6.
 
 ---
 
@@ -141,6 +156,12 @@ Report: "INCONCLUSIVE — [Attempt type]. Could not determine in this case; reco
 **Tried:** [Describe parameter region checked]
 **Result:** SURVIVES / BREAKS / INCONCLUSIVE
 [Report]
+
+### Attempt 9: Numerical Handoff Triage (only if Stage 7b ran)
+**Numerical finding:** [From the Stage 7b handoff — parameter values, what was violated]
+**Diagnosis:** CODING ERROR / NUMERICAL OPTIMIZATION ERROR / PARAMETER ISSUE / ASSUMPTION FAILURE / CLAIM FAILURE / PROPOSITION-DOMAIN ISSUE
+**Analytical verification:** [Reproduce or refute the numerical finding analytically]
+**Recommended resolution:** RETAIN / WEAKEN / RESTRICT TO FUNCTIONAL-FORM CLASS / SPLIT INTO REGIMES / RELABEL AS ILLUSTRATIVE / DROP — [justification]
 
 **P_E1 Overall verdict:** ROBUST (all attempts survive) / CONDITIONAL (survives with modifications) / FRAGILE (breaks under [conditions])
 

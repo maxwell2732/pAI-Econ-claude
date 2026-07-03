@@ -11,6 +11,7 @@
     "gate_2": null,
     "gate_3": null,
     "gate_4": null,
+    "gate_4b": null,
     "gate_5": null
   },
   "human_decisions": {
@@ -19,6 +20,9 @@
     "hil_3": null,
     "hil_4": null,
     "hil_5": null,
+    "hil_n1": null,
+    "hil_n2": null,
+    "hil_n3": null,
     "hil_6": null
   },
   "caveats": [],
@@ -27,6 +31,7 @@
     "gate_2": 0,
     "gate_3": 0,
     "gate_4": 0,
+    "gate_4b": 0,
     "gate_5": 0
   },
   "loopback_history": [],
@@ -34,6 +39,15 @@
   "deferred_propositions": [],
   "equilibrium_concept": null,
   "social_planner_benchmark": null,
+  "numerical_simulation": {
+    "decision": null,
+    "plan_approved": false,
+    "executed": false,
+    "gate_4b": null,
+    "results_review": null,
+    "figures_authorized_for_manuscript": null,
+    "blocked_propositions": []
+  },
   "finished": false,
   "started_at": "",
   "last_checkpoint": ""

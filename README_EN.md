@@ -39,7 +39,7 @@ Xiaolu Wang (China Agricultural University)
 
 Weilong Zhang (University of Cambridge)
 
-**Last updated:** June 15, 2026 (testing phase)
+**Last updated:** July 3, 2026 
 
 ---
 
@@ -297,6 +297,30 @@ Gate 1b produces three verdicts:
 - **CONDITIONAL PASS (REFRAME)**: Some assumptions are unverified — the pipeline can proceed, but the paper must explicitly describe a *stylized* market rather than claiming to describe a specific real market.
 - **FAIL (REROUTE)**: A core assumption is contradicted by evidence — loop back to Stage 1 to restate the research context, or redirect Stage 3b to a more appropriate canonical model family.
 
+**About Stage 7b — Numerical Simulation and Computational Illustration (optional):**
+
+> Numerical simulation is optional and runs only after explicit user approval. When selected, the workflow produces reproducible code, machine-readable results, and figures in both PNG and PDF formats. Numerical evidence is used for verification, counterexample search, and illustration, not as a substitute for formal proof.
+
+After Stage 7 (Proof Sketch) completes, the pipeline always pauses at **HiL-N1** and asks whether to run numerical simulation. The full branching logic:
+
+```text
+Stage 7 — Proof Sketch (+ Gate 4)
+  → Ask user whether to run numerical simulation (HiL-N1)
+      NO        → proceed directly to Stage 8 (no numerical artifacts created)
+      PLAN ONLY → generate numerical_simulation_plan.md and pause (no code executed)
+      CUSTOM    → collect user specifications (propositions, variables, ranges,
+                  axes, simulation types, figure formats) → generate plan
+      YES       → generate plan
+  → user approves plan (HiL-N2 — no code may run before APPROVE PLAN)
+  → generate code → run simulation → save machine-readable CSV results
+  → generate PNG and PDF figures
+  → Gate 4b — Numerical Integrity Gate
+  → human review of numerical results (HiL-N3)
+  → Stage 8 — Counterexample Finder (with numerical handoff)
+```
+
+Every parameter is classified (theoretical normalization / empirically grounded / illustrative / user specified), every numerical result carries an epistemic-status label (e.g., `NUMERICALLY VERIFIED FOR SPECIFIED PARAMETERS`, `COUNTEREXAMPLE FOUND`, `NOT A PROOF`), and figures enter the manuscript only if the researcher explicitly selects `USE FIGURES IN MANUSCRIPT` at HiL-N3 (when authorized, the manuscript includes 1–2 demonstration figures in the main text by default; the rest stay in the workspace or Appendix). A numerical counterexample to a core proposition blocks the unmodified proposition from Stage 10 until it is resolved at Stage 8 / HiL-6.
+
 ```mermaid
 flowchart TD
     A["0. Intake<br/>Research Idea"] --> B["1. Puzzle Refinement"]
@@ -308,7 +332,11 @@ flowchart TD
     F --> G["5. Assumption Audit"]
     G --> H["6. Proposition Generator"]
     H --> I["7. Proof Sketch"]
-    I --> J["8. Counterexample Finder"]
+    I --> N1{"HiL-N1<br/>Numerical simulation?"}
+    N1 -- "NO (default path)" --> J["8. Counterexample Finder"]
+    N1 -- "YES / CUSTOM" --> N2["7b. Numerical Simulation<br/>plan → user approval → code<br/>CSV + PNG/PDF figures<br/>(Gate 4b)"]
+    N1 -- "PLAN ONLY" --> NP["Plan written; pause<br/>(no code executed)"]
+    N2 --> J
     J --> K["9. Economic Interpretation"]
     K --> L["10. Manuscript Skeleton<br/>Markdown + PDF"]
 ```
@@ -329,6 +357,7 @@ flowchart TD
 | 5 | Assumption Audit | `assumption_audit.md` |
 | 6 | Proposition Generator | `candidate_propositions.md` |
 | 7 | Proof Sketch | `proof_sketches.md` |
+| **7b** | **Numerical Simulation (optional, user opt-in)** | `numerical_simulation_report.md` + `numerical_code/` + `numerical_results/` + `numerical_figures/` (PNG + PDF) |
 | 8 | Counterexample Finder | `counterexamples_and_edge_cases.md` |
 | 9 | Economic Interpretation | `economic_interpretation.md` |
 | 10 | Manuscript Skeleton | `manuscript_skeleton.md` + `manuscript_skeleton.tex` + `manuscript_skeleton.pdf` |
@@ -428,6 +457,7 @@ The Skill includes multiple quality gates to avoid the problem of work that "loo
 | Gate 2 | Model Coherence | Whether model primitives, timing, and information structure are consistent | Return to model primitives |
 | Gate 3 | Non-triviality | Whether propositions are non-trivial, not merely implied by assumptions | Return to assumptions or propositions |
 | Gate 4 | Proof Integrity | Whether proof sketches honestly flag gaps | Return to propositions or proofs |
+| Gate 4b | Numerical Integrity (optional; only if Stage 7b ran) | Equation–code consistency, reproducibility, parameter transparency, numerical robustness, result completeness, epistemic-status labels | Return to Stage 7b (fix code/parameters) or Stage 6 (revise proposition) |
 | Gate 5 | Economic Meaning | Whether economic interpretation extends beyond formal results | Return to economic interpretation |
 
 Gate failures are never hidden or repackaged as passes. The Skill explicitly outputs:
@@ -450,6 +480,9 @@ Critical judgments in theoretical economics should not be made automatically by 
 | HiL-3 | After Persona Council | Whether to accept the theory review conclusions |
 | HiL-4 | After Model Primitives | Confirm the equilibrium concept — this is a hard stop |
 | HiL-5 | After Proposition Generator | Which propositions to carry into subsequent analysis |
+| HiL-N1 | After Proof Sketch | Whether to run numerical simulation at all (YES / NO / PLAN ONLY / CUSTOM) — Stage 7b never runs by default |
+| HiL-N2 | After the simulation plan is written | Approve the plan and parameter design — no code executes before APPROVE PLAN |
+| HiL-N3 | After simulation + Gate 4b | Accept/revise numerical results; authorize (or refuse) manuscript use of figures |
 | HiL-6 | After Counterexample Finder | How to handle counterexamples and boundary cases |
 
 **HiL-4 is a hard stop.** Equilibrium concepts — Nash, SPE, BNE, PBE, competitive equilibrium, etc. — must be confirmed by the researcher before advancing.
@@ -492,6 +525,13 @@ Exploration/
     │   ├── assumption_audit.md
     │   ├── candidate_propositions.md
     │   ├── proof_sketches.md
+    │   ├── numerical_simulation_decision.md    ← Stage 7b (optional): HiL-N1 decision record
+    │   ├── numerical_simulation_plan.md        ← Stage 7b (optional): PLAN ONLY / CUSTOM / YES
+    │   ├── parameter_definitions.md            ← Stage 7b (optional): parameter classification
+    │   ├── numerical_simulation_report.md      ← Stage 7b (optional): after approved execution
+    │   ├── numerical_code/                     ← Stage 7b (optional): reproducible Python scripts
+    │   ├── numerical_results/                  ← Stage 7b (optional): machine-readable CSVs
+    │   ├── numerical_figures/                  ← Stage 7b (optional): figures, PNG + PDF
     │   ├── counterexamples_and_edge_cases.md
     │   ├── economic_interpretation.md
     │   ├── manuscript_skeleton.md
@@ -504,6 +544,7 @@ Exploration/
     │   ├── gate-02-model-coherence.md
     │   ├── gate-03-non-triviality.md
     │   ├── gate-04-proof-integrity.md
+    │   ├── gate-04b-numerical-integrity.md     ← Stage 7b (optional): only if simulation ran
     │   └── gate-05-economic-meaning.md
     └── logs/
         └── stage-log.md
@@ -632,6 +673,7 @@ pAI-Econ-claude/
 │   ├── 05-assumption-audit.md
 │   ├── 06-proposition-generator.md
 │   ├── 07-proof-sketch.md
+│   ├── 07b-numerical-simulation.md           # Optional Stage 7b (user opt-in only)
 │   ├── 08-counterexample-finder.md
 │   ├── 09-economic-interpretation.md
 │   ├── 10-manuscript-skeleton.md
@@ -641,6 +683,7 @@ pAI-Econ-claude/
 │   ├── gate-02-model-coherence.md
 │   ├── gate-03-non-triviality.md
 │   ├── gate-04-proof-integrity.md
+│   ├── gate-04b-numerical-integrity.md       # Optional Gate 4b (only if Stage 7b ran)
 │   └── gate-05-economic-meaning.md
 ├── templates/
 │   ├── state.json
