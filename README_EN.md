@@ -667,6 +667,7 @@ pAI-Econ-claude/
 │   ├── 00-intake.md
 │   ├── 01-puzzle-refinement.md
 │   ├── 02-literature-positioning.md
+│   ├── 02a-empirical-reality-check.md        # Stage 2a + Gate 1b (Reality Fit Check)
 │   ├── 03-persona-council.md
 │   ├── 03b-canonical-model-match.md
 │   ├── 04-model-primitives.md
@@ -690,6 +691,7 @@ pAI-Econ-claude/
 │   ├── academic-econ.latex               # Legacy PDF template (deprecated; pipeline now writes .tex directly)
 │   ├── author_style_guide_econ.md
 │   └── author_style_guide_default.md
+├── legacy/                               # Archived pAI/MSc pipeline files (reference only, not active)
 └── Exploration/                          # All project workspaces (auto-generated, contents not committed)
     └── Project_NNN_<ModelAbbrev>/
 ```

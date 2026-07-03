@@ -4,6 +4,22 @@ All notable changes to **pAI-Econ-claude** are documented here.
 
 ---
 
+## [v1.2.1] — 2026-07-03
+
+### Fixed
+
+- **`templates/state.json` was missing gate keys**: `gate_results` and `gate_retry_counts` lacked `gate_1b`, `gate_2b`, and `gate_2c`, so every pipeline run (Projects 002–005) had to improvise these keys at runtime, producing inconsistent state files across projects. The template now lists all nine gates in pipeline order.
+- **`SKILL.md` completion section numbering**: two steps were both numbered "3." (Generate the manuscript PDF / Print completion summary); the summary step is now "4.".
+- **`SKILL.md` completion summary stage count**: said "Stages completed: 11 (0–10)", omitting Stages 2a and 3b; now reads "13 (0–10 + 2a + 3b) [14 if Stage 7b ran]".
+- **README trees omitted `prompts/02a-empirical-reality-check.md`**: the Stage 2a prompt (which also contains Gate 1b) is now listed in both `README.md` and `README_EN.md`.
+
+### Changed
+
+- **Legacy pAI/MSc files archived to `legacy/`**: 29 unused ML-pipeline prompts (`01-persona-practical` … `33-explore-evaluator`) and 6 orchestrator docs (`execution-protocol`, `explore-mode`, `persona-post-review`, `pre-writeup-council`, `review-cycle`, `token-logging`) moved out of `prompts/` and `docs/` into `legacy/prompts/` and `legacy/docs/`, with a README explaining provenance. None were referenced by `SKILL.md` or the active prompts, and some used colliding terminology (the old "Phase 7b pre-writeup council" vs. the econ pipeline's Stage 7b Numerical Simulation). `prompts/` now contains exactly the 22 active stage/gate prompts. The maintained pAI/MSc pipeline lives in the separate `poggioai-msc-claude` skill.
+- **`SKILL.md` hardening**: project numbering now explicitly requires a Bash listing (not Glob, which has returned false negatives on this repo); the stage-log gate format uses an explicit `<id>` placeholder (1, 1b, 2b, 2c, 2, 3, 4, 4b, 5); Stages 6 and 9 now carry an explicit reminder that any citation entering `candidate_propositions.md` or `economic_interpretation.md` must be web-VERIFIED (reused from `literature_positioning.md` or freshly verified), mirroring the standing rule in `CLAUDE.md`.
+
+---
+
 ## [v1.2.0] — 2026-07-03
 
 ### Added

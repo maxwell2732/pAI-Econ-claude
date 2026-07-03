@@ -8,6 +8,9 @@
   "failed_stages": [],
   "gate_results": {
     "gate_1": null,
+    "gate_1b": null,
+    "gate_2b": null,
+    "gate_2c": null,
     "gate_2": null,
     "gate_3": null,
     "gate_4": null,
@@ -28,6 +31,9 @@
   "caveats": [],
   "gate_retry_counts": {
     "gate_1": 0,
+    "gate_1b": 0,
+    "gate_2b": 0,
+    "gate_2c": 0,
     "gate_2": 0,
     "gate_3": 0,
     "gate_4": 0,

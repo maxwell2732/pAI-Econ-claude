@@ -66,7 +66,7 @@ When the skill is first invoked:
 
 2. **Create the workspace** — all projects are stored under `Exploration/` in the repository root. Follow these steps:
 
-   a. **Determine the next project number**: scan `Exploration/` for existing subdirectories matching `Project_NNN_*`. Take the highest NNN found and add 1. If none exist, start at 001. Zero-pad to 3 digits.
+   a. **Determine the next project number**: scan `Exploration/` for existing subdirectories matching `Project_NNN_*` using a Bash listing (`find` or `ls`) — do NOT use the Glob tool, which has returned false negatives on this repo. Take the highest NNN found and add 1. If none exist, start at 001. Zero-pad to 3 digits.
 
    b. **Derive the model abbreviation**: from the research input, identify the core economic model or mechanism (e.g., `BNE`, `PrincipalAgent`, `MatchingSearch`, `SignalGame`, `RoyModel`). Keep it concise (≤20 chars, no spaces — use CamelCase or hyphens). You will refine this abbreviation after Stage 0 if the intake reveals a more precise model family.
 
@@ -477,13 +477,13 @@ For each stage:
 6. Append a structured entry to `logs/stage-log.md`:
    `[STAGE N — Stage Name] <ISO timestamp> | completed`
 7. Update `state.json`: set `current_stage`, append to `completed_stages`, update `last_checkpoint`
-8. If a gate follows: read the gate prompt file, evaluate the output, write gate result to `gates/gate-0N-*.md`.
-   Then append to `logs/stage-log.md`:
-   - On pass: `[GATE Nb — Gate Name] <ISO timestamp> | PASS`
-   - On fail: `[GATE Nb — Gate Name] <ISO timestamp> | FAIL [SEVERITY] — <one-line reason>`
+8. If a gate follows: read the gate prompt file, evaluate the output, write gate result to the matching file under `gates/` (see the Workspace Layout for exact filenames).
+   Then append to `logs/stage-log.md`, where `<id>` is the gate id (1, 1b, 2b, 2c, 2, 3, 4, 4b, or 5):
+   - On pass: `[GATE <id> — Gate Name] <ISO timestamp> | PASS`
+   - On fail: `[GATE <id> — Gate Name] <ISO timestamp> | FAIL [SEVERITY] — <one-line reason>`
    After the researcher decides, append the decision:
-   - `[GATE Nb — Gate Name] <ISO timestamp> | researcher: LOOP BACK TO STAGE X`
-   - `[GATE Nb — Gate Name] <ISO timestamp> | researcher: PROCEED WITH CAVEAT — <note or "no note">`
+   - `[GATE <id> — Gate Name] <ISO timestamp> | researcher: LOOP BACK TO STAGE X`
+   - `[GATE <id> — Gate Name] <ISO timestamp> | researcher: PROCEED WITH CAVEAT — <note or "no note">`
 9. If a HiL follows: present the checkpoint and wait for researcher input. After receiving the response,
    append to `logs/stage-log.md`:
    `[HiL-N — Checkpoint Name] <ISO timestamp> | researcher: <choice> — <notes or "no notes">`
@@ -570,6 +570,7 @@ LLMs hallucinate plausible-sounding but nonexistent papers, especially for appli
 - Output: `outputs/candidate_propositions.md`
 - Inputs: `outputs/model_primitives.md`, `outputs/assumption_audit.md`
 - Gate: **Gate 3** | HiL: **HiL-5**
+- ⚠️ Citations in the "Connection to Prior Literature" sections must be reused from the VERIFIED entries in `literature_positioning.md`. Any NEW citation introduced here requires its own web verification (same rule as Stage 2) before it is written to the file.
 
 ### Stage 7 — Proof Sketch
 - Prompt: `prompts/07-proof-sketch.md`
@@ -625,6 +626,7 @@ Log every decision: `[HiL-N1 — Numerical Simulation Decision] <ts> | researche
 - Output: `outputs/economic_interpretation.md`
 - Inputs: `outputs/candidate_propositions.md`, `outputs/proof_sketches.md`, `outputs/counterexamples_and_edge_cases.md`, `outputs/model_primitives.md`
 - Gate: **Gate 5** | HiL: none → proceed to Stage 10
+- ⚠️ Same citation rule as Stage 6: only VERIFIED citations (from `literature_positioning.md` or freshly web-verified in this session) may appear in `economic_interpretation.md`.
 
 ### Stage 10 — Manuscript Skeleton
 - Prompt: `prompts/10-manuscript-skeleton.md`
@@ -776,14 +778,14 @@ When Stage 10 completes:
 
    e. If pdflatex fails, record `"pdf_generation": "failed"` in `state.json`, print the error lines from the `.log` file, and note what the researcher must fix manually.
 
-3. Print completion summary:
+4. Print completion summary:
 
 ```
 ================================================================
   [COMPLETE] Theoretical Economics Pipeline Finished
 ================================================================
   Workspace: Exploration/Project_NNN_<ModelAbbrev>/
-  Stages completed: 11 (0–10)
+  Stages completed: 13 (0–10 + 2a + 3b) [14 if Stage 7b ran]
   Gate results:
     Gate 1  (Novelty Risk):       [PASS / FAIL+caveat]
     Gate 1b (Reality Fit):        [PASS / REFRAME / FAIL+caveat]

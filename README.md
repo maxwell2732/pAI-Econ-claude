@@ -668,6 +668,7 @@ pAI-Econ-claude/
 │   ├── 00-intake.md
 │   ├── 01-puzzle-refinement.md
 │   ├── 02-literature-positioning.md
+│   ├── 02a-empirical-reality-check.md        # Stage 2a + Gate 1b（现实契合度检查）
 │   ├── 03-persona-council.md
 │   ├── 03b-canonical-model-match.md
 │   ├── 04-model-primitives.md
@@ -691,6 +692,7 @@ pAI-Econ-claude/
 │   ├── academic-econ.latex               # 旧版 PDF 模板（已弃用，现直接写 .tex）
 │   ├── author_style_guide_econ.md
 │   └── author_style_guide_default.md
+├── legacy/                               # 原 pAI/MSc 流水线遗留文件（仅存档，非活跃流程）
 └── Exploration/                          # 所有项目工作区（自动生成，不提交内容）
     └── Project_NNN_<ModelAbbrev>/
 ```
