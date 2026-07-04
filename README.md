@@ -147,6 +147,10 @@ cd pAI-Econ-claude
 
 pAI-Econ-claude 支持不同成熟度的理论想法。你不必每次都跑完整 pipeline，可以根据任务选择合适入口。
 
+### Stata IV 诊断工具
+
+本仓库也包含 [`sigdiag_iv`](tools/stata/sigdiag_iv/)，一个用于检查 IV 结果是否脆弱的 Stata 命令。它会在同一组 IV、first stage 和 reduced form 设定下做 leave-one-unit-out、greedy deletion path 和组合搜索。这个工具不是用来证明应该删样本，而是帮助研究者看清楚：结果是否主要由少数高影响力单位推动。
+
 ### 1. Model Extension Mode：从经典模型出发做机制扩展
 
 当你已经知道大致模型家族，希望加入一个新机制时，可以使用这个模式。

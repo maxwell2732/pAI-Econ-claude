@@ -150,6 +150,15 @@ Open Claude Code in that directory — the slash command is immediately availabl
 
 pAI-Econ-claude supports theoretical ideas at different stages of maturity. You don't need to run the full pipeline every time — choose the entry point that fits your task.
 
+### Stata IV diagnostics
+
+This repository also includes [`sigdiag_iv`](tools/stata/sigdiag_iv/), a small
+Stata command for diagnosing fragile IV estimates. It runs the same IV,
+first-stage, and reduced-form specifications through leave-one-unit-out checks,
+greedy deletion paths, and combination searches. The point is not to justify
+dropping observations, but to see whether a result is being driven by a small set
+of influential units.
+
 ### 1. Model Extension Mode: Extend a Canonical Model with a New Mechanism
 
 Use this mode when you already know the approximate model family and want to add a new mechanism.
