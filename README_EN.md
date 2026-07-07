@@ -39,7 +39,7 @@ Xiaolu Wang (China Agricultural University)
 
 Weilong Zhang (University of Cambridge)
 
-**Last updated:** July 3, 2026 
+**Last updated:** July 7, 2026 
 
 ---
 
@@ -323,6 +323,20 @@ Stage 7 — Proof Sketch (+ Gate 4)
 
 Every parameter is classified (theoretical normalization / empirically grounded / illustrative / user specified), every numerical result carries an epistemic-status label (e.g., `NUMERICALLY VERIFIED FOR SPECIFIED PARAMETERS`, `COUNTEREXAMPLE FOUND`, `NOT A PROOF`), and figures enter the manuscript only if the researcher explicitly selects `USE FIGURES IN MANUSCRIPT` at HiL-N3 (when authorized, the manuscript includes 1–2 demonstration figures in the main text by default; the rest stay in the workspace or Appendix). A numerical counterexample to a core proposition blocks the unmodified proposition from Stage 10 until it is resolved at Stage 8 / HiL-6.
 
+**About Gate 6 — Mathematical Review Gate (added in v1.3.0):**
+
+After `manuscript.tex` is written and before the PDF is compiled, the pipeline runs a mandatory mathematical audit of the full manuscript. The gate was motivated by an observed failure mode: equilibrium equations and first-order conditions wrapped in `proposition` environments and presented as results. Five checks:
+
+- **Statement classification** — every theorem-like environment (definition / assumption / lemma / proposition / corollary / remark) must contain the kind of statement its label claims; equilibrium conditions, FOCs, and identities belong in the model setup and must never carry a Proposition label
+- **Independent re-derivation** — every displayed derivation (FOCs, closed forms, comparative-statics signs) is first re-derived from the model primitives and then compared with the manuscript term by term, so the reviewer's algebra is never anchored by the manuscript's
+- **Notation consistency** — symbols defined before use; no symbol denotes two different objects
+- **Statement–proof match** — the proof's conclusion must be exactly the stated claim, with matching quantifiers (a "for all parameters" claim verified only at a baseline case fails)
+- **Domain and boundary sanity** — division by zero, logarithms of non-positive expressions, missing interiority conditions
+
+Low-level errors (mislabels, algebra slips that change no claim's direction) are corrected directly and back-propagated to the upstream files (`candidate_propositions.md`, `proof_sketches.md`), all logged in the error table of `gates/gate-06-math-review.md`. Substantive errors (a sign contradicted by re-derivation, a proof that fails to establish its claim) pause the pipeline under the standard gate-failure protocol. The PDF cannot be compiled until the gate passes.
+
+Two matching checks were added upstream: Gate 3 now includes a statement-classification test (Check E) at the proposition-generation source, and Gate 4 now includes an independent re-derivation test (Check 7) for the key algebra in proof sketches.
+
 ```mermaid
 flowchart TD
     A["0. Intake<br/>Research Idea"] --> B["1. Puzzle Refinement"]
@@ -340,7 +354,7 @@ flowchart TD
     N1 -- "PLAN ONLY" --> NP["Plan written; pause<br/>(no code executed)"]
     N2 --> J
     J --> K["9. Economic Interpretation"]
-    K --> L["10. Manuscript Skeleton<br/>Markdown + PDF"]
+    K --> L["10. Manuscript Skeleton<br/>Markdown → Gate 6 Math Review → PDF"]
 ```
 
 ---

@@ -35,7 +35,7 @@ Xiaolu Wang / 王晓璐（China Agricultural University）
 
 Weilong Zhang / 章维龙（University of Cambridge）  
 
-**最后更新：** 2026 年 7 月 3 日 
+**最后更新：** 2026 年 7 月 7 日 
 
 ---
 
@@ -324,6 +324,20 @@ Stage 7 — Proof Sketch (+ Gate 4)
 
 每个参数都必须分类（理论归一化 / 有实证依据 / 示例性 / 用户指定）；每个数值结果都必须带认识论标签（如 `NUMERICALLY VERIFIED FOR SPECIFIED PARAMETERS`、`COUNTEREXAMPLE FOUND`、`NOT A PROOF`）；图形只有在用户于 HiL-N3 明确选择 `USE FIGURES IN MANUSCRIPT` 后才能进入论文（授权后默认在正文加入 1–2 张示例图：核心机制/福利图 + 至多一张参数扫描/regime 图，其余图形保留在工作区或附录）。如果数值模拟发现核心命题的反例，原始未修改命题将被禁止进入 Stage 10，直到在 Stage 8 / HiL-6 得到解决。
 
+**关于 Gate 6 — Mathematical Review（数学审查门，v1.3.0 新增）：**
+
+`manuscript.tex` 写完之后、编译 PDF 之前，pipeline 会强制运行一次全文数学审查。这个门的动机来自实际观察到的失误模式：均衡方程、一阶条件被包进 `proposition` 环境，当成研究结果呈现。五项检查：
+
+- **陈述分类** — 每个定理类环境（definition / assumption / lemma / proposition / corollary / remark）的标签必须与内容匹配；均衡条件、FOC、恒等式属于模型设定部分，绝不允许标成 Proposition
+- **独立重推导** — 每条展示推导（FOC、闭式解、比较静态符号）都先从模型原语独立推一遍，再与稿件逐项对照，避免审查者顺着稿件的错误代数往下读
+- **符号一致性** — 符号先定义后使用，一个符号不得指代两个对象
+- **命题与证明匹配** — 证明的结论必须恰好是命题的断言，量词必须对得上（"对所有参数成立"的断言只在基准点验证过即判不合格）
+- **定义域与边界** — 除零、对非正数取对数、缺失内点条件等
+
+低级错误（误标、不改变任何结论方向的代数笔误）直接改正并回写到上游文件（`candidate_propositions.md`、`proof_sketches.md` 等），全部记录在 `gates/gate-06-math-review.md` 的错误表中；实质性错误（重推导得出相反符号、证明未证得所声称的命题）会暂停 pipeline，按标准 gate 失败协议交研究者决定。审查未通过前禁止编译 PDF。
+
+上游同时增加了两道对应检查：Gate 3 新增陈述分类检查（Check E，在命题生成源头拦截误标），Gate 4 新增证明草图关键代数的独立重推导检查（Check 7）。
+
 ```mermaid
 flowchart TD
     A["0. Intake<br/>研究想法摄入"] --> B["1. Puzzle Refinement<br/>研究问题精炼"]
@@ -341,7 +355,7 @@ flowchart TD
     N1 -- "PLAN ONLY" --> NP["仅生成计划并暂停<br/>（不执行代码）"]
     N2 --> J
     J --> K["9. Economic Interpretation<br/>经济学解释"]
-    K --> L["10. Manuscript Skeleton<br/>论文框架 + PDF"]
+    K --> L["10. Manuscript Skeleton<br/>论文框架 → Gate 6 数学审查 → PDF"]
 ```
 
 ---
