@@ -44,6 +44,14 @@ Does the proposition say something that could not be stated without the economic
 - **MATHEMATICAL ONLY:** The result is a pure mathematical statement with no economic interpretation beyond the notation
 - **DEFINITIONAL:** The result follows immediately from the definitions without any non-trivial argument
 
+### Check E — Statement Classification Test
+Apply this check to EVERY labeled statement in candidate_propositions.md (propositions, lemmas, corollaries), including SUPPORTING and EXTENSION items. Is each statement actually the kind of statement its label claims? A proposition makes a substantive falsifiable claim requiring proof: existence, uniqueness, non-obvious characterization, comparative statics, welfare ranking, threshold or regime result.
+- **CORRECT:** the label matches the content
+- **MISLABELED (CHARACTERIZATION):** the statement is an equilibrium condition, a first-order condition, a definition, or an accounting identity. These belong in the model setup (Stage 4 material or the equilibrium definition). Presenting one as a proposition is a classification error; it usually also scores DEFINITIONAL on Check D.
+- **MISLABELED (TYPE):** wrong theorem type: a corollary with no parent result, a lemma that is the intended headline result, a remark dressed as a proposition
+
+If a statement is MISLABELED, the fix is to reclassify it (move it into the model setup or relabel the environment) and then re-count the remaining genuine CORE propositions.
+
 ## Verdict Rules
 
 For the full set of CORE propositions:
@@ -52,14 +60,17 @@ For the full set of CORE propositions:
 - All CORE propositions are NON-TRIVIAL or BORDERLINE on Check A
 - No CORE proposition fails Check C (REFORMULATION) unless explicitly acknowledged
 - All CORE propositions have ECONOMIC CONTENT on Check D
+- All labeled statements are CORRECT on Check E
 
 **CONDITIONAL PASS:**
 - 1 CORE proposition is BORDERLINE on Check A, but the others are NON-TRIVIAL
 - OR: a REFORMULATION is found but the extension is genuinely important
+- OR: a SUPPORTING statement is MISLABELED on Check E, has been reclassified in candidate_propositions.md, and enough genuine CORE propositions remain
 
 **FAIL:**
 - Any CORE proposition is TRIVIAL on Check A
 - OR: Any CORE proposition is REFORMULATION on Check C without acknowledgment
+- OR: Any CORE proposition is MISLABELED (CHARACTERIZATION) on Check E (an equilibrium condition or FOC presented as a core result)
 - OR: The full set of CORE propositions collectively fails to add up to a non-trivial contribution
 
 **Special FAIL — Empty Result Set:**
@@ -77,14 +88,14 @@ Write the gate result to `gates/gate-03-non-triviality.md`:
 **Verdict:** PASS / CONDITIONAL PASS / FAIL
 
 **Per-proposition assessment:**
-| Proposition | Check A | Check B | Check C | Check D | Overall |
-|------------|---------|---------|---------|---------|---------|
-| P_E1 | NON-TRIVIAL/BORDERLINE/TRIVIAL | HARD/SOFT/CIRCULAR | ORIGINAL/EXT/REFORM | ECON/MATH/DEF | OK/FLAG |
-| P_C1 | ... | ... | ... | ... | ... |
-| P_W1 | ... | ... | ... | ... | ... |
+| Proposition | Check A | Check B | Check C | Check D | Check E | Overall |
+|------------|---------|---------|---------|---------|---------|---------|
+| P_E1 | NON-TRIVIAL/BORDERLINE/TRIVIAL | HARD/SOFT/CIRCULAR | ORIGINAL/EXT/REFORM | ECON/MATH/DEF | CORRECT/MISLABELED | OK/FLAG |
+| P_C1 | ... | ... | ... | ... | ... | ... |
+| P_W1 | ... | ... | ... | ... | ... | ... |
 
 **Critical findings:**
-[List any TRIVIAL or REFORMULATION findings with specific details]
+[List any TRIVIAL, REFORMULATION, or MISLABELED findings with specific details]
 
 **Recommended action:**
 [If PASS: "Proceed to HiL-5."]

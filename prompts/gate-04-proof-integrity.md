@@ -18,6 +18,7 @@ This gate does not verify that proofs are complete. Proof sketches are expected 
 2. No proof step contradicts the model's assumptions or the proposition's statement
 3. No proof step relies on an assumption NOT listed in the model
 4. The overall proof strategy is logically coherent (even if incomplete)
+5. The key algebra (FOCs, closed forms, comparative-statics signs) survives an independent re-derivation
 
 ## Evaluation Criteria
 
@@ -58,17 +59,25 @@ For lemmas listed as "needed" in proof_sketches.md: are they plausibly true give
 - **WARNING:** One or more needed lemmas may require additional assumptions
 - **FAIL:** A needed lemma appears to be false or impossible to prove from the stated assumptions
 
+### Check 7 — Independent Re-derivation of Key Algebra
+For each proof sketch, identify the load-bearing displayed equations: first-order conditions, closed-form solutions, comparative-statics signs, threshold formulas. Re-derive each one directly from model_primitives.md and the stated assumptions, WITHOUT consulting the sketch's own algebra (derive first, compare second; reading the sketch's steps first anchors you to its errors). Then compare term by term: signs, coefficients, exponents, subscripts.
+- **PASS:** All re-derivations match the sketch, up to explicitly stated normalizations
+- **WARNING:** A discrepancy exists but traces to a notation or normalization difference; document the reconciliation
+- **FAIL:** A step marked SOLID or PLAUSIBLE yields a different sign, coefficient, or functional form under independent re-derivation
+
 ## Verdict Rules
 
 **PASS:**
 - Check 1: PASS for all propositions
 - Check 4: no FAIL
 - Check 5: PASS for all CORE propositions
-- No more than 2 WARNINGs total on Checks 2, 3, 6
+- Check 7: no FAIL
+- No more than 2 WARNINGs total on Checks 2, 3, 6, 7
 
 **CONDITIONAL PASS:**
 - Check 1 passes for all CORE propositions (may fail for SUPPORTING)
 - Check 5 passes for CORE
+- Check 7: no FAIL on CORE propositions
 - 3–4 WARNINGs total
 
 **FAIL:**
@@ -76,6 +85,7 @@ For lemmas listed as "needed" in proof_sketches.md: are they plausibly true give
 - Check 2 or 3 FAILs for any CORE proposition
 - Check 4 FAILs (FALSE_RISK is the entire argument for a CORE proposition)
 - Check 5 FAILs for any CORE proposition
+- Check 7 FAILs for any CORE proposition (the sketch's algebra contradicts an independent re-derivation)
 
 ---
 
@@ -89,9 +99,9 @@ Write the gate result to `gates/gate-04-proof-integrity.md`:
 **Verdict:** PASS / CONDITIONAL PASS / FAIL
 
 **Per-proposition check summary:**
-| Proposition | Check 1 | Check 2 | Check 3 | Check 4 | Check 5 | Check 6 |
-|------------|---------|---------|---------|---------|---------|---------|
-| P_E1 | ✓/✗ | ✓/⚠️/✗ | ✓/⚠️/✗ | ✓/⚠️/✗ | ✓/⚠️/✗ | ✓/⚠️/✗ |
+| Proposition | Check 1 | Check 2 | Check 3 | Check 4 | Check 5 | Check 6 | Check 7 |
+|------------|---------|---------|---------|---------|---------|---------|---------|
+| P_E1 | ✓/✗ | ✓/⚠️/✗ | ✓/⚠️/✗ | ✓/⚠️/✗ | ✓/⚠️/✗ | ✓/⚠️/✗ | ✓/⚠️/✗ |
 
 **Critical issues (FAILs):**
 [Specific description of any FAIL check with the problematic step]

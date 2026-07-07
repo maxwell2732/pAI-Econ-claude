@@ -4,6 +4,22 @@ All notable changes to **pAI-Econ-claude** are documented here.
 
 ---
 
+## [v1.3.0] — 2026-07-07
+
+### Added
+
+- **Gate 6 — Mathematical Review Gate** (`prompts/gate-06-math-review.md`): a mandatory mathematical audit of `manuscript.tex`, run after the manuscript is written and before pdflatex compiles it. Motivated by observed failures where equilibrium conditions and FOCs were wrapped in `proposition` environments. Five checks: (M1) statement classification against a content-to-environment rubric (equilibrium conditions, FOCs, identities, and definitions must never carry a Proposition label); (M2) independent re-derivation of every displayed derivation, with a derive-first-compare-second protocol so the reviewer's algebra is not anchored by the manuscript's; (M3) notation consistency; (M4) statement–proof match, including quantifier discipline; (M5) domain and boundary sanity. Unlike other gates, Gate 6 corrects TYPO-LEVEL and LOW errors directly and back-propagates the fixes to `manuscript_skeleton.md`, `candidate_propositions.md`, and `proof_sketches.md`; only SUBSTANTIVE errors (a sign or claim contradicted by re-derivation, a proof that fails to establish its statement) pause the pipeline via the standard gate-failure protocol, with recommended loopback to Stage 6 or Stage 7.
+- **Gate 3, new Check E (Statement Classification Test)**: every labeled statement in `candidate_propositions.md` is checked for label–content match at the source, before proof sketching begins. A CORE proposition that is actually an equilibrium condition or FOC forces a gate FAIL; mislabeled SUPPORTING statements are reclassified with a CONDITIONAL PASS.
+- **Gate 4, new Check 7 (Independent Re-derivation of Key Algebra)**: load-bearing displayed equations in each proof sketch (FOCs, closed-form solutions, comparative-statics signs, threshold formulas) are re-derived from `model_primitives.md` without consulting the sketch's own algebra, then compared term by term. A SOLID or PLAUSIBLE step contradicted by the re-derivation forces a gate FAIL for CORE propositions.
+
+### Changed
+
+- `SKILL.md`: banner now reads "9 Quality Gates (+1 optional)"; the pipeline overview, gate table, workspace layout, Stage 10 entry, stage-log gate-id list, completion sequence (new step 3c runs Gate 6 before compilation), and completion summary all include Gate 6. The gate-logic section documents Gate 6's correction exception (objective low-level errors are fixed without a researcher pause).
+- `templates/state.json`: `gate_results` and `gate_retry_counts` now include `gate_6`.
+- `README.md` / `README_EN.md`: Gate 6 added to the quality-gate tables, and `gate-06-math-review.md` added to the workspace and `prompts/` trees; the Gate 4 row now mentions independent re-derivation.
+
+---
+
 ## [v1.2.1] — 2026-07-03
 
 ### Added

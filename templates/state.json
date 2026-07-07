@@ -15,7 +15,8 @@
     "gate_3": null,
     "gate_4": null,
     "gate_4b": null,
-    "gate_5": null
+    "gate_5": null,
+    "gate_6": null
   },
   "human_decisions": {
     "hil_1": null,
@@ -38,7 +39,8 @@
     "gate_3": 0,
     "gate_4": 0,
     "gate_4b": 0,
-    "gate_5": 0
+    "gate_5": 0,
+    "gate_6": 0
   },
   "loopback_history": [],
   "active_propositions": [],

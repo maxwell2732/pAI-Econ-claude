@@ -458,9 +458,10 @@ The Skill includes multiple quality gates to avoid the problem of work that "loo
 | Gate 2c | Theory Lineage | Whether theoretical ancestors, inherited content, and new mechanisms are explicit | Return to canonical model matching |
 | Gate 2 | Model Coherence | Whether model primitives, timing, and information structure are consistent | Return to model primitives |
 | Gate 3 | Non-triviality | Whether propositions are non-trivial, not merely implied by assumptions | Return to assumptions or propositions |
-| Gate 4 | Proof Integrity | Whether proof sketches honestly flag gaps | Return to propositions or proofs |
+| Gate 4 | Proof Integrity | Whether proof sketches honestly flag gaps; whether key algebra (FOCs, closed forms, comparative-statics signs) survives independent re-derivation | Return to propositions or proofs |
 | Gate 4b | Numerical Integrity (optional; only if Stage 7b ran) | Equation–code consistency, reproducibility, parameter transparency, numerical robustness, result completeness, epistemic-status labels | Return to Stage 7b (fix code/parameters) or Stage 6 (revise proposition) |
 | Gate 5 | Economic Meaning | Whether economic interpretation extends beyond formal results | Return to economic interpretation |
+| Gate 6 | Mathematical Review (after manuscript.tex is written, before PDF compilation) | Statement classification (equilibrium conditions and FOCs must never be labeled as Propositions), independent line-by-line re-derivation, notation consistency, statement–proof match, domain and boundary sanity | Low-level errors are corrected in place and back-propagated to upstream files; substantive errors return to propositions (Stage 6) or proofs (Stage 7) |
 
 Gate failures are never hidden or repackaged as passes. The Skill explicitly outputs:
 
@@ -547,7 +548,8 @@ Exploration/
     │   ├── gate-03-non-triviality.md
     │   ├── gate-04-proof-integrity.md
     │   ├── gate-04b-numerical-integrity.md     ← Stage 7b (optional): only if simulation ran
-    │   └── gate-05-economic-meaning.md
+    │   ├── gate-05-economic-meaning.md
+    │   └── gate-06-math-review.md              ← after manuscript.tex, before compilation
     └── logs/
         └── stage-log.md
 ```
@@ -689,7 +691,8 @@ pAI-Econ-claude/
 │   ├── gate-03-non-triviality.md
 │   ├── gate-04-proof-integrity.md
 │   ├── gate-04b-numerical-integrity.md       # Optional Gate 4b (only if Stage 7b ran)
-│   └── gate-05-economic-meaning.md
+│   ├── gate-05-economic-meaning.md
+│   └── gate-06-math-review.md                # Gate 6 Mathematical Review (before PDF compilation)
 ├── templates/
 │   ├── state.json
 │   ├── academic-econ.latex               # Legacy PDF template (deprecated; pipeline now writes .tex directly)

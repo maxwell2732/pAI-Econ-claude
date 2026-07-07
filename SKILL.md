@@ -21,7 +21,7 @@ When this skill is first invoked, print this banner BEFORE anything else (verbat
 ║    intuition → model → propositions → proofs → paper       ║
 ║                                                            ║
 ║    Stages 0–10 + 2a + 3b (+ optional 7b)                   ║
-║    8 Quality Gates (+1 optional) · 6 HiL Stops (+3)        ║
+║    9 Quality Gates (+1 optional) · 6 HiL Stops (+3)        ║
 ║                                                            ║
 ║    Chen Zhu · Xiaolu Wang    China Agricultural Univ.      ║
 ║    Weilong Zhang             University of Cambridge       ║
@@ -121,7 +121,8 @@ Exploration/
     │   ├── gate-03-non-triviality.md            # After Stage 6
     │   ├── gate-04-proof-integrity.md           # After Stage 7
     │   ├── gate-04b-numerical-integrity.md      # After Stage 7b (only if simulation ran)
-    │   └── gate-05-economic-meaning.md          # After Stage 9
+    │   ├── gate-05-economic-meaning.md          # After Stage 9
+    │   └── gate-06-math-review.md               # Stage 10 completion (manuscript.tex written, before PDF)
     └── logs/
         └── stage-log.md                         # Running progress log
 ```
@@ -145,7 +146,7 @@ Exploration/
 | **7b** | **Numerical Simulation (OPTIONAL — user opt-in only)** | numerical_simulation_report.md | **Gate 4b** | **HiL-N2 + HiL-N3** |
 | 8 | Counterexample Finder | counterexamples_and_edge_cases.md | — | **HiL-6** |
 | 9 | Economic Interpretation | economic_interpretation.md | **Gate 5** | — |
-| 10 | Manuscript Skeleton | manuscript_skeleton.md | — | ✓ DONE |
+| 10 | Manuscript Skeleton | manuscript_skeleton.md | **Gate 6** (on manuscript.tex, before pdflatex) | ✓ DONE |
 
 ---
 
@@ -170,7 +171,7 @@ Exploration/
 
 ## Quality Gate Logic
 
-Eight gates protect the pipeline. Each gate runs immediately after its assigned stage. Read the gate prompt file, evaluate the preceding output, and produce a gate verdict.
+Nine gates protect the pipeline. Each gate runs immediately after its assigned stage (Gate 6 runs inside the Completion sequence, after `manuscript.tex` is written and before pdflatex). Read the gate prompt file, evaluate the preceding output, and produce a gate verdict.
 
 **Gate PASS:** continue to the next stage.
 
@@ -202,6 +203,9 @@ Wait for the researcher's explicit decision. If they proceed with caveat, append
 | 4 | Proof Integrity Gate | `prompts/gate-04-proof-integrity.md` | Stage 7 | Stage 6 (revise propositions) |
 | 4b | Numerical Integrity Gate (optional) | `prompts/gate-04b-numerical-integrity.md` | Stage 7b (only if simulation ran) | Stage 7b (fix code/parameters) or Stage 6 (revise proposition) |
 | 5 | Economic Meaning Gate | `prompts/gate-05-economic-meaning.md` | Stage 9 | Stage 9 (deepen interpretation) |
+| 6 | Mathematical Review Gate | `prompts/gate-06-math-review.md` | Stage 10 completion (after `manuscript.tex` is written, before pdflatex) | Stage 6 (proposition wrong as stated) or Stage 7 (proof wrong) |
+
+**Gate 6 correction exception:** Gate 6 checks objective mathematics (statement classification, independent re-derivation, notation, statement–proof match, domain sanity). TYPO-LEVEL and LOW errors (e.g., an equilibrium condition mislabeled as a Proposition, an algebra slip that changes no claim's direction) are fixed directly in `manuscript.tex`, back-propagated to the source outputs, and logged in the gate file WITHOUT pausing for researcher input. Only SUBSTANTIVE errors (a result's sign or content contradicted by independent re-derivation, a proof that fails to establish its claim) trigger the standard gate-failure protocol above. See `prompts/gate-06-math-review.md` for the severity definitions.
 
 ---
 
@@ -477,7 +481,7 @@ For each stage:
    `[STAGE N — Stage Name] <ISO timestamp> | completed`
 7. Update `state.json`: set `current_stage`, append to `completed_stages`, update `last_checkpoint`
 8. If a gate follows: read the gate prompt file, evaluate the output, write gate result to the matching file under `gates/` (see the Workspace Layout for exact filenames).
-   Then append to `logs/stage-log.md`, where `<id>` is the gate id (1, 1b, 2b, 2c, 2, 3, 4, 4b, or 5):
+   Then append to `logs/stage-log.md`, where `<id>` is the gate id (1, 1b, 2b, 2c, 2, 3, 4, 4b, 5, or 6):
    - On pass: `[GATE <id> — Gate Name] <ISO timestamp> | PASS`
    - On fail: `[GATE <id> — Gate Name] <ISO timestamp> | FAIL [SEVERITY] — <one-line reason>`
    After the researcher decides, append the decision:
@@ -632,7 +636,7 @@ Log every decision: `[HiL-N1 — Numerical Simulation Decision] <ts> | researche
 - Prompt: `prompts/10-manuscript-skeleton.md`
 - Output: `outputs/manuscript_skeleton.md`
 - Inputs: ALL prior outputs in `outputs/`
-- Gate: none | HiL: none → **PIPELINE COMPLETE**
+- Gate: **Gate 6** (Mathematical Review — runs during the Completion sequence, after `manuscript.tex` is written and before pdflatex; see Completion step 3c) | HiL: none → **PIPELINE COMPLETE**
 
 **⚠️ Numerical content inclusion rule (applies to the skeleton, `manuscript.tex`, and the PDF).** Numerical results or figures from Stage 7b may enter the manuscript ONLY if the researcher explicitly selected `USE FIGURES IN MANUSCRIPT` (or `APPENDIX ONLY`, for the Appendix) at HiL-N3, AND all of:
 1. code and parameters are saved under `numerical_code/` and `parameter_definitions.md`;
@@ -767,16 +771,24 @@ When Stage 10 completes:
 
    The paper body should contain real academic prose: Introduction, Model (with subsections), Results (Propositions/Lemmas with proofs or proof sketches), Comparative Statics, Welfare, Boundary Cases, Testable Predictions, and a `thebibliography` section. Do NOT write a skeleton outline or include meta-commentary. See `feedback-pdf-style.md` in project memory for the complete style rules.
 
-   c. **Compile** with pdflatex (twice for cross-references):
+   c. **⚠️ GATE 6 — MATHEMATICAL REVIEW GATE (mandatory before compiling).**
+      Read `prompts/gate-06-math-review.md` and review `manuscript.tex` top to bottom:
+      - **Statement classification**: equilibrium conditions, FOCs, definitions, and identities must NOT sit in `proposition`/`lemma`/`corollary` environments; every theorem-like environment must contain the kind of statement its label claims.
+      - **Independent re-derivation**: re-derive every displayed derivation (FOCs, closed forms, comparative-statics signs) from `model_primitives.md` WITHOUT consulting the manuscript's steps, then compare term by term.
+      - **Notation consistency**, **statement–proof match**, and **domain/boundary sanity**.
+
+      Fix TYPO-LEVEL and LOW errors directly and back-propagate the fixes to `manuscript_skeleton.md`, `candidate_propositions.md`, and `proof_sketches.md`. A SUBSTANTIVE error (wrong sign or content under re-derivation, proof that fails to establish its claim) is a gate FAIL: apply the standard gate-failure protocol and do NOT compile. Write the verdict to `gates/gate-06-math-review.md`, log it in `logs/stage-log.md`, and record `gate_results.gate_6` in `state.json`. Compile only on PASS or PASS WITH CORRECTIONS.
+
+   d. **Compile** with pdflatex (twice for cross-references):
    ```
    pdflatex -interaction=nonstopmode <WORKSPACE>/outputs/manuscript.tex
    pdflatex -interaction=nonstopmode <WORKSPACE>/outputs/manuscript.tex
    ```
    Check the `.log` file for lines beginning with `!` (fatal errors). Warnings about rerunning are expected on the first pass and safe to ignore.
 
-   d. If compilation succeeds, confirm `outputs/manuscript.pdf` exists and record `"pdf_generation": "success"` in `state.json`.
+   e. If compilation succeeds, confirm `outputs/manuscript.pdf` exists and record `"pdf_generation": "success"` in `state.json`.
 
-   e. If pdflatex fails, record `"pdf_generation": "failed"` in `state.json`, print the error lines from the `.log` file, and note what the researcher must fix manually.
+   f. If pdflatex fails, record `"pdf_generation": "failed"` in `state.json`, print the error lines from the `.log` file, and note what the researcher must fix manually.
 
 4. Print completion summary:
 
@@ -796,6 +808,7 @@ When Stage 10 completes:
     Gate 4  (Proof Integrity):    [PASS / FAIL+caveat]
     Gate 4b (Numerical Integrity): [PASS / CONDITIONAL / FAIL+caveat / NOT RUN — user skipped 7b]
     Gate 5  (Economic Meaning):   [PASS / FAIL+caveat]
+    Gate 6  (Math Review):        [PASS / PASS WITH CORRECTIONS / FAIL+caveat]
 
   Output files:
     outputs/research_puzzle.md
