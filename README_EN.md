@@ -39,7 +39,7 @@ Xiaolu Wang (China Agricultural University)
 
 Weilong Zhang (University of Cambridge)
 
-**Last updated:** July 7, 2026 
+**Last updated:** July 9, 2026 
 
 ---
 
@@ -524,7 +524,14 @@ The Brutal Skeptic's role is not to support the project but to attack it. If an 
 
 ## Output Structure
 
-All project outputs are stored under `Exploration/`, named with a sequential project number and model abbreviation:
+All project outputs are stored under `Exploration/`, named with a sequential project number and model abbreviation.
+
+As of July 9, 2026, `Exploration/` is listed in `.gitignore`: new project workspaces and generated manuscripts stay local by default and are excluded from commits. To publish a project deliberately, run:
+
+```bash
+git add -f Exploration/Project_NNN_<Name>/
+```
+
 
 ```text
 Exploration/
@@ -713,8 +720,8 @@ pAI-Econ-claude/
 │   ├── author_style_guide_econ.md
 │   └── author_style_guide_default.md
 ├── legacy/                               # Archived pAI/MSc pipeline files (reference only, not active)
-└── Exploration/                          # All project workspaces (auto-generated, contents not committed)
-    └── Project_NNN_<ModelAbbrev>/
+└── Exploration/                          # All project workspaces (auto-generated; gitignored by
+    └── Project_NNN_<ModelAbbrev>/        #   default, publish manually with git add -f)
 ```
 
 ---

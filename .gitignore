@@ -4,6 +4,11 @@ workspace/
 results/
 logs/
 
+# Pipeline project workspaces and generated manuscripts.
+# Ignored by default; upload a project manually with:
+#   git add -f Exploration/Project_NNN_<Name>/
+Exploration/
+
 # Local Claude Code settings (personal overrides, not team-wide)
 .claude/settings.local.json
 
