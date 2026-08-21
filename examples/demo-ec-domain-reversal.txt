@@ -1,0 +1,52 @@
+mode: empirical-companion
+
+Empirical question:
+Does expanding rural broadband coverage raise off-farm labor supply among rural household
+members?
+
+Baseline result:
+Household members in villages that received broadband raise off-farm hours worked by about
+6.4% relative to not-yet-connected villages (staggered rollout, Table 2, significant at 1%).
+
+Proposed mechanism:
+Broadband lowers the cost of finding off-farm work. Job search requires time and effort;
+online listings and messaging platforms reduce the effort cost per contact, which lowers the
+marginal cost of search and raises the equilibrium search intensity. Higher search intensity
+raises the job-finding rate and therefore off-farm hours.
+
+Mechanism test:
+We measure self-reported job-search time and the number of employer contacts per month from
+a supplementary survey module. Both rise after connection, and the rise in off-farm hours is
+concentrated among households that report using online job search (Table 4).
+
+Heterogeneity results:
+The effect is larger for younger household members and for households with at least one
+member who completed middle school. It is near zero for households where all adults have
+primary schooling or less (Table 6).
+
+Key hypotheses to rationalize:
+H1: Broadband access raises off-farm hours worked.
+H2: The effect operates through a lower marginal cost of search — it is larger where search
+    costs fall more.
+H3: The effect is larger for households with higher schooling.
+
+Preferred theoretical tradition, if any:
+A search model with costly search effort and a household labor allocation decision.
+
+Scope exclusions:
+No general equilibrium effects on the local wage. No migration decision. No firm-side
+vacancy posting; treat the arrival rate as a function of search intensity alone. No dynamic
+human capital accumulation.
+
+Declared empirical domain:
+Search cost reductions in the sample correspond to a fall of between 10% and 45% in the
+per-contact effort cost. Off-farm wage premia over farm work are strictly positive for all
+households in the sample. Household members supply strictly positive farm hours, so no
+household is at the corner of full off-farm specialization. Reservation wages lie strictly
+below the off-farm wage.
+
+Note for the pipeline:
+We are aware that in a search model a large enough fall in search cost can raise the
+reservation wage enough to lower accepted-offer rates. Our sample does not contain search
+cost reductions anywhere near that large. Record any such reversal, but do not let a
+boundary case that our data cannot reach take over the theory section.

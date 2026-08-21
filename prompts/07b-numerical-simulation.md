@@ -231,3 +231,55 @@ If simulation ran, append to the end of `numerical_simulation_report.md`:
 ```
 
 Stage 7b does NOT replace Stage 8. Stage 8 must analytically diagnose every numerical failure (coding error / numerical optimization error / parameter issue / assumption failure / claim failure / proposition-domain issue) and decide each affected proposition's fate (retain / weaken / restrict to functional-form class / split into regimes / relabel as illustrative / drop).
+
+---
+
+## Empirical-Companion Mode Addendum
+
+**Applies only when `state.json → mode == "empirical-companion"`.** In `theory-development`
+mode, ignore this section entirely. See `prompts/mode-empirical-companion.md` for the full
+mode contract.
+
+**The user-control rule is unchanged.** Stage 7b never runs without an explicit opt-in at
+HiL-N1, HiL-N2 remains an execution hard stop, and Gate 4b applies whenever code runs. What
+changes is the recommendation the pipeline makes at HiL-N1.
+
+### The three triggers
+
+In this mode, recommend simulation only when at least one of these holds:
+
+1. **An analytical sign is ambiguous.** A target hypothesis is `DERIVED CONDITIONAL` or
+   `NOT DERIVED`, and a parameter sweep would show where in the declared empirical domain
+   the sign holds.
+2. **A heterogeneity result needs its interaction shown.** The cross-partial in H3 is
+   established analytically but is hard to read; a figure over the moderating variable makes
+   the prediction legible next to the empirical subgroup table.
+3. **A numerical illustration aids empirical interpretation.** A calibration to the paper's
+   own sample moments would help a reader connect the model's magnitudes to the estimates.
+
+When none of the three holds, the HiL-N1 presentation states that and recommends NO. Present
+the decision to the researcher regardless — the recommendation is not the decision.
+
+**Never recommend simulation to enrich the theory section.** A model whose propositions are
+proved and whose hypotheses are derived needs no figures in an applied paper.
+
+### If simulation runs
+
+- Restrict the parameter grid to the **declared empirical domain** in `empirical_scope.md`.
+  Sweeping far outside it produces reversals that belong in `scope_notes.md` and that will
+  crowd the manuscript if treated as results.
+- Anchor baseline parameter values to the paper's own sample where possible, and say so in
+  `parameter_definitions.md`. Where no sample counterpart exists, label the value
+  illustrative.
+- The epistemic labeling rules and the prohibited-language list in Stage 10 apply
+  unchanged. In particular, "calibrated" still requires actual calibration to data.
+
+Add to the HiL-N1 presentation:
+
+```markdown
+**Empirical-companion trigger assessment:**
+- Analytical sign ambiguous: YES [which hypothesis] / NO
+- Heterogeneity interaction needs illustration: YES / NO
+- Numerical illustration aids empirical interpretation: YES / NO
+**Recommendation:** [YES / NO], because [trigger, or "no trigger present"]
+```

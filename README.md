@@ -17,6 +17,7 @@
 <p align="center">
   <a href="./README_EN.md">English Version</a> ·
   <a href="#快速开始">快速开始</a> ·
+  <a href="#运行模式">运行模式</a> ·
   <a href="#使用场景">使用场景</a> ·
   <a href="#理论模型库">理论模型库</a> ·
   <a href="#工作流">工作流</a>
@@ -35,7 +36,7 @@ Xiaolu Wang / 王晓璐（China Agricultural University）
 
 Weilong Zhang / 章维龙（University of Cambridge）  
 
-**最后更新：** 2026 年 7 月 9 日 
+**最后更新：** 2026 年 8 月 21 日 
 
 ---
 
@@ -145,9 +146,179 @@ cd pAI-Econ-claude
 
 ---
 
+## 运行模式
+
+pAI-Econ-claude 提供两种理论构建模式，共用同一套典范模型匹配、假设审计、证明完整性检查和人类在环机制。
+
+### 1. Theory Development（默认）
+
+开放式理论开发：拓展参数空间、寻找特殊情形、分析结论反转、增加机制、主动搜索反例，追求较广泛的理论贡献。适合独立理论研究。
+
+不指定模式时运行的就是这个模式，行为与 v1.3.0 完全一致。
+
+### 2. Empirical Companion
+
+> **From empirical results to the smallest theory that can explain them.**
+
+面向实证论文的受约束理论构建模式：锁定研究者已经提出的 empirical story，用最少的 primitives 将其形式化，推出与实证设计一一对应的 hypotheses。
+
+核心原则：
+
+> **Constrain scope, not rigor.**
+
+这个模式缩小理论搜索空间。它不降低证明标准，也不会为了配合回归系数制造结论。
+
+| 维度 | Theory Development | Empirical Companion |
+|---|---|---|
+| 研究问题 | 可以拓宽、重构、一般化 | 锁定研究者的实证问题 |
+| 模型规模 | 理论需要多少就多少 | 能推出目标 hypotheses 的最小连贯模型 |
+| 命题 | 六种必需类型（E/U/C/W/M/B） | 每个 target hypothesis 一条，其余延后 |
+| 反例搜索 | 全参数空间广泛搜索 | 优先检查声明的实证域，域外结果记入 scope notes |
+| 数值模拟 | 按自身价值提供 | 仅在三个特定触发条件下建议 |
+| 新颖性要求 | 模型本身应构成理论贡献 | 模型可以只是实证分析的组织框架 |
+| 额外发现 | 进入主线 | 记入 `scope_notes.md` |
+
+保持不变的部分：典范模型匹配（Stage 3b、Gate 2b/2c）、假设审计（Stage 5）、证明完整性（Gate 4）、反例检验（Stage 8）、数学审查（Gate 6）、引用核验规则，以及全部人类在环停点。
+
+### 调用方式
+
+```text
+/mode empirical-companion
+
+我的实证论文发现：
+
+Baseline:
+政策 X 显著提高 Y。
+
+Mechanism:
+X 通过降低融资约束 M 影响 Y。
+
+Heterogeneity:
+效果主要集中在初始融资约束较高的企业。
+
+请构建一个最小理论模型，为 baseline、mechanism 和 heterogeneity results
+分别推出对应 hypotheses。
+```
+
+等价写法：
+
+```text
+/mode empirical-companion --task path/to/empirical-brief.txt
+
+/theoretical-economics-claude-skill "
+mode: empirical-companion
+...
+"
+```
+
+### Empirical Companion 工作流
+
+```text
+Empirical scope lock
+        ↓
+Canonical matching
+        ↓
+Minimal model
+        ↓
+Empirical–theory mapping
+        ↓
+Propositions
+        ↓
+Proof / consistency check
+        ↓
+Empirical Alignment Gate
+        ↓
+Theory section
+```
+
+Stage 0-EC 会解析以下字段并写入 `outputs/empirical_scope.md`（scope contract）：
+
+```text
+Empirical question:
+Baseline result:
+Proposed mechanism:
+Mechanism test:
+Heterogeneity results:
+Key hypotheses to rationalize:
+Preferred theoretical tradition, if any:
+Scope exclusions:
+```
+
+前三项中的 empirical question、baseline result 和 key hypotheses 为必填。缺失字段最多追问三个问题，且合并在一条消息中。
+
+### 该模式独有的产出
+
+| 文件 | 生成阶段 | 内容 |
+|---|---|---|
+| `outputs/empirical_scope.md` | Stage 0-EC | scope contract，后续所有阶段在其范围内工作 |
+| `outputs/minimality_check.md` | Stage 4／6 | 每个模型元素对应的实证功能；无实证角色的元素直接删除 |
+| `outputs/empirical_theory_map.md` | Stage 4／6 | empirical result → mechanism → primitive → proposition → hypothesis |
+| `outputs/scope_notes.md` | Stage 4–8 | 域外反转、边界情形、替代机制、可能扩展、额外命题 |
+| `gates/gate-ec-empirical-alignment.md` | Stage 6 之后 | Gate EC 判定 |
+
+`scope_notes.md` 中的内容仍然被检查和记录，默认不进入主线命题、hypotheses 和正文。仅在三种情况下可以进入正文：推翻某个 target hypothesis、对识别有关键影响、研究者明确要求。
+
+### Gate EC — Empirical–Theory Alignment
+
+在 Stage 6 和 Gate 3 之后、HiL-5 之前运行，共六项检查：
+
+| 检查 | 内容 |
+|---|---|
+| EC1 | 每个主要 proposition 是否对应至少一个 empirical result |
+| EC2 | 每个 target hypothesis 是否能从模型推出 |
+| EC3 | 是否存在未服务于实证分析的额外机制 |
+| EC4 | 模型是否引入超出实证论文所需的假设 |
+| EC5 | heterogeneity proposition 是否对应实证的 interaction／subgroup 分析 |
+| EC6 | mechanism proposition 与 mechanism test 测量的是否是同一个经济对象 |
+
+判定沿用 pipeline 标准词汇 PASS / CONDITIONAL PASS / FAIL。EC6 是唯一不可降级的检查：如果论文声称某个实证结果检验机制 M，而模型中的 M 是另一个 latent object，该门必须 FAIL。
+
+### 严谨性约束
+
+**目标 hypothesis 只是待推导的靶子。** 如果研究者期望 `X 提高 Y`，而模型只能推出 `符号取决于参数取值`，系统会如实报告，并给出最小充分条件：
+
+```text
+TARGET HYPOTHESIS NOT DERIVED — H2
+
+What the model actually yields: sign depends on theta
+Minimal sufficient condition:   theta > theta*
+Economic meaning:               ...
+Support:                        EMPIRICAL / THEORETICAL / NONE FOUND
+
+  ACCEPT CONDITIONAL   ADD ASSUMPTION   REVISE EMPIRICS
+```
+
+由研究者决定采纳哪一条。系统不会自行采纳该条件继续推进。
+
+**No assumption laundering.** 系统不能通过悄悄增加单调性、凸性、single-crossing、参数范围、函数形式或分布假设来制造与回归方向一致的结果。scope lock 之后引入的任何假设都会在 `assumption_audit.md` 中标记为 `ADDED-FOR-TARGET`，必须给出独立于目标结论的经济学理由，并接受 Gate EC 检查。
+
+### 论文输出
+
+Stage 10 产出适合实证论文的理论章节：
+
+```text
+3. Conceptual Framework
+
+3.1 Economic Environment
+3.2 Model
+3.3 Predictions
+
+Hypothesis 1: Baseline effect
+Hypothesis 2: Mechanism
+Hypothesis 3: Heterogeneity
+```
+
+目标长度 3–5 页，证明放入附录，不生成边界情形专节，实证论文未提出福利主张时不生成福利分析。
+
+完整说明见 `docs/mode-empirical-companion.md`；pipeline 实际执行的规范见 `prompts/mode-empirical-companion.md`。
+
+---
+
 ## 使用场景
 
 pAI-Econ-claude 支持不同成熟度的理论想法。你不必每次都跑完整 pipeline，可以根据任务选择合适入口。
+
+下面五个入口都在默认的 **Theory Development** 模式下运行。实证论文的理论章节请使用上一节的 **Empirical Companion** 模式。
 
 ### 1. Model Extension Mode：从经典模型出发做机制扩展
 
@@ -324,6 +495,10 @@ Stage 7 — Proof Sketch (+ Gate 4)
 
 每个参数都必须分类（理论归一化 / 有实证依据 / 示例性 / 用户指定）；每个数值结果都必须带认识论标签（如 `NUMERICALLY VERIFIED FOR SPECIFIED PARAMETERS`、`COUNTEREXAMPLE FOUND`、`NOT A PROOF`）；图形只有在用户于 HiL-N3 明确选择 `USE FIGURES IN MANUSCRIPT` 后才能进入论文（授权后默认在正文加入 1–2 张示例图：核心机制/福利图 + 至多一张参数扫描/regime 图，其余图形保留在工作区或附录）。如果数值模拟发现核心命题的反例，原始未修改命题将被禁止进入 Stage 10，直到在 Stage 8 / HiL-6 得到解决。
 
+**关于两种运行模式（v1.4.0 新增）：**
+
+pipeline 支持两种理论构建模式，共用同一套典范模型匹配、假设审计和证明完整性检查。默认的 **Theory Development** 模式行为与既往版本一致。**Empirical Companion** 模式面向实证论文：Stage 0 之后先执行 Stage 0-EC 锁定实证范围，Stage 4 启用 Minimal Model Principle，Stage 6 之后加入 Gate EC 检查实证与理论的对应关系，HiL-5 改为 EMPIRICAL COMPANION CHECKPOINT。上图中的 Stage 0-EC 与 Gate EC 仅在该模式下运行。详见上文的 [运行模式](#运行模式) 一节。
+
 **关于 Gate 6 — Mathematical Review（数学审查门，v1.3.0 新增）：**
 
 `manuscript.tex` 写完之后、编译 PDF 之前，pipeline 会强制运行一次全文数学审查。这个门的动机来自实际观察到的失误模式：均衡方程、一阶条件被包进 `proposition` 环境，当成研究结果呈现。五项检查：
@@ -340,7 +515,8 @@ Stage 7 — Proof Sketch (+ Gate 4)
 
 ```mermaid
 flowchart TD
-    A["0. Intake<br/>研究想法摄入"] --> B["1. Puzzle Refinement<br/>研究问题精炼"]
+    A["0. Intake<br/>研究想法摄入"] --> A2["0-EC. Empirical Scope Lock<br/>实证范围锁定<br/>（仅 empirical-companion 模式）"]
+    A2 --> B["1. Puzzle Refinement<br/>研究问题精炼"]
     B --> C["2. Literature Positioning<br/>文献定位与检索计划"]
     C --> C2["2a. Empirical Reality Check<br/>现实背景校验（Gate 1b）"]
     C2 --> D["3. Persona Council<br/>理论评审委员会"]
@@ -348,7 +524,8 @@ flowchart TD
     E --> F["4. Model Primitives<br/>模型原语"]
     F --> G["5. Assumption Audit<br/>假设审计"]
     G --> H["6. Proposition Generator<br/>候选命题"]
-    H --> I["7. Proof Sketch<br/>证明草图"]
+    H --> HE{"Gate EC<br/>实证—理论对齐<br/>（仅 empirical-companion 模式）"}
+    HE --> I["7. Proof Sketch<br/>证明草图"]
     I --> N1{"HiL-N1<br/>是否数值模拟？"}
     N1 -- "NO（默认路径）" --> J["8. Counterexample Finder<br/>反例与边界检查"]
     N1 -- "YES / CUSTOM" --> N2["7b. Numerical Simulation<br/>计划 → 用户批准 → 代码<br/>CSV + PNG/PDF 图形<br/>（Gate 4b）"]
@@ -365,14 +542,15 @@ flowchart TD
 | 阶段 | 名称 | 主要产出 |
 |---|---|---|
 | 0 | Intake | `research_intake.md` |
+| **0-EC** | **Empirical Scope Lock**（仅 empirical-companion 模式） | `empirical_scope.md` |
 | 1 | Puzzle Refinement | `research_puzzle.md` |
 | 2 | Literature Positioning | `literature_positioning.md` |
 | 2a | Empirical Reality Check | `empirical_reality_check.md` |
 | 3 | Theory Persona Council | `persona_council.md` |
 | 3b | Canonical Model Matching | `canonical_model_match.md` |
-| 4 | Model Primitives | `model_primitives.md` |
+| 4 | Model Primitives | `model_primitives.md`（+ empirical-companion 模式下的 `minimality_check.md`、`empirical_theory_map.md`） |
 | 5 | Assumption Audit | `assumption_audit.md` |
-| 6 | Proposition Generator | `candidate_propositions.md` |
+| 6 | Proposition Generator | `candidate_propositions.md`（+ empirical-companion 模式下的 `scope_notes.md`、完成后的 `empirical_theory_map.md`） |
 | 7 | Proof Sketch | `proof_sketches.md` |
 | **7b** | **Numerical Simulation（可选，须用户明确选择）** | `numerical_simulation_report.md` + `numerical_code/` + `numerical_results/` + `numerical_figures/`（PNG + PDF） |
 | 8 | Counterexample Finder | `counterexamples_and_edge_cases.md` |
@@ -477,6 +655,7 @@ Skill 内置多个质量门，用来避免"看起来像理论，其实没有理�
 | Gate 4b | Numerical Integrity（可选；仅当 Stage 7b 运行后） | 公式—代码一致性、可复现性、参数透明度、数值稳健性、结果完整性、认识论标签 | 回到 Stage 7b（修代码/参数）或 Stage 6（修改命题） |
 | Gate 5 | Economic Meaning | 经济解释是否超过形式结果 | 回到经济学解释 |
 | Gate 6 | Mathematical Review（manuscript.tex 写完后、编译 PDF 前） | 陈述分类是否正确（均衡条件、FOC 不得标成 Proposition）、逐条独立重推导、符号一致性、证明与命题是否匹配、定义域与边界情形 | 低级错误直接改正并回写到上游文件；实质性错误回到命题（Stage 6）或证明（Stage 7） |
+| Gate EC | Empirical–Theory Alignment（仅 empirical-companion 模式；Stage 6 与 Gate 3 之后） | 命题是否都对应实证结果、target hypotheses 是否都能推出、是否存在多余机制、假设是否超出实证论文所需、heterogeneity 命题是否对应实证 interaction、mechanism 命题与 mechanism test 是否测量同一对象 | 回到命题（EC1/EC2/EC5）、模型原语（EC3/EC4）或典范模型匹配（EC6） |
 
 Gate 失败不会被自动隐藏，也不会被包装成通过。Skill 会明确输出：
 
@@ -497,7 +676,7 @@ Gate 失败不会被自动隐藏，也不会被包装成通过。Skill 会明确
 | HiL-2 | Literature Positioning 后 | 是否接受文献定位 |
 | HiL-3 | Persona Council 后 | 是否接受理论评审结论 |
 | HiL-4 | Model Primitives 后 | 确认均衡概念；这是硬停点 |
-| HiL-5 | Proposition Generator 后 | 选择哪些命题进入后续分析 |
+| HiL-5 | Proposition Generator 后 | 选择哪些命题进入后续分析；在 empirical-companion 模式下改为 EMPIRICAL COMPANION CHECKPOINT，展示 empirical result → model mechanism → proposition → hypothesis 的对应关系，选项为 APPROVE / EDIT / RETURN TO MODEL |
 | HiL-N1 | Proof Sketch 后 | 是否进行数值模拟（YES / NO / PLAN ONLY / CUSTOM）——Stage 7b 绝不默认运行 |
 | HiL-N2 | 数值模拟计划生成后 | 批准模拟计划与参数设计——未批准前禁止执行任何代码 |
 | HiL-N3 | 模拟执行 + Gate 4b 后 | 接受/修改数值结果；决定图形是否允许进入论文 |
@@ -542,13 +721,17 @@ Exploration/
     │   └── hypothesis.md
     ├── outputs/
     │   ├── research_intake.md
+    │   ├── empirical_scope.md                 ← Stage 0-EC：仅 empirical-companion 模式
     │   ├── research_puzzle.md
     │   ├── literature_positioning.md
     │   ├── persona_council.md
     │   ├── canonical_model_match.md
     │   ├── model_primitives.md
+    │   ├── minimality_check.md                ← Stage 4/6：仅 empirical-companion 模式
+    │   ├── empirical_theory_map.md            ← Stage 4/6：仅 empirical-companion 模式
     │   ├── assumption_audit.md
     │   ├── candidate_propositions.md
+    │   ├── scope_notes.md                     ← Stage 4–8：仅 empirical-companion 模式
     │   ├── proof_sketches.md
     │   ├── numerical_simulation_decision.md   ← Stage 7b（可选）：HiL-N1 决策记录
     │   ├── numerical_simulation_plan.md       ← Stage 7b（可选）：PLAN ONLY / CUSTOM / YES
@@ -571,7 +754,8 @@ Exploration/
     │   ├── gate-04-proof-integrity.md
     │   ├── gate-04b-numerical-integrity.md    ← Stage 7b（可选）：仅当模拟运行后
     │   ├── gate-05-economic-meaning.md
-    │   └── gate-06-math-review.md             ← manuscript.tex 写完后、编译前
+    │   ├── gate-06-math-review.md             ← manuscript.tex 写完后、编译前
+    │   └── gate-ec-empirical-alignment.md     ← Stage 6 之后：仅 empirical-companion 模式
     └── logs/
         └── stage-log.md
 ```
@@ -643,7 +827,8 @@ pAI-Econ-claude/
 ├── LICENSE
 ├── .claude/
 │   └── commands/
-│       └── theoretical-economics-claude-skill.md  # slash command 入口
+│       ├── theoretical-economics-claude-skill.md  # slash command 入口（默认模式）
+│       └── mode.md                                # /mode <模式名> 入口
 ├── model_library/                        # 理论经济学典范模型库（仅结构模型）
 │   ├── consumer-choice.md
 │   ├── indirect-utility-expenditure-minimization.md
@@ -692,6 +877,9 @@ pAI-Econ-claude/
 │       ├── human-capital-adaptation-automation-ai.md
 │       └── directed-technical-change-sbtc.md
 ├── prompts/
+│   ├── mode-empirical-companion.md            # empirical-companion 模式契约
+│   ├── ec-00-empirical-scope-lock.md          # Stage 0-EC（仅 empirical-companion 模式）
+│   ├── ec-empirical-theory-map.md             # 实证—理论映射与 minimality check
 │   ├── 00-intake.md
 │   ├── 01-puzzle-refinement.md
 │   ├── 02-literature-positioning.md
@@ -714,7 +902,20 @@ pAI-Econ-claude/
 │   ├── gate-04-proof-integrity.md
 │   ├── gate-04b-numerical-integrity.md       # 可选 Gate 4b（仅当 Stage 7b 运行后）
 │   ├── gate-05-economic-meaning.md
-│   └── gate-06-math-review.md                # Gate 6 数学审查（编译 PDF 前）
+│   ├── gate-06-math-review.md                # Gate 6 数学审查（编译 PDF 前）
+│   └── gate-ec-empirical-alignment.md        # Gate EC（仅 empirical-companion 模式）
+├── docs/
+│   ├── persona-council.md                # Stage 3 说明
+│   ├── mode-empirical-companion.md       # empirical-companion 模式说明
+│   ├── mode-empirical-companion-tests.md # 该模式的三项验证测试
+│   └── issue-001-pilot-feedback.md       # 试用反馈记录
+├── examples/                             # 可用 --task 直接载入的示例输入
+│   ├── quickstart-task.txt
+│   ├── demo-human-capital-ai-automation.txt
+│   ├── demo-nutrition-label-attention.txt
+│   ├── demo-ec-clean-companion.txt       # Test EC1 fixture
+│   ├── demo-ec-impossible-hypothesis.txt # Test EC2 fixture
+│   └── demo-ec-domain-reversal.txt       # Test EC3 fixture
 ├── templates/
 │   ├── state.json
 │   ├── academic-econ.latex               # 旧版 PDF 模板（已弃用，现直接写 .tex）
@@ -766,6 +967,9 @@ pAI-Econ-claude/
 2. Edit prompt files, model_library, or SKILL.md routing logic
 3. Test on a research hypothesis end-to-end
 4. Submit a PR describing what changed and why
+
+若改动涉及 empirical-companion 模式，请同时跑通 `docs/mode-empirical-companion-tests.md` 中的
+Test BC（向后兼容）、Test RT（模式路由）和 Test EC1–EC3，并把结果记入该文件末尾的表格。
 ```
 
 ---

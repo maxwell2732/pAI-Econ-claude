@@ -102,3 +102,52 @@ Write the gate result to `gates/gate-03-non-triviality.md`:
 [If CONDITIONAL PASS: "Proceed to HiL-5; note that [proposition] should be strengthened or more carefully distinguished from [known result]."]
 [If FAIL: "Return to Stage 5 (Assumption Audit) to tighten model assumptions, or to Stage 4 to revise the model structure to generate more non-trivial implications. Specific issue: [description]."]
 ```
+
+---
+
+## Empirical-Companion Mode Addendum
+
+**Applies only when `state.json → mode == "empirical-companion"`.** In `theory-development`
+mode, ignore this section entirely. See `prompts/mode-empirical-companion.md` for the full
+mode contract.
+
+Checks A through E all still run, and **Check E (Statement Classification) binds at full
+strength**. An equilibrium condition or a first-order condition dressed as a Proposition is
+a classification error in every mode.
+
+Two calibrations for this mode:
+
+**1. Check C (Pure Reformulation) — acknowledged reuse passes.** A proposition that applies
+a known canonical result to this paper's setting scores EXTENSION rather than REFORMULATION
+when the lineage is disclosed in `canonical_model_match.md` and the manuscript attributes
+it. Silent reformulation still fails.
+
+**2. Check A (Pre-Model Answer Test) — the bar is what the model rules out.** In this mode a
+proposition earns its place by making the researcher's mechanism *precise and falsifiable*,
+not by surprising a theorist. Score NON-TRIVIAL when the proposition:
+
+- pins down a sign or a condition an informal argument leaves open, or
+- shows that the mechanism generates the heterogeneity pattern, which an informal argument
+  cannot establish, or
+- rules out a competing prediction the informal mechanism would also permit.
+
+Score TRIVIAL when the proposition restates the researcher's verbal mechanism with symbols
+and adds nothing an informal argument did not already give. That failure is real in this
+mode and should be reported: a theory section of restated intuitions gives an applied
+referee nothing.
+
+**The verdict arithmetic is unchanged.** The empty-CORE-set failure, the mislabeled-statement
+failure, and the trivial-CORE-proposition failure all stand.
+
+**What does not fail here:** a low novelty rating alone. A CORE proposition that is
+non-trivial, correctly labeled, and does real work does not fail Gate 3 because a theorist
+would find the model familiar.
+
+Add to the gate output:
+
+```markdown
+**Mode:** empirical-companion
+**Per-proposition empirical role:** [P_id → baseline / mechanism / heterogeneity]
+**Restated-intuition check:** [any CORE proposition that only symbolizes the verbal
+mechanism, or "none"]
+```

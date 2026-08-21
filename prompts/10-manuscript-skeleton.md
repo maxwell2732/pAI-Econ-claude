@@ -349,3 +349,89 @@ For each proposition: proof title, proof structure hint, supporting lemmas.
 - [ ] Address remaining GAP and FALSE_RISK steps from Stage 7
 - [ ] Verify counterexample fixes from Stage 8 are reflected in propositions
 ```
+
+---
+
+## Empirical-Companion Mode Addendum
+
+**Applies only when `state.json → mode == "empirical-companion"`.** In `theory-development`
+mode, ignore this section entirely. See `prompts/mode-empirical-companion.md` for the full
+mode contract.
+
+Additional inputs: `outputs/empirical_scope.md`, `outputs/empirical_theory_map.md`,
+`outputs/minimality_check.md`, `outputs/scope_notes.md`.
+
+The deliverable is a **theory section for an applied empirical paper**, not a standalone
+theory paper. It slots into an existing manuscript between the institutional background and
+the empirical strategy.
+
+### Section structure
+
+Replace the "2. Model / 3. Main Results / 4. Discussion" structure with:
+
+```
+3. Conceptual Framework
+
+3.1 Economic Environment
+    Agents, timing, and the decision problem. Prose-first; the reader is an applied
+    economist, not a theorist.
+
+3.2 Model
+    Primitives, the objective, the equilibrium concept, and the assumptions. Propositions
+    appear here with proofs in an appendix.
+
+3.3 Predictions
+    One numbered Hypothesis per target hypothesis, each stated as a displayed claim about
+    observables, each with a one-line pointer to the proposition that delivers it.
+```
+
+Number the section 3 by default, since a conceptual framework typically follows the
+introduction and the setting. Say in the skeleton that the number is adjustable.
+
+### The Predictions subsection
+
+Generate it directly from `empirical_theory_map.md`, one Hypothesis per row, in the map's
+order:
+
+```latex
+\begin{hypothesis}[Baseline]
+[The claim about observables, in the researcher's variables.]
+\end{hypothesis}
+\noindent\textit{Follows from Proposition 1.}
+```
+
+Each hypothesis must be readable by someone who skipped the model, and each must correspond
+to a coefficient in the empirical section. The mapping table is the contract: a reader
+should be able to place the theory section and the results tables side by side and match
+them row for row.
+
+A hypothesis that Stage 7 recorded as `DERIVED CONDITIONAL` is stated with its condition
+visible in the hypothesis text. Do not move the condition to a footnote.
+
+### Length and content discipline
+
+- **Target 3–5 pages** for the whole conceptual framework. An applied referee reads it to
+  understand the mechanism, then moves on.
+- **Proofs go to an appendix.** The main text carries statements and one-sentence intuitions.
+- **`scope_notes.md` stays out of the main text** unless an entry carries one of the three
+  promotion triggers (overturns a target hypothesis, affects identification, researcher
+  request). Entries that do not qualify may appear as a single sentence in the limitations
+  discussion at most.
+- **No boundary-case section.** Limit and corner results enter only where they bear on the
+  empirical design.
+- **No welfare section** unless the empirical paper makes a welfare or policy claim.
+- **Do not restate the empirical results** in the theory section. It states predictions; the
+  results section reports what was found.
+
+### The abstract and introduction
+
+The paper's contribution is empirical. Draft the abstract and introduction paragraphs so the
+model is described as what it is — an organizing framework that generates the tested
+hypotheses — and so the empirical finding leads. The eight-paragraph introduction outline
+above is reduced to a single paragraph describing the framework's role, for insertion into
+the researcher's existing introduction.
+
+### Everything else is unchanged
+
+The style rules, the numerical content inclusion rule, the citation verification
+requirement, the blocked-propositions rule, and Gate 6 all apply exactly as specified above.

@@ -1,0 +1,48 @@
+mode: empirical-companion
+
+Empirical question:
+Does mandatory disclosure of restaurant hygiene grades raise average hygiene quality?
+
+Baseline result:
+After a city introduced mandatory posting of letter grades in restaurant windows, average
+inspection scores rose by 4.2 points on a 100-point scale (event study around the mandate
+date, Table 3, significant at 1%).
+
+Proposed mechanism:
+Disclosure makes hygiene observable to consumers before they choose a restaurant. When
+quality is unobservable, a restaurant captures none of the demand return to investing in
+hygiene, so it invests only up to what inspection penalties compel. Making quality
+observable gives the restaurant a demand-side return to hygiene investment, so investment
+rises.
+
+Mechanism test:
+We interact the mandate with a measure of pre-period consumer search intensity in the
+neighborhood (mobile-location data on how many restaurants a diner visits before choosing).
+The effect is larger where search intensity is higher (Table 5).
+
+Heterogeneity results:
+The effect is larger for restaurants in the middle of the pre-period quality distribution
+and near zero for restaurants at the top and at the bottom (Table 6).
+
+Key hypotheses to rationalize:
+H1: Mandatory disclosure raises every restaurant's hygiene investment.
+H2: The effect is larger where consumers search more.
+H3: The effect is largest for mid-quality restaurants.
+
+Preferred theoretical tradition, if any:
+A vertical product differentiation model with unobservable quality and a disclosure
+mandate — something in the Shapiro / Milgrom quality-disclosure tradition.
+
+Scope exclusions:
+No entry or exit of restaurants. No consumer learning over time; treat the disclosure
+as a one-shot change in the information structure. No inspector behavior; the grading
+technology is exogenous and truthful.
+
+Declared empirical domain:
+Restaurants with pre-period inspection scores between 60 and 95. Consumer search intensity
+between 1 and 6 restaurants considered per decision. All restaurants remain active
+throughout the sample.
+
+Note for the pipeline:
+H1 as stated is a claim about EVERY restaurant. We expect the model to deliver it. If it
+cannot, we want to know that before we write the theory section.

@@ -114,3 +114,59 @@ Write the gate result to `gates/gate-04-proof-integrity.md`:
 [If CONDITIONAL PASS: "Proceed to Stage 8; the following proof steps require attention before formalization: [list]."]
 [If FAIL: "Return to Stage 6 (Proposition Generator) to revise the proposition statement, or provide a corrected proof strategy. Specific issue: [description]."]
 ```
+
+---
+
+## Empirical-Companion Mode Addendum
+
+**Applies only when `state.json → mode == "empirical-companion"`.** In `theory-development`
+mode, ignore this section entirely. See `prompts/mode-empirical-companion.md` for the full
+mode contract.
+
+Additional inputs: `outputs/empirical_scope.md`, `outputs/empirical_theory_map.md`.
+
+Checks 1 through 7 all run unchanged, including the independent re-derivation in Check 7.
+This mode adds one check.
+
+### Check EC-D — Target hypothesis derivation
+
+For each target hypothesis in `empirical_scope.md`: given the assumptions actually in force,
+does the model establish the hypothesis?
+
+Verify Stage 7's own verdict rather than accepting it. Re-derive the key sign from
+`model_primitives.md` and the assumption set, then compare.
+
+- **PASS:** every target hypothesis is `DERIVED`, or `DERIVED CONDITIONAL` on a condition
+  that is in the assumption set and audited
+- **WARNING:** a hypothesis is `NOT DERIVED`, Stage 7 emitted a complete
+  `TARGET HYPOTHESIS NOT DERIVED` block, and the researcher's decision is still pending
+- **FAIL:** a hypothesis is asserted as derived when the re-derivation does not support it;
+  or a hypothesis is `NOT DERIVED` with no `TARGET HYPOTHESIS NOT DERIVED` record; or the
+  sketch closes the gap with an assumption that does not appear in `assumption_audit.md`
+
+The third failure mode is assumption laundering caught at the proof stage. A sketch that
+introduces convexity, monotonicity, a parameter restriction, or a functional form in order
+to sign a derivative, without that restriction appearing in the audited assumption set, is a
+FAIL regardless of how reasonable the restriction is. The fix is to return to Stage 5 and
+audit it, not to keep it in the proof.
+
+### Verdict rule additions
+
+- **FAIL** if Check EC-D FAILs for any target hypothesis.
+- A Check EC-D WARNING counts toward the WARNING total in the standard arithmetic and does
+  not by itself prevent a CONDITIONAL PASS. The pipeline reported honestly and is awaiting a
+  researcher decision; that is the intended behavior, not a defect.
+
+Add to the gate output:
+
+```markdown
+**Mode:** empirical-companion
+
+**Check EC-D — Target hypothesis derivation:**
+
+| Hypothesis | Proposition | Stage 7 verdict | Re-derivation agrees? | Result |
+|------------|-------------|-----------------|----------------------|--------|
+| H1 | P_C1 | DERIVED | yes / no | ✓/⚠️/✗ |
+
+**Assumptions used in proofs but absent from assumption_audit.md:** [list, or "none"]
+```

@@ -226,3 +226,75 @@ The following claims are OUT OF SCOPE for this model and should not be made:
 - [Optional additional result or extension]
 - [Optional additional result or extension]
 ```
+
+---
+
+## Empirical-Companion Mode Addendum
+
+**Applies only when `state.json → mode == "empirical-companion"`.** In `theory-development`
+mode, ignore this section entirely. See `prompts/mode-empirical-companion.md` for the full
+mode contract.
+
+Additional inputs: `outputs/empirical_scope.md`, `outputs/empirical_theory_map.md`,
+`outputs/minimality_check.md`, `prompts/ec-empirical-theory-map.md`.
+
+### The required proposition types are relaxed
+
+The "Required Proposition Types" section above (Types E, U, C, W, M, B) does not apply in
+this mode. Generating one proposition per type produces a theory paper the researcher did
+not ask for.
+
+**Default output: one CORE proposition per target hypothesis in `empirical_scope.md`.**
+
+| Target | Typical proposition form |
+|--------|--------------------------|
+| Baseline (H1) | A comparative static: the sign of the equilibrium response to the treatment variable |
+| Mechanism (H2) | A cross-partial or a characterization of the channel: how the response varies with the mechanism parameter |
+| Heterogeneity (H3) | An interaction or a comparison across the moderating variable the empirical analysis splits on |
+
+Existence and uniqueness are stated **only when a target hypothesis depends on them**. A
+single existence lemma establishing that the equilibrium being differentiated is well
+defined is usually sufficient, and belongs in the model section as a lemma rather than
+appearing as a headline proposition.
+
+Welfare propositions are generated only when the empirical paper makes a welfare or policy
+claim. If it does not, welfare goes to `scope_notes.md`.
+
+### Everything else goes to `scope_notes.md`
+
+The model will support results the paper does not need. Record them, do not develop them.
+Append to `outputs/scope_notes.md` using the entry format in
+`prompts/mode-empirical-companion.md`: additional propositions, boundary and limit results,
+welfare characterizations, alternative equilibrium selections, and comparative statics with
+respect to parameters the empirical design does not vary.
+
+Each entry is stated precisely enough that a later reader can pick it up. Deferring is not
+discarding.
+
+### Steps that still apply
+
+Steps 1–4 above apply unchanged: state each proposition precisely with all quantifiers,
+label the assumptions it requires, name the expected proof technique, rate difficulty and
+novelty, assign an ID, and state what the proposition set CANNOT say.
+
+Step 5 (is the set sufficient for a publishable contribution?) is answered against the
+empirical paper: does the set deliver every target hypothesis? A set that delivers H1–H3 and
+nothing else is complete in this mode.
+
+Proposition IDs keep the existing convention (P_C1, P_E1, …) and the map records which
+hypothesis each serves.
+
+### Required additional output
+
+Complete `outputs/empirical_theory_map.md` per `prompts/ec-empirical-theory-map.md`: fill
+the proposition and hypothesis columns, write out the three correspondence chains, complete
+the object identity check for the mechanism row, and list any break in the mapping.
+
+Revise `outputs/minimality_check.md` against the propositions actually generated. An element
+that was kept at Stage 4 for a hypothesis no proposition now delivers is re-examined here.
+
+### Gate EC follows
+
+After Gate 3, Gate EC (`prompts/gate-ec-empirical-alignment.md`) audits the map before
+HiL-5. A proposition with no empirical counterpart, or a target hypothesis with no
+proposition, fails that gate. Resolve what you can here rather than passing it forward.

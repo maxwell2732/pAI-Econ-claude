@@ -165,3 +165,70 @@ Before generating propositions, consider:
 
 These recommendations are advisory. The researcher may override them at HiL-4.
 ```
+
+---
+
+## Empirical-Companion Mode Addendum
+
+**Applies only when `state.json → mode == "empirical-companion"`.** In `theory-development`
+mode, ignore this section entirely. See `prompts/mode-empirical-companion.md` for the full
+mode contract.
+
+Additional input: `outputs/empirical_scope.md`.
+
+**This stage is unchanged in strictness.** Every check above applies at full force. The
+addendum adds one classification and one prohibition.
+
+### The `ADDED-FOR-TARGET` tag
+
+Any assumption introduced after `empirical_scope.md` was locked, whose function is to make a
+target hypothesis derivable, carries this tag:
+
+```markdown
+**Status:** ADDED-FOR-TARGET
+**Introduced at:** Stage [n]
+**Target it serves:** H[n]
+**Economic justification:** [why an economist would accept this assumption on its own terms,
+independent of the hypothesis it delivers]
+**Support:** EMPIRICAL [source] | THEORETICAL [source] | NONE FOUND
+```
+
+The economic justification must stand without reference to the target. "We assume the cost
+function is convex because that gives us the positive sign in H1" is not a justification;
+"we assume the cost function is convex because adjustment costs in this setting rise with
+the speed of adjustment, as documented in [source]" is.
+
+An `ADDED-FOR-TARGET` assumption whose only defense is the sign it produces is a Gate EC
+failure (check EC4).
+
+### No assumption laundering
+
+The prohibition, stated concretely. The pipeline must not obtain the researcher's expected
+sign by silently introducing any of:
+
+- monotonicity or single-crossing conditions;
+- convexity or concavity of a cost, production, or utility function;
+- a parameter restriction that happens to be exactly the sign condition;
+- a functional form chosen because it delivers a clean derivative sign;
+- a distributional assumption (log-normality, uniformity, MLRP) adopted without a stated
+  reason;
+- a normalization that is doing substantive work.
+
+Each of these, when present and load-bearing, appears in the audit as a BINDING assumption
+with the `ADDED-FOR-TARGET` tag where it applies. None of them may be introduced in a proof
+sketch at Stage 7 without returning here.
+
+### Additional output section
+
+```markdown
+## Assumptions Added for Target Hypotheses
+
+| Assumption | Target | Economic justification independent of target? | Support | Verdict |
+|------------|--------|----------------------------------------------|---------|---------|
+| A_[n] | H[n] | yes / no | EMPIRICAL / THEORETICAL / NONE FOUND | acceptable / Gate EC risk |
+
+**Assumptions inherited from the canonical model:** [list — these are not ADDED-FOR-TARGET]
+**Assumptions the empirical design itself implies:** [e.g. an exclusion restriction, a
+timing assumption, a no-anticipation condition — these carry empirical role
+`identification`]
+```

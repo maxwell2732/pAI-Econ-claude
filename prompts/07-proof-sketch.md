@@ -175,3 +175,80 @@ Choose one:
 2. [Second priority]
 3. [Third priority]
 ```
+
+---
+
+## Empirical-Companion Mode Addendum
+
+**Applies only when `state.json → mode == "empirical-companion"`.** In `theory-development`
+mode, ignore this section entirely. See `prompts/mode-empirical-companion.md` for the full
+mode contract.
+
+Additional inputs: `outputs/empirical_scope.md`, `outputs/empirical_theory_map.md`.
+
+**This stage is unchanged in rigor.** The GAP and FALSE_RISK labeling, the honesty
+requirements, and the rigor ratings all apply at full force. The addendum adds one required
+verdict per target hypothesis.
+
+### Per-hypothesis derivability verdict
+
+For each target hypothesis in `empirical_scope.md`, state explicitly whether the proof
+sketch establishes it under the current assumptions:
+
+| Verdict | Meaning |
+|---------|---------|
+| `DERIVED` | The sketch establishes the hypothesis as stated |
+| `DERIVED CONDITIONAL` | The sketch establishes it under a condition already in the assumption set |
+| `NOT DERIVED` | The sketch cannot establish it without a new assumption, or the sign is genuinely ambiguous |
+
+A hypothesis whose sign depends on parameter values is `NOT DERIVED`, even when the
+researcher expects a particular sign and the data show it. What the data show is evidence
+about the world; it is not a step in a proof.
+
+### The `TARGET HYPOTHESIS NOT DERIVED` block
+
+For every `NOT DERIVED` verdict, emit this block in `proof_sketches.md` and present it to
+the researcher:
+
+```
+TARGET HYPOTHESIS NOT DERIVED — H[n]
+
+Hypothesis as stated:           [the researcher's hypothesis]
+What the model actually yields: [e.g. the sign of the derivative depends on theta]
+
+Minimal sufficient condition:   [the weakest restriction that delivers the sign]
+Economic meaning:               [what the condition says in economics]
+Support for the condition:      EMPIRICAL [source] | THEORETICAL [source] | NONE FOUND
+
+Options:
+  ACCEPT CONDITIONAL   — restate H[n] as conditional on the condition above
+  ADD ASSUMPTION       — adopt the condition as a stated, audited assumption
+  REVISE EMPIRICS      — change the empirical interpretation instead
+```
+
+Requirements on the block:
+
+- **The condition must be minimal.** Find the weakest restriction that delivers the sign. Do
+  not offer a functional-form assumption where a parameter restriction suffices, and do not
+  offer a global condition where a local one at the relevant point suffices.
+- **Search for support before writing `NONE FOUND`.** Web-verify any source cited, under the
+  standing citation rule.
+- **Do not adopt the condition yourself.** The researcher chooses. If they choose
+  `ADD ASSUMPTION`, the condition returns to Stage 5 tagged `ADDED-FOR-TARGET` and is
+  audited there before any proposition relies on it.
+
+Never close the gap by quietly assuming the condition and continuing. That is the
+assumption-laundering failure this mode is built to prevent, and Gate 4 and Gate EC both
+check for it.
+
+### Additional output section
+
+```markdown
+## Target Hypothesis Derivability
+
+| Hypothesis | Proposition | Verdict | Condition (if conditional) | Rigor of the sketch |
+|------------|-------------|---------|---------------------------|---------------------|
+| H1 | P_C1 | DERIVED / DERIVED CONDITIONAL / NOT DERIVED | [condition] | COMPLETE / SKETCH / CONJECTURE-LEVEL |
+```
+
+Record `empirical_companion.underived_hypotheses` in `state.json`.

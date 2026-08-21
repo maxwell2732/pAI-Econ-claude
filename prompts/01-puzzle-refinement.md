@@ -137,3 +137,45 @@ A complete paper addressing this question would need to establish:
 - [Bullet 1]
 - [Bullet 2]
 ```
+
+---
+
+## Empirical-Companion Mode Addendum
+
+**Applies only when `state.json → mode == "empirical-companion"`.** In `theory-development`
+mode, ignore this section entirely. See `prompts/mode-empirical-companion.md` for the full
+mode contract.
+
+Additional input: `outputs/empirical_scope.md` (the locked scope).
+
+The research puzzle is already fixed by the empirical paper. This stage sharpens its
+statement; it does not search for a better question.
+
+**Do:**
+- State the empirical puzzle as the researcher framed it: what pattern in the data needs an
+  economic explanation.
+- State the authors' proposed mechanism explicitly, as the candidate explanation the theory
+  section will formalize.
+- List which empirical results require theoretical rationalization (baseline, mechanism,
+  heterogeneity) and which are context the theory need not explain.
+- Identify what would make the proposed mechanism a *non-obvious* explanation of the
+  baseline, since Gate 3 still applies.
+
+**Do not:**
+- Widen the research question beyond the empirical paper's scope.
+- Propose a more general question the model could answer instead.
+- Substitute an alternative mechanism for the researcher's. Alternative mechanisms that
+  would also produce the baseline are recorded in `scope_notes.md` and named in the
+  manuscript's limitations, not adopted.
+
+Add to the output a short section:
+
+```markdown
+## Empirical Companion Framing
+
+**Empirical puzzle:** [the pattern requiring explanation]
+**Authors' proposed mechanism:** [as stated in empirical_scope.md]
+**Results requiring theory:** [list, with the target hypothesis each maps to]
+**Results not requiring theory:** [context, robustness, first-stage diagnostics]
+**Why the mechanism is not obvious:** [what a reader would have expected instead]
+```

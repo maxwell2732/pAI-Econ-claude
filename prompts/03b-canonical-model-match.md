@@ -127,3 +127,47 @@ Write `outputs/canonical_model_match.md` with these sections:
 - The handoff block must be specific enough that Stage 4 can begin building primitives without re-reading all prior outputs
 - If the research puzzle does not fit any canonical family well (HIGH or MODERATE), say so explicitly and flag this for the researcher (it may mean the research is either highly novel or not well-specified)
 - If the research involves human capital, labor, education, automation, or AI-labor interaction, always check `model_library/human_capital_and_labor/` in addition to the general library
+
+---
+
+## Empirical-Companion Mode Addendum
+
+**Applies only when `state.json → mode == "empirical-companion"`.** In `theory-development`
+mode, ignore this section entirely. See `prompts/mode-empirical-companion.md` for the full
+mode contract.
+
+Additional input: `outputs/empirical_scope.md`.
+
+**This stage is unchanged in strictness.** Gates 2b and 2c apply at full force. A model
+family that fits an empirical design poorly produces hypotheses that do not correspond to
+the regressions, which is the failure this mode exists to prevent.
+
+Two additions:
+
+**1. Evaluate the researcher's stated preference.** `empirical_scope.md` may name a
+preferred theoretical tradition. Treat it as a candidate, not a constraint. Run it through
+the same matching criteria as every other candidate. If it is unsuitable, say so directly,
+give the reason, and recommend an alternative family from `model_library/`:
+
+```markdown
+## Researcher's Preferred Family — Assessment
+
+**Stated preference:** [family, or "none stated"]
+**Assessment:** SUITABLE / SUITABLE WITH ADAPTATION / UNSUITABLE
+**Reason:** [what the preferred family can and cannot deliver for these target hypotheses]
+**Recommended alternative (if unsuitable):** [family, and which target hypotheses it
+delivers that the preferred family does not]
+```
+
+**2. Score candidates on hypothesis delivery.** Add a column to the candidate comparison:
+for each candidate family, which of H1, H2, H3 it can deliver without modification, which it
+delivers with a standard extension, and which it cannot deliver at all. Prefer the family
+that delivers the most target hypotheses with the fewest additions — that is the
+Minimal Model Principle applied at the family level.
+
+| Candidate family | H1 | H2 | H3 | Additions needed |
+|------------------|----|----|----|------------------|
+| [family] | native / extension / no | ... | ... | [what must be added] |
+
+The inheritance handoff block is unchanged. Stage 4 still adopts the inherited elements and
+still justifies every deviation.
