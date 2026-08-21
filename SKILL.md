@@ -1,12 +1,14 @@
 ---
 name: theoretical-economics-claude-skill
-description: "Human-in-the-loop theoretical economics research pipeline: from economic intuition to manuscript skeleton in 10 structured stages with quality gates."
+description: "Human-in-the-loop theoretical economics research pipeline: from economic intuition to manuscript skeleton in 10 structured stages with quality gates. Two modes: open-ended theory-development (default) and empirical-companion for building a minimal model around finished empirical results."
 user-invocable: true
 ---
 
 # Theoretical Economics Research Orchestrator
 
 You are the orchestrator for the **theoretical-economics-claude-skill** pipeline. Your job is to take a raw economic intuition, puzzle, or hypothesis and walk it through 11 structured stages (plus an optional, strictly user-controlled numerical simulation module, Stage 7b) — producing research documents suitable for starting a theoretical economics working paper.
+
+The pipeline runs in one of two modes. **`theory-development`** is the default and is what this file describes throughout. **`empirical-companion`** is a constrained mode for researchers whose empirical work is finished and who need the smallest coherent model that rationalizes it; see `## Mode Routing` below and `prompts/mode-empirical-companion.md`.
 
 ## Welcome Message
 
@@ -22,6 +24,7 @@ When this skill is first invoked, print this banner BEFORE anything else (verbat
 ║                                                            ║
 ║    Stages 0–10 + 2a + 3b (+ optional 7b)                   ║
 ║    9 Quality Gates (+1 optional) · 6 HiL Stops (+3)        ║
+║    Modes: theory-development · empirical-companion         ║
 ║                                                            ║
 ║    Chen Zhu · Xiaolu Wang    China Agricultural Univ.      ║
 ║    Weilong Zhang             University of Cambridge       ║
@@ -53,7 +56,55 @@ When this skill is first invoked, print this banner BEFORE anything else (verbat
 /theoretical-economics-claude-skill --resume path/to/workspace
 ```
 
+**In a selected mode:**
+```
+/mode empirical-companion "Your empirical results and the mechanism to formalize."
+/mode empirical-companion --task path/to/empirical-brief.txt
+```
+
 If invoked with no argument and no `--task` file, ask the user for their research idea before proceeding.
+
+---
+
+## Mode Routing
+
+The pipeline runs in one of two modes. **Resolve the mode before Stage 0** and record it in `state.json` under `mode`.
+
+| Mode | Purpose | Entry |
+|------|---------|-------|
+| `theory-development` | **Default.** Open-ended theory development: explore the theoretical space, challenge the initial logic, search for alternative mechanisms and counterexamples, pursue a broad theoretical contribution. | Any invocation with no mode given |
+| `empirical-companion` | Constrained theory-building for an empirical paper: formalize the researcher's stated mechanism with the smallest coherent model and derive hypotheses that map directly onto the empirical design. | `/mode empirical-companion …` or a `mode:` line |
+
+**Resolution order:**
+
+1. The mode token passed by the `/mode` command.
+2. A `mode:` line as the first non-empty line of the research input, e.g. `mode: empirical-companion`.
+3. `--resume <workspace>`: read `mode` back from that workspace's `state.json` and ignore any mode token in the argument. A state file with no `mode` key is `theory-development`.
+4. Otherwise: `theory-development`.
+
+**Accepted spellings:** hyphen and underscore are equivalent (`empirical-companion` = `empirical_companion`). For the default mode: `theory-development`, `theory_development`, `full`.
+
+**Legacy aliases.** The following tokens appear in the README use-case examples. Each resolves to `theory-development`; they select an entry point into the same pipeline rather than a distinct mode:
+
+| Legacy token | Resolves to |
+|--------------|-------------|
+| `full_pipeline` | `theory-development` |
+| `model_extension` | `theory-development` |
+| `phenomenon_to_model` | `theory-development` |
+| `model_critique` | `theory-development` |
+| `manuscript_skeleton_only` | `theory-development` |
+
+**Unrecognized mode value:** do NOT guess and do NOT fall back silently. Print the two mode names with their one-line descriptions and ask which one the researcher wants. Record the answer.
+
+**What the mode controls.** In `empirical-companion` mode:
+
+- Stage 0-EC (Empirical Scope Lock) runs after Stage 0.
+- Gate EC (Empirical–Theory Alignment) runs after Stage 6 and Gate 3.
+- HiL-5 is presented as the EMPIRICAL COMPANION CHECKPOINT.
+- Four extra artifacts are produced (`empirical_scope.md`, `minimality_check.md`, `empirical_theory_map.md`, `scope_notes.md`).
+- Each stage prompt's "Empirical-Companion Mode Addendum" section applies.
+
+Read `prompts/mode-empirical-companion.md` in full at Stage 0 when this mode is active. In `theory-development` mode, every EC-mode instruction in this file and in the stage prompts is ignored, and behavior is exactly as it was before the mode system existed.
 
 ---
 
@@ -62,6 +113,8 @@ If invoked with no argument and no `--task` file, ask the user for their researc
 When the skill is first invoked:
 
 1. **Accept the research input** — from the skill argument, a `--task` file, or by asking the user.
+
+1b. **Resolve the pipeline mode** — apply the resolution order in `## Mode Routing` above. If the mode is `empirical-companion`, read `prompts/mode-empirical-companion.md` in full before continuing.
 
 2. **Create the workspace** — all projects are stored under `Exploration/` in the repository root. Follow these steps:
 
@@ -73,11 +126,13 @@ When the skill is first invoked:
 
    d. All outputs go inside this workspace directory. Record the full path in `state.json`.
 
-3. **Initialize state.json** — copy from `templates/state.json` and fill in `campaign_id`, `workspace`, `hypothesis`, and `started_at`.
+3. **Initialize state.json** — copy from `templates/state.json` and fill in `campaign_id`, `workspace`, `hypothesis`, `mode` (the value resolved in step 1b), and `started_at`.
 
-4. **Save the hypothesis** — write the raw user input verbatim to `initial_context/hypothesis.md`.
+4. **Save the hypothesis** — write the raw user input verbatim to `initial_context/hypothesis.md`. Keep any `mode:` line in the verbatim copy; the file is never modified after it is written.
 
 5. **Begin Stage 0** — proceed immediately without asking further questions (unless the input is completely ambiguous, in which case ask ONE clarifying question).
+
+6. **In `empirical-companion` mode only** — after Stage 0 completes, run **Stage 0-EC (Empirical Scope Lock)** before Stage 1. This is the only stage that may ask the researcher questions before Stage 1, and it asks at most three, in one message. See `prompts/ec-00-empirical-scope-lock.md`.
 
 ---
 
@@ -91,14 +146,18 @@ Exploration/
     │   └── hypothesis.md                        # Raw user input (verbatim, never modified)
     ├── outputs/
     │   ├── research_intake.md                   # Stage 0
+    │   ├── empirical_scope.md                   # Stage 0-EC  ← empirical-companion mode only
     │   ├── research_puzzle.md                   # Stage 1
     │   ├── literature_positioning.md            # Stage 2
     │   ├── empirical_reality_check.md           # Stage 2a
     │   ├── persona_council.md                   # Stage 3
     │   ├── canonical_model_match.md             # Stage 3b
     │   ├── model_primitives.md                  # Stage 4
+    │   ├── minimality_check.md                  # Stage 4    ← empirical-companion mode only
+    │   ├── empirical_theory_map.md              # Stage 4/6  ← empirical-companion mode only
     │   ├── assumption_audit.md                  # Stage 5
     │   ├── candidate_propositions.md            # Stage 6
+    │   ├── scope_notes.md                       # Stages 4–8 ← empirical-companion mode only
     │   ├── proof_sketches.md                    # Stage 7
     │   ├── numerical_simulation_decision.md     # Stage 7b — HiL-N1 decision record (always, once decided)
     │   ├── numerical_simulation_plan.md         # Stage 7b — only if PLAN ONLY / CUSTOM / YES
@@ -122,7 +181,8 @@ Exploration/
     │   ├── gate-04-proof-integrity.md           # After Stage 7
     │   ├── gate-04b-numerical-integrity.md      # After Stage 7b (only if simulation ran)
     │   ├── gate-05-economic-meaning.md          # After Stage 9
-    │   └── gate-06-math-review.md               # Stage 10 completion (manuscript.tex written, before PDF)
+    │   ├── gate-06-math-review.md               # Stage 10 completion (manuscript.tex written, before PDF)
+    │   └── gate-ec-empirical-alignment.md       # After Stage 6 ← empirical-companion mode only
     └── logs/
         └── stage-log.md                         # Running progress log
 ```
@@ -134,6 +194,7 @@ Exploration/
 | Stage | Name | Key Output | Gate After | HiL After |
 |-------|------|-----------|-----------|-----------|
 | 0 | Intake | research_intake.md | — | — |
+| **0-EC** | **Empirical Scope Lock** *(empirical-companion mode only)* | empirical_scope.md | — | — |
 | 1 | Puzzle Refinement | research_puzzle.md | — | **HiL-1** |
 | 2 | Literature Positioning | literature_positioning.md | **Gate 1** | **HiL-2** |
 | **2a** | **Empirical Reality Check** | empirical_reality_check.md | **Gate 1b** | — |
@@ -141,12 +202,14 @@ Exploration/
 | **3b** | **Canonical Model Matching** | canonical_model_match.md | **Gate 2b + 2c** | — |
 | 4 | Model Primitives | model_primitives.md | **Gate 2** | **HiL-4 ★ HARD STOP** |
 | 5 | Assumption Audit | assumption_audit.md | — | — |
-| 6 | Proposition Generator | candidate_propositions.md | **Gate 3** | **HiL-5** |
+| 6 | Proposition Generator | candidate_propositions.md | **Gate 3** (+ **Gate EC** in empirical-companion mode) | **HiL-5** |
 | 7 | Proof Sketch | proof_sketches.md | **Gate 4** | **HiL-N1** (7b decision) |
 | **7b** | **Numerical Simulation (OPTIONAL — user opt-in only)** | numerical_simulation_report.md | **Gate 4b** | **HiL-N2 + HiL-N3** |
 | 8 | Counterexample Finder | counterexamples_and_edge_cases.md | — | **HiL-6** |
 | 9 | Economic Interpretation | economic_interpretation.md | **Gate 5** | — |
 | 10 | Manuscript Skeleton | manuscript_skeleton.md | **Gate 6** (on manuscript.tex, before pdflatex) | ✓ DONE |
+
+**Mode-conditional rows.** Stage 0-EC and Gate EC run only when `state.json → mode == "empirical-companion"`. In `theory-development` mode the table above is exactly the pre-existing pipeline: Stages 0–10 plus 2a and 3b, with optional 7b. In `empirical-companion` mode, Stages 1 through 10 additionally apply the "Empirical-Companion Mode Addendum" section at the end of their prompt files, and HiL-5 is presented as the EMPIRICAL COMPANION CHECKPOINT.
 
 ---
 
@@ -171,7 +234,7 @@ Exploration/
 
 ## Quality Gate Logic
 
-Nine gates protect the pipeline. Each gate runs immediately after its assigned stage (Gate 6 runs inside the Completion sequence, after `manuscript.tex` is written and before pdflatex). Read the gate prompt file, evaluate the preceding output, and produce a gate verdict.
+Nine gates protect the pipeline, plus Gate 4b (optional, only if Stage 7b ran) and Gate EC (only in `empirical-companion` mode). Each gate runs immediately after its assigned stage (Gate 6 runs inside the Completion sequence, after `manuscript.tex` is written and before pdflatex). Read the gate prompt file, evaluate the preceding output, and produce a gate verdict.
 
 **Gate PASS:** continue to the next stage.
 
@@ -204,8 +267,11 @@ Wait for the researcher's explicit decision. If they proceed with caveat, append
 | 4b | Numerical Integrity Gate (optional) | `prompts/gate-04b-numerical-integrity.md` | Stage 7b (only if simulation ran) | Stage 7b (fix code/parameters) or Stage 6 (revise proposition) |
 | 5 | Economic Meaning Gate | `prompts/gate-05-economic-meaning.md` | Stage 9 | Stage 9 (deepen interpretation) |
 | 6 | Mathematical Review Gate | `prompts/gate-06-math-review.md` | Stage 10 completion (after `manuscript.tex` is written, before pdflatex) | Stage 6 (proposition wrong as stated) or Stage 7 (proof wrong) |
+| EC | Empirical–Theory Alignment Gate (`empirical-companion` mode only) | `prompts/gate-ec-empirical-alignment.md` | Stage 6, after Gate 3 and before HiL-5 | Stage 6 (EC1/EC2/EC5), Stage 4 (EC3/EC4), Stage 3b or 4 (EC6) |
 
 **Gate 6 correction exception:** Gate 6 checks objective mathematics (statement classification, independent re-derivation, notation, statement–proof match, domain sanity). TYPO-LEVEL and LOW errors (e.g., an equilibrium condition mislabeled as a Proposition, an algebra slip that changes no claim's direction) are fixed directly in `manuscript.tex`, back-propagated to the source outputs, and logged in the gate file WITHOUT pausing for researcher input. Only SUBSTANTIVE errors (a result's sign or content contradicted by independent re-derivation, a proof that fails to establish its claim) trigger the standard gate-failure protocol above. See `prompts/gate-06-math-review.md` for the severity definitions.
+
+**Gate EC (`empirical-companion` mode only):** Gate EC audits the correspondence between the model and the empirical paper — proposition coverage (EC1), hypothesis derivability (EC2), mechanism parsimony (EC3), assumption economy (EC4), heterogeneity correspondence (EC5), and mechanism object identity (EC6). It uses the standard PASS / CONDITIONAL PASS / FAIL vocabulary and the standard failure protocol. One exception: **an EC6 failure cannot be downgraded to a CONDITIONAL PASS.** If the empirical result is claimed to test mechanism M while the model's M is a different latent object, the paper's central claim does not hold, and the researcher must either loop back or accept a caveat that is disclosed in the manuscript as a stated limitation. See `prompts/gate-ec-empirical-alignment.md`.
 
 ---
 
@@ -334,6 +400,46 @@ Please choose one:
   REVISE [P_n] — Specify the revision; I will update before continuing
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
+
+**In `empirical-companion` mode**, HiL-5 runs after Stage 6 + Gate 3 + **Gate EC**, and is presented in the format below instead. It is the same checkpoint and the same `human_decisions.hil_5` slot — only the rendering changes, so the researcher answers one checkpoint, not two.
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  EMPIRICAL COMPANION CHECKPOINT  (HiL-5)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Gate 3 result:  [PASS / CONDITIONAL PASS / FAIL — one-line reason]
+Gate EC result: [PASS / CONDITIONAL PASS / FAIL — one-line reason]
+
+Baseline:
+  Empirical result:  [the finding, with its table reference]
+  Model mechanism:   [the channel, in words]
+  Proposition:       [P_id] — [one-line statement]
+  Hypothesis:        H1 — [claim about observables]
+
+Mechanism:
+  Empirical result:  [the mechanism test, with its table reference]
+  Model mechanism:   [the channel]
+  Proposition:       [P_id] — [one-line statement]
+  Hypothesis:        H2 — [claim about observables]
+
+Heterogeneity:
+  Empirical result:  [the subgroup or interaction result]
+  Model mechanism:   [the channel]
+  Proposition:       [P_id] — [one-line statement]
+  Hypothesis:        H3 — [claim about observables]
+
+Deferred to scope_notes.md: [n] items
+  [SN-1] [one-line title]
+  [SN-2] [one-line title]
+
+Please choose one:
+  APPROVE          — Proceed to Stage 7 (Proof Sketch)
+  EDIT             — Revise the mapping; I will re-run Stage 6
+  RETURN TO MODEL  — Loop back to Stage 4 (Model Primitives)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+Log as `[HiL-5 — Empirical Companion Checkpoint] <ISO timestamp> | researcher: <choice> — <notes>`. Record the choice in `state.json` under `human_decisions.hil_5`, as in the default rendering.
 
 ### HiL-N1 — Numerical Simulation Decision (after Stage 7 + Gate 4) — OPTIONAL MODULE ENTRY
 
@@ -481,7 +587,7 @@ For each stage:
    `[STAGE N — Stage Name] <ISO timestamp> | completed`
 7. Update `state.json`: set `current_stage`, append to `completed_stages`, update `last_checkpoint`
 8. If a gate follows: read the gate prompt file, evaluate the output, write gate result to the matching file under `gates/` (see the Workspace Layout for exact filenames).
-   Then append to `logs/stage-log.md`, where `<id>` is the gate id (1, 1b, 2b, 2c, 2, 3, 4, 4b, 5, or 6):
+   Then append to `logs/stage-log.md`, where `<id>` is the gate id (1, 1b, 2b, 2c, 2, 3, 4, 4b, 5, 6, or EC):
    - On pass: `[GATE <id> — Gate Name] <ISO timestamp> | PASS`
    - On fail: `[GATE <id> — Gate Name] <ISO timestamp> | FAIL [SEVERITY] — <one-line reason>`
    After the researcher decides, append the decision:
@@ -496,19 +602,37 @@ For each stage:
 - Prompt: `prompts/00-intake.md`
 - Output: `outputs/research_intake.md`
 - Inputs: `initial_context/hypothesis.md`
-- Gate: none | HiL: none → proceed immediately to Stage 1
+- Gate: none | HiL: none → proceed immediately to Stage 1 (in `empirical-companion` mode, to Stage 0-EC)
+
+### Stage 0-EC — Empirical Scope Lock (`empirical-companion` mode only)
+- Prompt: `prompts/ec-00-empirical-scope-lock.md`
+- Output: `outputs/empirical_scope.md`
+- Inputs: `initial_context/hypothesis.md`, `outputs/research_intake.md`
+- Gate: none | HiL: none → proceed to Stage 1
+- Runs only when `state.json → mode == "empirical-companion"`. Skip it entirely in `theory-development` mode.
+
+**Purpose:** fix in writing what the theory section has to account for, before any modeling begins. The eight fields are: empirical question, baseline result, proposed mechanism, mechanism test, heterogeneity results, key hypotheses to rationalize, preferred theoretical tradition, and scope exclusions. Fields 1, 2, and 6 are required to lock the scope.
+
+**Questions:** this stage may ask the researcher **at most three questions, bundled into one message**, and only for required fields that are missing. Do not ask one at a time, and do not ask about fields 7 or 8 (absent means "no preference" / "no exclusions"). Everything derivable from the brief is derived before asking.
+
+**Scope status** is `LOCKED` or `REVISE`. A locked scope is the contract for the rest of the run: later stages work inside it, and any change to it is written back into `empirical_scope.md` with the stage that requested it and the researcher's decision.
+
+Record in `state.json` → `empirical_companion`: `scope_status`, `scope_locked`, `target_hypotheses`, `excluded_extensions`.
+Log: `[STAGE 0-EC — Empirical Scope Lock] <ISO timestamp> | completed — scope <LOCKED|REVISE>, <n> target hypotheses`
 
 ### Stage 1 — Puzzle Refinement
 - Prompt: `prompts/01-puzzle-refinement.md`
 - Output: `outputs/research_puzzle.md`
 - Inputs: `outputs/research_intake.md`
 - Gate: none | HiL: **HiL-1**
+- **EC mode:** also read the "Empirical-Companion Mode Addendum" at the end of the prompt file, and apply it. Additional input: `outputs/empirical_scope.md`.
 
 ### Stage 2 — Literature Positioning
 - Prompt: `prompts/02-literature-positioning.md`
 - Output: `outputs/literature_positioning.md`
 - Inputs: `outputs/research_puzzle.md`
 - Gate: **Gate 1** | HiL: **HiL-2**
+- **EC mode:** also read the "Empirical-Companion Mode Addendum" at the end of the prompt file, and apply it.
 
 **⚠️ MANDATORY: Web-verify every citation before writing it to `literature_positioning.md`.**
 For each paper identified in Stage 2, use WebSearch or WebFetch to confirm:
@@ -545,12 +669,14 @@ LLMs hallucinate plausible-sounding but nonexistent papers, especially for appli
 - Inputs: `outputs/research_puzzle.md`, `outputs/literature_positioning.md`, `outputs/empirical_reality_check.md`
 - Council format: 5 personas, 2-round council — independent assessment (Round 1) followed by cross-review and synthesis (Round 2)
 - Gate: none | HiL: **HiL-3**
+- **EC mode:** also read the "Empirical-Companion Mode Addendum" at the end of the prompt file, and apply it.
 
 ### Stage 3b — Canonical Model Matching
 - Prompt: `prompts/03b-canonical-model-match.md`
 - Output: `outputs/canonical_model_match.md`
 - Inputs: `outputs/research_puzzle.md`, `outputs/literature_positioning.md`, `outputs/persona_council.md`, `model_library/` (all files)
 - Gate: **Gate 2b** (Canonical Fit) then **Gate 2c** (Theory Lineage) — run both sequentially | HiL: none → proceed to Stage 4
+- **EC mode:** also read the "Empirical-Companion Mode Addendum" at the end of the prompt file, and apply it. Strictness is unchanged; the addendum adds an assessment of the researcher's stated model-family preference.
 - Note: if the research involves human capital, labor, automation, or AI-labor topics, the prompt explicitly requires checking `model_library/human_capital_and_labor/`
 - Note: if the research involves market structure, pricing, platforms, or entry/competition topics, check `model_library/io/`
 - Note: if the research involves trade patterns, trade liberalization, exporter behavior, or gains from trade, check `model_library/comparative-advantage-ricardian.md`, `model_library/heckscher-ohlin.md`, `model_library/new-trade-theory-krugman.md`, `model_library/melitz-firm-heterogeneity.md`
@@ -561,6 +687,7 @@ LLMs hallucinate plausible-sounding but nonexistent papers, especially for appli
 - Output: `outputs/model_primitives.md`
 - Inputs: `outputs/research_puzzle.md`, `outputs/persona_council.md`, **`outputs/canonical_model_match.md`** (NEW — must use the handoff block)
 - Gate: **Gate 2** | HiL: **HiL-4 ★ HARD STOP**
+- **EC mode:** also read the "Empirical-Companion Mode Addendum" at the end of the prompt file, and apply it. It enables the Minimal Model Principle and requires two extra outputs: `outputs/minimality_check.md` and the draft of `outputs/empirical_theory_map.md` (see `prompts/ec-empirical-theory-map.md`).
 - Note: Stage 4 must explicitly adopt the "Inherit from the canonical model" elements listed in `canonical_model_match.md`; any deviation must be noted and justified
 
 ### Stage 5 — Assumption Audit
@@ -568,12 +695,14 @@ LLMs hallucinate plausible-sounding but nonexistent papers, especially for appli
 - Output: `outputs/assumption_audit.md`
 - Inputs: `outputs/model_primitives.md`
 - Gate: none | HiL: none → proceed to Stage 6
+- **EC mode:** also read the "Empirical-Companion Mode Addendum" at the end of the prompt file, and apply it. It adds the `ADDED-FOR-TARGET` tag and the no-assumption-laundering rule.
 
 ### Stage 6 — Proposition Generator
 - Prompt: `prompts/06-proposition-generator.md`
 - Output: `outputs/candidate_propositions.md`
 - Inputs: `outputs/model_primitives.md`, `outputs/assumption_audit.md`
 - Gate: **Gate 3** | HiL: **HiL-5**
+- **EC mode:** also read the "Empirical-Companion Mode Addendum" at the end of the prompt file, and apply it. It relaxes the required proposition types to one per target hypothesis, defers the rest to `outputs/scope_notes.md`, and completes `outputs/empirical_theory_map.md`. **Gate EC runs after Gate 3 and before HiL-5** (`prompts/gate-ec-empirical-alignment.md`).
 - ⚠️ Citations in the "Connection to Prior Literature" sections must be reused from the VERIFIED entries in `literature_positioning.md`. Any NEW citation introduced here requires its own web verification (same rule as Stage 2) before it is written to the file.
 
 ### Stage 7 — Proof Sketch
@@ -581,12 +710,14 @@ LLMs hallucinate plausible-sounding but nonexistent papers, especially for appli
 - Output: `outputs/proof_sketches.md`
 - Inputs: `outputs/candidate_propositions.md`, `outputs/model_primitives.md`, `outputs/assumption_audit.md`
 - Gate: **Gate 4** | HiL: **HiL-N1** (Numerical Simulation Decision — always presented; Stage 7b runs only on explicit user opt-in)
+- **EC mode:** also read the "Empirical-Companion Mode Addendum" at the end of the prompt file, and apply it. It requires a per-hypothesis derivability verdict and the `TARGET HYPOTHESIS NOT DERIVED` block where a target cannot be established. Gate 4 gains check EC-D.
 
 ### Stage 7b — Numerical Simulation and Computational Illustration (OPTIONAL — USER-CONTROLLED)
 - Prompt: `prompts/07b-numerical-simulation.md`
 - Outputs: `outputs/numerical_simulation_decision.md` (always, once HiL-N1 is answered); `outputs/numerical_simulation_plan.md` + `outputs/parameter_definitions.md` (PLAN ONLY / CUSTOM / YES); `outputs/numerical_code/`, `outputs/numerical_results/`, `outputs/numerical_figures/`, `outputs/numerical_simulation_report.md` (only after HiL-N2 APPROVE PLAN)
 - Inputs: `outputs/candidate_propositions.md`, `outputs/proof_sketches.md`, `outputs/model_primitives.md`, `outputs/assumption_audit.md`
 - Gate: **Gate 4b** (only if code ran) | HiL: **HiL-N1** (entry decision), **HiL-N2** (★ execution hard stop), **HiL-N3** (results review)
+- **EC mode:** also read the "Empirical-Companion Mode Addendum" at the end of the prompt file, and apply it. It narrows the HiL-N1 *recommendation* to three triggers. The user-control rule is unchanged.
 
 **⚠️ This stage NEVER runs by default.** The pipeline must not decide on its own whether to simulate. Full branching logic:
 
@@ -623,6 +754,7 @@ Log every decision: `[HiL-N1 — Numerical Simulation Decision] <ts> | researche
 - Output: `outputs/counterexamples_and_edge_cases.md`
 - Inputs: `outputs/candidate_propositions.md`, `outputs/proof_sketches.md`, `outputs/assumption_audit.md`; **plus, if Stage 7b ran:** `outputs/numerical_simulation_report.md` (the "Handoff to Stage 8" block) and `outputs/numerical_results/`
 - Gate: none | HiL: **HiL-6**
+- **EC mode:** also read the "Empirical-Companion Mode Addendum" at the end of the prompt file, and apply it. The full adversarial battery still runs; findings inside the declared empirical domain are gate-failing, findings outside it go to `outputs/scope_notes.md`.
 - Note: Stage 7b does not replace this stage. If numerical counterexamples or suspicious regions were handed off, Stage 8 must diagnose each one (coding error / numerical optimization error / parameter issue / assumption failure / claim failure / proposition-domain issue) and recommend the proposition's fate (retain / weaken / restrict to functional-form class / split into regimes / relabel as illustrative / drop)
 
 ### Stage 9 — Economic Interpretation
@@ -630,6 +762,7 @@ Log every decision: `[HiL-N1 — Numerical Simulation Decision] <ts> | researche
 - Output: `outputs/economic_interpretation.md`
 - Inputs: `outputs/candidate_propositions.md`, `outputs/proof_sketches.md`, `outputs/counterexamples_and_edge_cases.md`, `outputs/model_primitives.md`
 - Gate: **Gate 5** | HiL: none → proceed to Stage 10
+- **EC mode:** also read the "Empirical-Companion Mode Addendum" at the end of the prompt file, and apply it.
 - ⚠️ Same citation rule as Stage 6: only VERIFIED citations (from `literature_positioning.md` or freshly web-verified in this session) may appear in `economic_interpretation.md`.
 
 ### Stage 10 — Manuscript Skeleton
@@ -637,6 +770,7 @@ Log every decision: `[HiL-N1 — Numerical Simulation Decision] <ts> | researche
 - Output: `outputs/manuscript_skeleton.md`
 - Inputs: ALL prior outputs in `outputs/`
 - Gate: **Gate 6** (Mathematical Review — runs during the Completion sequence, after `manuscript.tex` is written and before pdflatex; see Completion step 3c) | HiL: none → **PIPELINE COMPLETE**
+- **EC mode:** also read the "Empirical-Companion Mode Addendum" at the end of the prompt file, and apply it. It produces an applied-paper Conceptual Framework section (3.1 Economic Environment / 3.2 Model / 3.3 Predictions) with hypotheses generated from `outputs/empirical_theory_map.md`.
 
 **⚠️ Numerical content inclusion rule (applies to the skeleton, `manuscript.tex`, and the PDF).** Numerical results or figures from Stage 7b may enter the manuscript ONLY if the researcher explicitly selected `USE FIGURES IN MANUSCRIPT` (or `APPENDIX ONLY`, for the Appendix) at HiL-N3, AND all of:
 1. code and parameters are saved under `numerical_code/` and `parameter_definitions.md`;
@@ -660,13 +794,16 @@ Any proposition listed in `state.json` → `numerical_simulation.blocked_proposi
 Initialize `state.json` from `templates/state.json`. Update after every stage and gate.
 
 Key fields to maintain:
-- `current_stage` — integer 0–10; update after each stage starts
+- `mode` — `"theory-development"` (default) or `"empirical-companion"`; set once at initialization from the `## Mode Routing` resolution and never changed mid-run. A state file without this key is read as `"theory-development"`.
+- `current_stage` — integer 0–10; update after each stage starts. Stage 0-EC is recorded as `"0-EC"` in `completed_stages` and leaves `current_stage` at 0.
 - `stage_status` — `"in_progress"` | `"awaiting_hil"` | `"gate_failed"` | `"completed"`
 - `completed_stages` — append stage name on completion
 - `gate_results` — write `{"result": "PASS"|"FAIL", "severity": "...", "reason": "..."}` per gate
 - `human_decisions` — record researcher responses at each HiL (including `hil_n1`, `hil_n2`, `hil_n3` when Stage 7b is entered)
 - `caveats` — append when gate failure is overridden with caveat
 - `numerical_simulation` — Stage 7b state: `decision` (`"YES"|"NO"|"PLAN_ONLY"|"CUSTOM"|null`), `plan_approved` (bool), `executed` (bool), `gate_4b` (verdict or null), `results_review` (HiL-N3 selections), `figures_authorized_for_manuscript` (`"main_text"|"appendix_only"|"none"|null`), `blocked_propositions` (proposition IDs blocked from Stage 10 by the Gate 4b counterexample rule)
+- `empirical_companion` — `empirical-companion` mode state, inert in the default mode: `scope_locked` (bool), `scope_status` (`"LOCKED"|"REVISE"|null`), `target_hypotheses` (the H-labels from `empirical_scope.md`), `excluded_extensions`, `unmapped_propositions` (Gate EC check EC1), `underived_hypotheses` (Stage 7 / Gate 4 check EC-D)
+- `gate_results.gate_ec` — Gate EC verdict; stays `null` in `theory-development` mode
 - `finished` — set `true` when Stage 10 completes
 
 ---
@@ -674,7 +811,7 @@ Key fields to maintain:
 ## Resume Protocol
 
 If invoked with `--resume <workspace_path>`:
-1. Read `state.json` from that workspace
+1. Read `state.json` from that workspace, including `mode`. A state file with no `mode` key is `theory-development`. The resumed mode governs the rest of the run; a mode token in the resume invocation is ignored.
 2. Check `current_stage` and `stage_status`
 3. If `stage_status == "awaiting_hil"`: re-present the HiL checkpoint and wait
 4. If `stage_status == "gate_failed"`: re-present the gate failure and ask researcher to decide
@@ -797,7 +934,8 @@ When Stage 10 completes:
   [COMPLETE] Theoretical Economics Pipeline Finished
 ================================================================
   Workspace: Exploration/Project_NNN_<ModelAbbrev>/
-  Stages completed: 13 (0–10 + 2a + 3b) [14 if Stage 7b ran]
+  Mode: [theory-development / empirical-companion]
+  Stages completed: 13 (0–10 + 2a + 3b) [14 if Stage 7b ran] [+1 if Stage 0-EC ran]
   Gate results:
     Gate 1  (Novelty Risk):       [PASS / FAIL+caveat]
     Gate 1b (Reality Fit):        [PASS / REFRAME / FAIL+caveat]
@@ -809,8 +947,14 @@ When Stage 10 completes:
     Gate 4b (Numerical Integrity): [PASS / CONDITIONAL / FAIL+caveat / NOT RUN — user skipped 7b]
     Gate 5  (Economic Meaning):   [PASS / FAIL+caveat]
     Gate 6  (Math Review):        [PASS / PASS WITH CORRECTIONS / FAIL+caveat]
+    Gate EC (Empirical Alignment): [PASS / CONDITIONAL PASS / FAIL+caveat / NOT RUN — theory-development mode]
 
   Output files:
+    [if empirical-companion mode:]
+    outputs/empirical_scope.md            ← Stage 0-EC scope contract
+    outputs/minimality_check.md           ← Stage 4/6
+    outputs/empirical_theory_map.md       ← Stage 4/6
+    outputs/scope_notes.md                ← Stages 4–8, deferred findings
     outputs/research_puzzle.md
     outputs/literature_positioning.md
     outputs/empirical_reality_check.md

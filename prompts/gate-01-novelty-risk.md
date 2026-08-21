@@ -85,3 +85,38 @@ Write the gate result to `gates/gate-01-novelty-risk.md`:
 [If CONDITIONAL PASS: "Proceed with the following caveats: [list]."]
 [If FAIL: "Recommend returning to Stage 1 to [specific reframing recommendation]."]
 ```
+
+---
+
+## Empirical-Companion Mode Addendum
+
+**Applies only when `state.json → mode == "empirical-companion"`.** In `theory-development`
+mode, ignore this section entirely. See `prompts/mode-empirical-companion.md` for the full
+mode contract.
+
+All five risk dimensions are still scored and the verdict arithmetic is unchanged. What
+changes is the object being assessed for novelty.
+
+**In this mode, the paper's contribution is the empirical result.** The model's job is to
+organize it. Score accordingly:
+
+- **A model that closely resembles an existing canonical model is expected**, and is not by
+  itself a novelty risk. This mode instructs Stage 4 to prefer exactly that. Score the
+  "model already exists" dimension as LOW when the model is an acknowledged application of a
+  canonical framework whose lineage Stage 3b documented.
+- **The novelty question that still binds is empirical.** If the *empirical question* is
+  already answered in the literature with the same identification strategy and the same
+  finding, that is a genuine HIGH risk and a Gate 1 failure. Report it plainly.
+- **Undisclosed lineage is still a failure.** A model presented as new that is an unstated
+  special case of a known result fails here and at Gate 2c, in either mode. Acknowledged
+  reuse passes; silent reuse does not.
+
+Add to the gate output:
+
+```markdown
+**Mode:** empirical-companion
+**Contribution assessed:** empirical result (model role: organizing framework / extension /
+standalone contribution)
+**Empirical novelty risk:** LOW / MEDIUM / HIGH — [is this question already answered?]
+**Model lineage disclosed:** yes / no — [Stage 3b lineage statement present?]
+```

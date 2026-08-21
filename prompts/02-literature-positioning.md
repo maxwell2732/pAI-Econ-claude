@@ -168,3 +168,58 @@ This research draws on the following branch(es) of economic theory:
 
 [List any citations marked UNCERTAIN above that the researcher must verify before including in the paper]
 ```
+
+---
+
+## Empirical-Companion Mode Addendum
+
+**Applies only when `state.json → mode == "empirical-companion"`.** In `theory-development`
+mode, ignore this section entirely. See `prompts/mode-empirical-companion.md` for the full
+mode contract.
+
+Additional input: `outputs/empirical_scope.md`.
+
+The search target shifts. Instead of locating the frontier this paper would advance, locate
+the model the paper should borrow.
+
+**Search for, in this order:**
+1. **The closest canonical model** to the proposed mechanism — the standard framework an
+   applied reader would recognize immediately.
+2. **Theoretical literature supporting the proposed mechanism** — papers establishing that
+   this channel operates, which the manuscript can cite instead of re-proving.
+3. **Empirical companion theory sections in comparable papers** — how applied papers on
+   similar questions formalize a similar mechanism, and how long their theory sections are.
+   Note the model family, the number of propositions, and whether they prove or assert.
+4. **Empirical literature on the same question** — for positioning the empirical
+   contribution, which is the paper's actual contribution.
+
+**Novelty is still assessed and Gate 1 still runs.** What changes is the standard applied to
+the *model*: this mode does not require the model itself to be a standalone theoretical
+contribution. The following positioning is acceptable and should be stated plainly when it
+is accurate:
+
+> The model is primarily an organizing framework for the empirical analysis.
+
+The novelty that matters is the empirical result. If the *empirical* question is already
+answered in the literature, that is a genuine Gate 1 failure and must be reported.
+
+The citation verification rule is unchanged and applies at full strength: every citation
+written to `literature_positioning.md` is web-verified in this session.
+
+Add to the output:
+
+```markdown
+## Empirical Companion Positioning
+
+**Closest canonical model:** [family, and the paper that established it — VERIFIED]
+**Theory supporting the mechanism:** [papers — VERIFIED]
+**Comparable empirical companion theory sections:**
+
+| Paper | Model family | Propositions | Theory section length | Proves or asserts |
+|-------|--------------|--------------|----------------------|-------------------|
+| [cite — VERIFIED] | [family] | [n] | [pages] | [proves / asserts / appendix proofs] |
+
+**Model's role in this paper:** standalone theoretical contribution / organizing framework
+for the empirical analysis / extension of a canonical model
+**Empirical novelty:** [what the empirical result adds, and whether it is already answered]
+```

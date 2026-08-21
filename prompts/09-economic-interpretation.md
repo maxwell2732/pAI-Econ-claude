@@ -158,3 +158,75 @@ The following topics should be addressed in the paper's Discussion section:
 2. **[Topic 2]** — [Why it matters]
 3. **[Topic 3]** — [Extension or robustness question raised by the interpretation]
 ```
+
+---
+
+## Empirical-Companion Mode Addendum
+
+**Applies only when `state.json → mode == "empirical-companion"`.** In `theory-development`
+mode, ignore this section entirely. See `prompts/mode-empirical-companion.md` for the full
+mode contract.
+
+Additional inputs: `outputs/empirical_scope.md`, `outputs/empirical_theory_map.md`,
+`outputs/scope_notes.md`.
+
+**The no-overreach rule is unchanged and binds harder here.** In an applied paper the model
+sits next to real estimates, and a reader will read a theoretical comparative static as a
+prediction about those estimates. A proposition proved for a special case must be
+interpreted as covering that case only.
+
+### Organize each interpretation as a chain
+
+Replace the eight-step structure with this three-part chain for each CORE proposition:
+
+```
+Proposition  →  Empirical hypothesis  →  Regression specification
+```
+
+**Part 1 — Proposition.** The mechanism in plain economic language: when [condition],
+[agent] has an incentive to [action], which leads to [outcome]. Steps 1–3 of the main
+instructions above (core mechanism, intuition, what the result rules out) collapse into
+this part.
+
+**Part 2 — Empirical hypothesis.** The proposition restated as a claim about observables:
+what should be true in the data if this mechanism operates. State the direction, and state
+the condition if the proposition is conditional.
+
+**Part 3 — Regression specification.** The coefficient that tests the hypothesis, its
+predicted sign, and what would falsify it. Name the specification in the researcher's own
+terms where `empirical_scope.md` supplies them.
+
+Steps 5 (distributional interpretation), 7 (connection to prior literature), and 8
+(limitations) from the main instructions still apply. Step 4 (real-world counterpart) is
+absorbed into Part 3 — the real-world counterpart is the researcher's own sample.
+
+Step 6 (the "So What?" paragraph) is written once for the model as a whole rather than per
+proposition, since the paper's contribution is the empirical result.
+
+### Limitations section
+
+Draw the limitations from `scope_notes.md`. Two items are mandatory when present:
+
+- **Alternative mechanisms** that would produce the same baseline, mechanism, and
+  heterogeneity results. An applied referee will raise these; state them first.
+- **The declared domain qualifier** on any proposition Stage 8 retained with a domain
+  restriction, including what happens outside the domain.
+
+### Additional output structure
+
+```markdown
+## P_[id] → H[n]
+
+**Proposition (plain language):** [the mechanism]
+**Empirical hypothesis:** [the claim about observables, with its condition if any]
+**Regression specification:** [the coefficient, the predicted sign, what falsifies it]
+**What this does NOT establish:** [scope limits, conditions, what the estimate cannot show]
+
+...
+
+## Limitations
+
+**Observationally equivalent explanations:** [from scope_notes.md]
+**Domain restrictions on the predictions:** [from Stage 8]
+**What the model deliberately omits:** [from empirical_scope.md excluded extensions]
+```

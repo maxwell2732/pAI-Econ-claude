@@ -226,3 +226,67 @@ Before finalizing:
 | [F(·)] | [Type distribution] | [CDF on Θ] |
 | [Add all symbols used above] | | |
 ```
+
+---
+
+## Empirical-Companion Mode Addendum
+
+**Applies only when `state.json → mode == "empirical-companion"`.** In `theory-development`
+mode, ignore this section entirely. See `prompts/mode-empirical-companion.md` for the full
+mode contract.
+
+Additional inputs: `outputs/empirical_scope.md`, `prompts/ec-empirical-theory-map.md`.
+
+### The Minimal Model Principle governs this stage
+
+> **Use the smallest coherent economic model capable of generating the target hypotheses.**
+
+Steps 1 through 8 above are unchanged in what they require — every object still defined
+before use, every symbol with a domain, every agent with a well-specified objective and
+constraint set. What changes is what gets into the model at all.
+
+Before adding any element, answer both:
+
+1. Which empirical result in `empirical_scope.md` does it correspond to?
+2. Which target hypothesis becomes underivable without it?
+
+Two "none" answers means the element does not enter the model.
+
+Working rules:
+
+- **Start from the canonical model** Stage 3b selected and inherit its structure. Do not
+  rebuild a framework that already exists.
+- **One state variable per empirical result that depends on it.** A second state variable
+  needs its own justification.
+- **Every parameter is describable in one sentence of economics.** A parameter that can only
+  be described by its role in the algebra is a fitting device.
+- **Prefer a restriction to a generalization.** Two types beat a continuum unless the
+  heterogeneity result needs the continuum. Two periods beat infinite horizon unless a
+  target hypothesis is about dynamics the data covers.
+- **Attempt at least one reduction.** Take the model you have written, remove the least
+  load-bearing element, and record which target hypothesis fails. If none fails, the element
+  stays out.
+- **Complexity is not a quality signal.** Do not add generality to make the theory section
+  look substantial.
+
+### Required additional outputs
+
+Follow `prompts/ec-empirical-theory-map.md` and produce:
+
+1. **`outputs/minimality_check.md`** — the full element inventory with each element's
+   empirical role, the hypothesis lost without it, and the keep/remove verdict. Removals are
+   performed in `model_primitives.md`, not merely recommended.
+2. **`outputs/empirical_theory_map.md`** (draft) — columns 1–3 filled (empirical result,
+   economic mechanism, model primitive); the proposition and hypothesis columns marked
+   `pending` until Stage 6.
+3. **`outputs/scope_notes.md`** — create it if it does not exist. Log any element removed
+   here that a researcher might reasonably want back, and any equilibrium complication
+   (multiplicity, existence gaps) found outside the declared empirical domain.
+
+### At HiL-4
+
+HiL-4 remains a hard stop and still settles the equilibrium concept. In this mode, also
+present:
+- the element count (agent types, state variables, parameters, mechanisms);
+- the smaller alternative that was considered and the hypothesis it failed to deliver;
+- any element marked `contested` in `minimality_check.md`, with the trade-off.

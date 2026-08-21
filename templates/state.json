@@ -2,6 +2,7 @@
   "campaign_id": "",
   "workspace": "",
   "hypothesis": "",
+  "mode": "theory-development",
   "current_stage": 0,
   "stage_status": "not_started",
   "completed_stages": [],
@@ -16,7 +17,8 @@
     "gate_4": null,
     "gate_4b": null,
     "gate_5": null,
-    "gate_6": null
+    "gate_6": null,
+    "gate_ec": null
   },
   "human_decisions": {
     "hil_1": null,
@@ -40,7 +42,8 @@
     "gate_4": 0,
     "gate_4b": 0,
     "gate_5": 0,
-    "gate_6": 0
+    "gate_6": 0,
+    "gate_ec": 0
   },
   "loopback_history": [],
   "active_propositions": [],
@@ -55,6 +58,14 @@
     "results_review": null,
     "figures_authorized_for_manuscript": null,
     "blocked_propositions": []
+  },
+  "empirical_companion": {
+    "scope_locked": false,
+    "scope_status": null,
+    "target_hypotheses": [],
+    "excluded_extensions": [],
+    "unmapped_propositions": [],
+    "underived_hypotheses": []
   },
   "finished": false,
   "started_at": "",

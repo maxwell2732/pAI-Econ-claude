@@ -269,3 +269,48 @@ The Brutal Skeptic's REJECT carries extra weight: a Brutal Skeptic REJECT with a
 - [Concern]
 - [Concern]
 ```
+
+---
+
+## Empirical-Companion Mode Addendum
+
+**Applies only when `state.json → mode == "empirical-companion"`.** In `theory-development`
+mode, ignore this section entirely. See `prompts/mode-empirical-companion.md` for the full
+mode contract.
+
+Additional input: `outputs/empirical_scope.md`.
+
+All five personas still convene and still hold two rounds. The question they answer changes
+from "is this theory worth developing?" to "does the smallest coherent model support this
+empirical design?"
+
+Persona focus in this mode:
+
+| Persona | Question in `empirical-companion` mode |
+|---------|---------------------------------------|
+| Mechanism Theorist | Is the authors' proposed mechanism formalizable at all? What is the smallest structure that carries it? |
+| Mathematical Referee | Will the target hypotheses actually follow, or will the signs be ambiguous? Name the condition each hypothesis will turn on. |
+| Economic Intuition Referee | Does the model's mechanism mean the same thing as the mechanism the empirical test measures? |
+| Journal Positioning Referee | Is the theory section proportionate to an applied paper at this target journal? Where would it be too long? |
+| Brutal Skeptic | What alternative mechanism produces the same baseline, mechanism, and heterogeneity results? Would a referee accept this model as an explanation? |
+
+The Brutal Skeptic attacks the mapping between model and empirics, and attacks the
+sufficiency of the proposed mechanism. It does not attack the scope: "this should be a
+bigger theory paper" is out of bounds in this mode.
+
+Alternative mechanisms the Skeptic raises are recorded in `scope_notes.md` and carried
+forward into the manuscript's limitations section. They are not adopted in place of the
+researcher's mechanism.
+
+Add to the synthesis:
+
+```markdown
+## Empirical Companion Assessment
+
+**Is the mechanism formalizable?** YES / YES WITH CAVEATS / NO — [reason]
+**Smallest structure that carries it:** [the council's recommendation]
+**Hypotheses at risk of sign ambiguity:** [H-labels, and the parameter each will turn on]
+**Object identity concern (mechanism test vs. model mechanism):** [none / description]
+**Proportionality:** [is the proposed theory section the right size for this paper?]
+**Alternative mechanisms raised:** [list — each to be logged in scope_notes.md]
+```

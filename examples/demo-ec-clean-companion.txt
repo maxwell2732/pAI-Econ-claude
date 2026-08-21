@@ -1,0 +1,51 @@
+mode: empirical-companion
+
+Empirical question:
+Does a government-subsidized credit guarantee program raise investment among small and
+medium-sized manufacturing firms?
+
+Baseline result:
+Firms in prefectures that entered the guarantee program raise their investment rate by
+roughly 3.1 percentage points relative to firms in not-yet-treated prefectures (staggered
+difference-in-differences, Table 2, significant at 1%). The pre-trend test is flat over four
+pre-periods.
+
+Proposed mechanism:
+The program lowers the collateral wedge firms face when borrowing. A firm that must post
+collateral to borrow can only finance investment up to a multiple of its pledgeable assets.
+The guarantee substitutes public credit risk for private collateral, relaxing that limit, so
+firms that were previously borrowing-constrained can move closer to their unconstrained
+optimum.
+
+Mechanism test:
+We interact the treatment indicator with a pre-period measure of the firm's collateral
+ratio (tangible fixed assets over total assets). The treatment effect is significantly
+larger for firms with low pre-period collateral ratios (Table 4, interaction coefficient
+negative and significant at 5%). We also show that treated firms' loan-to-asset ratios rise
+and that the increase is concentrated in medium-term loans.
+
+Heterogeneity results:
+The effect concentrates in firms with high pre-period leverage and low cash holdings —
+firms most likely to have been constrained before the program. Firms in the top quartile of
+cash holdings show no detectable effect (Table 5).
+
+Key hypotheses to rationalize:
+H1: The guarantee program raises the investment rate.
+H2: The effect operates through the collateral constraint — it is larger where the
+    collateral wedge binds harder.
+H3: The effect is concentrated among firms that were financially constrained before the
+    program, and is absent for unconstrained firms.
+
+Preferred theoretical tradition, if any:
+A static collateral-constrained investment model. We do not want a full dynamic
+investment model.
+
+Scope exclusions:
+No general equilibrium effects on the interest rate. No entry or exit. No welfare analysis
+of the subsidy — the paper does not claim the program is welfare-improving. No banking
+sector behavior; treat the lender as passive.
+
+Declared empirical domain:
+All firms in the sample are borrowers with strictly positive debt. Collateral ratios lie
+between 0.15 and 0.70. The guarantee covers at most 80% of loan principal. Investment is
+strictly positive for all firms in the estimation sample (no corner at zero investment).

@@ -20,6 +20,7 @@
 <p align="center">
   <a href="./README.md">中文版本</a> ·
   <a href="#quick-start">Quick Start</a> ·
+  <a href="#run-modes">Run Modes</a> ·
   <a href="#use-cases">Use Cases</a> ·
   <a href="#model-library">Model Library</a> ·
   <a href="#workflow">Workflow</a>
@@ -39,7 +40,7 @@ Xiaolu Wang (China Agricultural University)
 
 Weilong Zhang (University of Cambridge)
 
-**Last updated:** July 9, 2026 
+**Last updated:** August 21, 2026 
 
 ---
 
@@ -148,9 +149,202 @@ Open Claude Code in that directory — the slash command is immediately availabl
 
 ---
 
+## Run Modes
+
+pAI-Econ-claude offers two theory-building modes. They share the same canonical matching,
+assumption audit, proof integrity, and human-in-the-loop principles.
+
+### 1. Theory Development (default)
+
+Explore and stress-test the theory space: widen the parameter space, look for special cases,
+analyze reversals, add mechanisms, search actively for counterexamples, and pursue a broad
+theoretical contribution. Suited to standalone theoretical research.
+
+This is what runs when no mode is given, and its behavior is identical to v1.3.0.
+
+### 2. Empirical Companion
+
+> **From empirical results to the smallest theory that can explain them.**
+
+A constrained theory-building mode for empirical papers: formalize the researcher's stated
+mechanism with the smallest coherent model and derive hypotheses that map directly onto the
+empirical design.
+
+The governing principle:
+
+> **Constrain scope, not rigor.**
+
+The mode narrows the theoretical search space. It does not lower the standard of proof, and
+it does not manufacture a conclusion to match a regression coefficient.
+
+| | Theory Development | Empirical Companion |
+|---|---|---|
+| Research question | May be widened, reframed, generalized | Locked to the researcher's empirical question |
+| Model size | Whatever the theory needs | Smallest coherent model that generates the target hypotheses |
+| Propositions | Six required types (E/U/C/W/M/B) | One per target hypothesis; extras deferred |
+| Counterexample search | Broad, whole parameter space | Declared empirical domain first; outside findings to scope notes |
+| Numerical simulation | Offered on its own merits | Offered only on three narrow triggers |
+| Novelty requirement | The model should be a theoretical contribution | The model may be an organizing framework for the empirical analysis |
+| Extra findings | Enter the main line | Recorded in `scope_notes.md` |
+
+Unchanged in both modes: canonical model matching (Stage 3b, Gates 2b/2c), the assumption
+audit (Stage 5), proof integrity (Gate 4), the counterexample battery (Stage 8), the
+mathematical review (Gate 6), the citation verification rule, and every human-in-the-loop
+stop.
+
+### How to invoke
+
+```text
+/mode empirical-companion
+
+My empirical paper finds:
+
+Baseline:
+Policy X significantly raises Y.
+
+Mechanism:
+X affects Y by relaxing financing constraint M.
+
+Heterogeneity:
+The effect concentrates in firms with high initial financing constraints.
+
+Please build a minimal theoretical model that derives hypotheses for the baseline,
+mechanism, and heterogeneity results.
+```
+
+Equivalent forms:
+
+```text
+/mode empirical-companion --task path/to/empirical-brief.txt
+
+/theoretical-economics-claude-skill "
+mode: empirical-companion
+...
+"
+```
+
+### The empirical-companion workflow
+
+```text
+Empirical scope lock
+        ↓
+Canonical matching
+        ↓
+Minimal model
+        ↓
+Empirical–theory mapping
+        ↓
+Propositions
+        ↓
+Proof / consistency check
+        ↓
+Empirical Alignment Gate
+        ↓
+Theory section
+```
+
+Stage 0-EC parses these fields and writes `outputs/empirical_scope.md`, the scope contract:
+
+```text
+Empirical question:
+Baseline result:
+Proposed mechanism:
+Mechanism test:
+Heterogeneity results:
+Key hypotheses to rationalize:
+Preferred theoretical tradition, if any:
+Scope exclusions:
+```
+
+The empirical question, the baseline result, and the key hypotheses are required. Missing
+required fields draw at most three questions, bundled into a single message.
+
+### Artifacts unique to this mode
+
+| File | Written at | Content |
+|---|---|---|
+| `outputs/empirical_scope.md` | Stage 0-EC | The scope contract; all later stages work inside it |
+| `outputs/minimality_check.md` | Stage 4/6 | Every model element mapped to its empirical function; elements with no empirical role are removed |
+| `outputs/empirical_theory_map.md` | Stage 4/6 | empirical result → mechanism → primitive → proposition → hypothesis |
+| `outputs/scope_notes.md` | Stages 4–8 | Out-of-domain reversals, corner cases, alternative mechanisms, extensions, additional propositions |
+| `gates/gate-ec-empirical-alignment.md` | After Stage 6 | The Gate EC verdict |
+
+Entries in `scope_notes.md` are still checked and still recorded. By default they stay out of
+the main propositions, the hypotheses, and the manuscript main text. They enter the main text
+only when they overturn a target hypothesis, materially affect identification, or the
+researcher asks for them.
+
+### Gate EC — Empirical–Theory Alignment
+
+Runs after Stage 6 and Gate 3, before HiL-5. Six checks:
+
+| Check | Question |
+|---|---|
+| EC1 | Does every main proposition correspond to at least one empirical result? |
+| EC2 | Is every target hypothesis derivable from the model? |
+| EC3 | Is there any mechanism serving no empirical result? |
+| EC4 | Has the model taken on assumptions beyond what the empirical paper needs? |
+| EC5 | Does the heterogeneity proposition match the empirical interaction or subgroup analysis? |
+| EC6 | Does the mechanism proposition concern the same economic object the mechanism test measures? |
+
+Verdicts use the pipeline's standard vocabulary, PASS / CONDITIONAL PASS / FAIL. EC6 is the
+one check that cannot be downgraded: if the paper claims an empirical result tests mechanism
+M while the model's M is a different latent object, the gate fails.
+
+### Preserved rigor
+
+**Target hypotheses are targets, not truths.** If the researcher expects `X increases Y` and
+the model yields `the sign depends on parameter values`, the pipeline reports that and offers
+the minimal sufficient condition:
+
+```text
+TARGET HYPOTHESIS NOT DERIVED — H2
+
+What the model actually yields: sign depends on theta
+Minimal sufficient condition:   theta > theta*
+Economic meaning:               ...
+Support:                        EMPIRICAL / THEORETICAL / NONE FOUND
+
+  ACCEPT CONDITIONAL   ADD ASSUMPTION   REVISE EMPIRICS
+```
+
+The researcher decides. The pipeline never adopts the condition on its own.
+
+**No assumption laundering.** Monotonicity, convexity, single-crossing, parameter
+restrictions, functional forms, and distributional assumptions cannot be introduced quietly
+to produce a result matching the regression. Any assumption added after the scope lock is
+tagged `ADDED-FOR-TARGET` in `assumption_audit.md`, requires an economic justification that
+holds independent of the target it serves, and is checked at Gate EC.
+
+### Manuscript output
+
+Stage 10 produces a theory section sized for an applied paper:
+
+```text
+3. Conceptual Framework
+
+3.1 Economic Environment
+3.2 Model
+3.3 Predictions
+
+Hypothesis 1: Baseline effect
+Hypothesis 2: Mechanism
+Hypothesis 3: Heterogeneity
+```
+
+Target length is 3–5 pages, proofs go to an appendix, there is no boundary-case section, and
+no welfare section unless the empirical paper makes a welfare claim.
+
+Full explanation: `docs/mode-empirical-companion.md`. The specification the pipeline
+executes: `prompts/mode-empirical-companion.md`.
+
+---
+
 ## Use Cases
 
 pAI-Econ-claude supports theoretical ideas at different stages of maturity. You don't need to run the full pipeline every time — choose the entry point that fits your task.
+
+All five entry points below run in the default **Theory Development** mode. For the theory section of an empirical paper, use the **Empirical Companion** mode described in the previous section.
 
 ### 1. Model Extension Mode: Extend a Canonical Model with a New Mechanism
 
@@ -323,6 +517,10 @@ Stage 7 — Proof Sketch (+ Gate 4)
 
 Every parameter is classified (theoretical normalization / empirically grounded / illustrative / user specified), every numerical result carries an epistemic-status label (e.g., `NUMERICALLY VERIFIED FOR SPECIFIED PARAMETERS`, `COUNTEREXAMPLE FOUND`, `NOT A PROOF`), and figures enter the manuscript only if the researcher explicitly selects `USE FIGURES IN MANUSCRIPT` at HiL-N3 (when authorized, the manuscript includes 1–2 demonstration figures in the main text by default; the rest stay in the workspace or Appendix). A numerical counterexample to a core proposition blocks the unmodified proposition from Stage 10 until it is resolved at Stage 8 / HiL-6.
 
+**About the two run modes (added in v1.4.0):**
+
+The pipeline supports two theory-building modes, sharing the same canonical matching, assumption audit, and proof integrity checks. The default **Theory Development** mode behaves exactly as in earlier versions. **Empirical Companion** mode targets empirical papers: Stage 0-EC locks the empirical scope after Stage 0, Stage 4 enables the Minimal Model Principle, Gate EC checks the empirical–theory correspondence after Stage 6, and HiL-5 is presented as the EMPIRICAL COMPANION CHECKPOINT. Stage 0-EC and Gate EC in the diagram above run only in that mode. See the [Run Modes](#run-modes) section above.
+
 **About Gate 6 — Mathematical Review Gate (added in v1.3.0):**
 
 After `manuscript.tex` is written and before the PDF is compiled, the pipeline runs a mandatory mathematical audit of the full manuscript. The gate was motivated by an observed failure mode: equilibrium equations and first-order conditions wrapped in `proposition` environments and presented as results. Five checks:
@@ -339,7 +537,8 @@ Two matching checks were added upstream: Gate 3 now includes a statement-classif
 
 ```mermaid
 flowchart TD
-    A["0. Intake<br/>Research Idea"] --> B["1. Puzzle Refinement"]
+    A["0. Intake<br/>Research Idea"] --> A2["0-EC. Empirical Scope Lock<br/>(empirical-companion mode only)"]
+    A2 --> B["1. Puzzle Refinement"]
     B --> C["2. Literature Positioning"]
     C --> C2["2a. Empirical Reality Check<br/>(Gate 1b)"]
     C2 --> D["3. Persona Council<br/>Theory Review Committee"]
@@ -347,7 +546,8 @@ flowchart TD
     E --> F["4. Model Primitives"]
     F --> G["5. Assumption Audit"]
     G --> H["6. Proposition Generator"]
-    H --> I["7. Proof Sketch"]
+    H --> HE{"Gate EC<br/>Empirical–Theory Alignment<br/>(empirical-companion mode only)"}
+    HE --> I["7. Proof Sketch"]
     I --> N1{"HiL-N1<br/>Numerical simulation?"}
     N1 -- "NO (default path)" --> J["8. Counterexample Finder"]
     N1 -- "YES / CUSTOM" --> N2["7b. Numerical Simulation<br/>plan → user approval → code<br/>CSV + PNG/PDF figures<br/>(Gate 4b)"]
@@ -364,14 +564,15 @@ flowchart TD
 | Stage | Name | Primary Output |
 |---|---|---|
 | 0 | Intake | `research_intake.md` |
+| **0-EC** | **Empirical Scope Lock** (empirical-companion mode only) | `empirical_scope.md` |
 | 1 | Puzzle Refinement | `research_puzzle.md` |
 | 2 | Literature Positioning | `literature_positioning.md` |
 | **2a** | **Empirical Reality Check** | `empirical_reality_check.md` |
 | 3 | Theory Persona Council | `persona_council.md` |
 | 3b | Canonical Model Matching | `canonical_model_match.md` |
-| 4 | Model Primitives | `model_primitives.md` |
+| 4 | Model Primitives | `model_primitives.md` (plus `minimality_check.md` and `empirical_theory_map.md` in empirical-companion mode) |
 | 5 | Assumption Audit | `assumption_audit.md` |
-| 6 | Proposition Generator | `candidate_propositions.md` |
+| 6 | Proposition Generator | `candidate_propositions.md` (plus `scope_notes.md` and the completed `empirical_theory_map.md` in empirical-companion mode) |
 | 7 | Proof Sketch | `proof_sketches.md` |
 | **7b** | **Numerical Simulation (optional, user opt-in)** | `numerical_simulation_report.md` + `numerical_code/` + `numerical_results/` + `numerical_figures/` (PNG + PDF) |
 | 8 | Counterexample Finder | `counterexamples_and_edge_cases.md` |
@@ -476,6 +677,7 @@ The Skill includes multiple quality gates to avoid the problem of work that "loo
 | Gate 4b | Numerical Integrity (optional; only if Stage 7b ran) | Equation–code consistency, reproducibility, parameter transparency, numerical robustness, result completeness, epistemic-status labels | Return to Stage 7b (fix code/parameters) or Stage 6 (revise proposition) |
 | Gate 5 | Economic Meaning | Whether economic interpretation extends beyond formal results | Return to economic interpretation |
 | Gate 6 | Mathematical Review (after manuscript.tex is written, before PDF compilation) | Statement classification (equilibrium conditions and FOCs must never be labeled as Propositions), independent line-by-line re-derivation, notation consistency, statement–proof match, domain and boundary sanity | Low-level errors are corrected in place and back-propagated to upstream files; substantive errors return to propositions (Stage 6) or proofs (Stage 7) |
+| Gate EC | Empirical–Theory Alignment (empirical-companion mode only; after Stage 6 and Gate 3) | Whether every proposition corresponds to an empirical result, whether every target hypothesis is derivable, whether any mechanism serves no empirical result, whether assumptions exceed what the empirical paper needs, whether the heterogeneity proposition matches the empirical interaction, whether the mechanism proposition and the mechanism test measure the same object | Return to propositions (EC1/EC2/EC5), model primitives (EC3/EC4), or canonical matching (EC6) |
 
 Gate failures are never hidden or repackaged as passes. The Skill explicitly outputs:
 
@@ -496,7 +698,7 @@ Critical judgments in theoretical economics should not be made automatically by 
 | HiL-2 | After Literature Positioning | Whether to accept the literature positioning |
 | HiL-3 | After Persona Council | Whether to accept the theory review conclusions |
 | HiL-4 | After Model Primitives | Confirm the equilibrium concept — this is a hard stop |
-| HiL-5 | After Proposition Generator | Which propositions to carry into subsequent analysis |
+| HiL-5 | After Proposition Generator | Which propositions to carry into subsequent analysis; in empirical-companion mode this is rendered as the EMPIRICAL COMPANION CHECKPOINT, showing empirical result → model mechanism → proposition → hypothesis, with APPROVE / EDIT / RETURN TO MODEL |
 | HiL-N1 | After Proof Sketch | Whether to run numerical simulation at all (YES / NO / PLAN ONLY / CUSTOM) — Stage 7b never runs by default |
 | HiL-N2 | After the simulation plan is written | Approve the plan and parameter design — no code executes before APPROVE PLAN |
 | HiL-N3 | After simulation + Gate 4b | Accept/revise numerical results; authorize (or refuse) manuscript use of figures |
@@ -541,13 +743,17 @@ Exploration/
     │   └── hypothesis.md
     ├── outputs/
     │   ├── research_intake.md
+    │   ├── empirical_scope.md                  ← Stage 0-EC: empirical-companion mode only
     │   ├── research_puzzle.md
     │   ├── literature_positioning.md
     │   ├── persona_council.md
     │   ├── canonical_model_match.md
     │   ├── model_primitives.md
+    │   ├── minimality_check.md                 ← Stage 4/6: empirical-companion mode only
+    │   ├── empirical_theory_map.md             ← Stage 4/6: empirical-companion mode only
     │   ├── assumption_audit.md
     │   ├── candidate_propositions.md
+    │   ├── scope_notes.md                      ← Stages 4–8: empirical-companion mode only
     │   ├── proof_sketches.md
     │   ├── numerical_simulation_decision.md    ← Stage 7b (optional): HiL-N1 decision record
     │   ├── numerical_simulation_plan.md        ← Stage 7b (optional): PLAN ONLY / CUSTOM / YES
@@ -570,7 +776,8 @@ Exploration/
     │   ├── gate-04-proof-integrity.md
     │   ├── gate-04b-numerical-integrity.md     ← Stage 7b (optional): only if simulation ran
     │   ├── gate-05-economic-meaning.md
-    │   └── gate-06-math-review.md              ← after manuscript.tex, before compilation
+    │   ├── gate-06-math-review.md              ← after manuscript.tex, before compilation
+    │   └── gate-ec-empirical-alignment.md      ← after Stage 6: empirical-companion mode only
     └── logs/
         └── stage-log.md
 ```
@@ -642,7 +849,8 @@ pAI-Econ-claude/
 ├── LICENSE
 ├── .claude/
 │   └── commands/
-│       └── theoretical-economics-claude-skill.md  # Slash command entry point
+│       ├── theoretical-economics-claude-skill.md  # slash command entry (default mode)
+│       └── mode.md                                # /mode <mode-name> entry
 ├── model_library/                        # Canonical theoretical economics model library (structural models only)
 │   ├── consumer-choice.md
 │   ├── indirect-utility-expenditure-minimization.md
@@ -691,6 +899,9 @@ pAI-Econ-claude/
 │       ├── human-capital-adaptation-automation-ai.md
 │       └── directed-technical-change-sbtc.md
 ├── prompts/
+│   ├── mode-empirical-companion.md            # empirical-companion mode contract
+│   ├── ec-00-empirical-scope-lock.md          # Stage 0-EC (empirical-companion mode only)
+│   ├── ec-empirical-theory-map.md             # Empirical–theory map and minimality check
 │   ├── 00-intake.md
 │   ├── 01-puzzle-refinement.md
 │   ├── 02-literature-positioning.md
@@ -713,7 +924,20 @@ pAI-Econ-claude/
 │   ├── gate-04-proof-integrity.md
 │   ├── gate-04b-numerical-integrity.md       # Optional Gate 4b (only if Stage 7b ran)
 │   ├── gate-05-economic-meaning.md
-│   └── gate-06-math-review.md                # Gate 6 Mathematical Review (before PDF compilation)
+│   ├── gate-06-math-review.md                # Gate 6 Mathematical Review (before PDF compilation)
+│   └── gate-ec-empirical-alignment.md        # Gate EC (empirical-companion mode only)
+├── docs/
+│   ├── persona-council.md                # Stage 3 detail
+│   ├── mode-empirical-companion.md       # empirical-companion mode explainer
+│   ├── mode-empirical-companion-tests.md # The three verification tests for that mode
+│   └── issue-001-pilot-feedback.md       # Pilot feedback log
+├── examples/                             # Sample inputs loadable with --task
+│   ├── quickstart-task.txt
+│   ├── demo-human-capital-ai-automation.txt
+│   ├── demo-nutrition-label-attention.txt
+│   ├── demo-ec-clean-companion.txt       # Test EC1 fixture
+│   ├── demo-ec-impossible-hypothesis.txt # Test EC2 fixture
+│   └── demo-ec-domain-reversal.txt       # Test EC3 fixture
 ├── templates/
 │   ├── state.json
 │   ├── academic-econ.latex               # Legacy PDF template (deprecated; pipeline now writes .tex directly)
@@ -765,6 +989,11 @@ Basic workflow:
 2. Edit prompt files, model_library, or SKILL.md routing logic
 3. Test on a research hypothesis end-to-end
 4. Submit a PR describing what changed and why
+
+If your change touches the empirical-companion mode, also run Test BC (backward
+compatibility), Test RT (mode routing), and Tests EC1–EC3 from
+`docs/mode-empirical-companion-tests.md`, and record the results in the log table at the
+end of that file.
 ```
 
 ---
