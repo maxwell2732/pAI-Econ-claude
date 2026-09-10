@@ -31,6 +31,9 @@ Human capital / labor check: if the research involves any of the following topic
 - Children's skill development → check Cunha-Heckman, Technology of Skill Formation, Early Childhood Investment
 - Automation / AI / labor market → check Task-Based Production (Acemoglu-Restrepo), Automation-Displacement-Reinstatement, Human Capital Adaptation, Directed Technical Change / SBTC
 - Occupational sorting → check Roy, Occupational Choice and Comparative Advantage
+- Job risk, workplace violence, hours, or any non-wage job attribute → check Compensating Differentials (and, if wages are administratively set, its regulated-wage extension)
+- Entry into an occupation with a multi-year training pipeline → check Cobweb Supply Lags, Ben-Porath
+- Admission cutoffs, exam ranks, or centrally rationed assignment → check Matching with Cutoffs (`model_library/matching-with-cutoffs.md`) in addition to Matching Models
 
 **FAIL if:** a family with HIGH fit is completely absent from the document with no mention or exclusion rationale.
 

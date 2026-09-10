@@ -608,6 +608,7 @@ This step is critical because theoretical economics research should not start fr
 | Disclosure / Persuasion | Information disclosure, Bayesian persuasion |
 | Mechanism Design | Revelation principle, incentive compatibility |
 | Matching Models | Two-sided matching, assignment markets |
+| Matching with Cutoffs | Admission cutoffs, threshold clearing, rationed assignment |
 | Social Learning | Herding behavior, information cascades |
 | Dynamic Optimization | Bellman equations, lifecycle choices |
 | OLG / Life-Cycle Models | Overlapping generations, lifecycle investment |
@@ -655,6 +656,8 @@ For human capital, education, labor markets, automation, and AI impact, the Skil
 | Intergenerational Transmission | Intergenerational transmission of human capital |
 | Education under Credit Constraints | Education choice under credit constraints |
 | Occupational Choice & Comparative Advantage | Occupational choice and comparative advantage |
+| Compensating Differentials | Job risk and non-wage attributes; pass-through under regulated wages |
+| Cobweb Supply Lags | Entry dynamics, expectations, and cycles in long-training occupations |
 | Acemoglu-Restrepo Task-Based Framework | Task-based production, automation, and new tasks |
 | Automation Displacement / Reinstatement | Displacement effects, reinstatement effects, new task creation |
 | Human Capital Adaptation to AI | Human capital adjustment under AI shocks |
@@ -866,6 +869,7 @@ pAI-Econ-claude/
 │   ├── disclosure-persuasion-information-design.md
 │   ├── mechanism-design.md
 │   ├── matching-models.md
+│   ├── matching-with-cutoffs.md                  # Azevedo-Leshno (2016)
 │   ├── social-learning-information-cascades.md
 │   ├── dynamic-optimization-bellman.md
 │   ├── overlapping-generations-life-cycle.md
@@ -894,6 +898,8 @@ pAI-Econ-claude/
 │       ├── intergenerational-transmission.md
 │       ├── education-credit-constraints.md
 │       ├── occupational-choice-comparative-advantage.md
+│       ├── compensating-differentials.md
+│       ├── cobweb-supply-lags.md
 │       ├── task-based-production-acemoglu-restrepo.md
 │       ├── automation-displacement-reinstatement.md
 │       ├── human-capital-adaptation-automation-ai.md

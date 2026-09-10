@@ -586,6 +586,7 @@ pAI-Econ-claude 内置一个 `model_library/`，用于在建模前先匹配经�
 | Disclosure / Persuasion | 信息披露、贝叶斯劝说 |
 | Mechanism Design | 显示原理、激励相容 |
 | Matching Models | 双边匹配、分配市场 |
+| Matching with Cutoffs | 录取分数线、门槛出清、配额分配 |
 | Social Learning | 羊群行为、信息瀑布 |
 | Dynamic Optimization | Bellman 方程、生命周期选择 |
 | OLG / Life-Cycle Models | 代际模型、生命周期投资 |
@@ -633,6 +634,8 @@ pAI-Econ-claude 内置一个 `model_library/`，用于在建模前先匹配经�
 | Intergenerational Transmission | 人力资本代际传递 |
 | Education under Credit Constraints | 信贷约束下的教育选择 |
 | Occupational Choice & Comparative Advantage | 职业选择与比较优势 |
+| Compensating Differentials | 职业风险与非货币属性的补偿性差别；工资管制下的转嫁 |
+| Cobweb Supply Lags | 长训练周期职业的进入动态、预期与周期 |
 | Acemoglu-Restrepo Task-Based Framework | 任务型生产、自动化与新任务 |
 | Automation Displacement / Reinstatement | 替代效应、恢复效应、新任务创造 |
 | Human Capital Adaptation to AI | AI 冲击下的人力资本调整 |
@@ -844,6 +847,7 @@ pAI-Econ-claude/
 │   ├── disclosure-persuasion-information-design.md
 │   ├── mechanism-design.md
 │   ├── matching-models.md
+│   ├── matching-with-cutoffs.md                  # Azevedo-Leshno (2016)
 │   ├── social-learning-information-cascades.md
 │   ├── dynamic-optimization-bellman.md
 │   ├── overlapping-generations-life-cycle.md
@@ -872,6 +876,8 @@ pAI-Econ-claude/
 │       ├── intergenerational-transmission.md
 │       ├── education-credit-constraints.md
 │       ├── occupational-choice-comparative-advantage.md
+│       ├── compensating-differentials.md
+│       ├── cobweb-supply-lags.md
 │       ├── task-based-production-acemoglu-restrepo.md
 │       ├── automation-displacement-reinstatement.md
 │       ├── human-capital-adaptation-automation-ai.md

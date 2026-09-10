@@ -681,6 +681,9 @@ LLMs hallucinate plausible-sounding but nonexistent papers, especially for appli
 - Note: if the research involves market structure, pricing, platforms, or entry/competition topics, check `model_library/io/`
 - Note: if the research involves trade patterns, trade liberalization, exporter behavior, or gains from trade, check `model_library/comparative-advantage-ricardian.md`, `model_library/heckscher-ohlin.md`, `model_library/new-trade-theory-krugman.md`, `model_library/melitz-firm-heterogeneity.md`
 - Note: if the research involves regional/spatial dynamics, internal migration, regional convergence, local labor market adjustment, or the dynamic effects of trade shocks across regions, check `model_library/dynamic-spatial-general-equilibrium.md` and `model_library/trade-labor-dynamics-china-shock.md`
+- Note: if the research involves admission cutoffs, threshold scores, exam ranks, school choice, or any centrally rationed assignment, check `model_library/matching-with-cutoffs.md` in addition to `model_library/matching-models.md`
+- Note: if the research involves job risk, workplace violence, hours, or any non-wage job attribute, check `model_library/human_capital_and_labor/compensating-differentials.md`; if wages in the setting are administratively set, that file's regulated-wage extension is the relevant part
+- Note: if the research involves entry into an occupation with a multi-year training pipeline (medicine, law, engineering, licensed trades), check `model_library/human_capital_and_labor/cobweb-supply-lags.md` for the training-lag dynamics before treating an entry decline as a permanent repricing
 
 ### Stage 4 — Model Primitives
 - Prompt: `prompts/04-model-primitives.md`
