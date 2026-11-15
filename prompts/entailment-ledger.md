@@ -231,6 +231,8 @@ Where a claim makes a sign relation or has a composed governing expression, the 
 | `GAP` | The link cannot be settled with what is available | An open obligation with a named discharge condition. Blocks `VERIFIED`. |
 | `FAIL` | The link is violated | Gate FAIL, trigger FT-1. Where the violation is a claim contradicting a verified expression, class ND-1 applies and the finding is non-downgradable. |
 
+**Every `GAP` and `FAIL` is also a search instruction.** Stage 8's required executable search is aimed at the flags this ledger raises, through the mapping table in `prompts/08-counterexample-finder.md → Required executable search`. An L3 `GAP` means construct the equality configuration; an S2 `MISSING` means insert a gap in the support. Running the ledger first is what makes that search cheap and targeted, so the two are one procedure in two stages.
+
 ---
 
 ## Part 5 — Worked examples

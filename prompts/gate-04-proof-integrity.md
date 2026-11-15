@@ -140,6 +140,8 @@ This gate sets `proof_status` for each claim, per `prompts/verification-record.m
 
 A claim missing any of those stays `NOT VERIFIED` or becomes `CONDITIONALLY VALID` with its conditions named. **Leaving a claim at `NOT VERIFIED` is a normal and correct outcome at this gate**, since Stage 8's search has not yet run. The status is a record of evidence, so do not raise it to clear a blockage.
 
+`counterexample_tests` performed means an entry against the claim's current text with a stated search space. A CORE claim whose entry is `SEARCH NOT PERFORMED`, or which has no entry, may reach `CONDITIONALLY VALID` and may not reach `VERIFIED`. The required search is specified in `prompts/08-counterexample-finder.md → Required executable search`, and the flags this gate's Check 8 raised are what it is aimed at.
+
 ---
 
 ## Output Format

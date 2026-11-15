@@ -1,6 +1,6 @@
 # The Verification Record
 
-**Shared schema module.** Read this file when a stage or gate instructs you to write `verification_record.json`. Stages 6, 7, 7b and 8 write claim fields; Gates 3, 4, 4b and 6 write status and decisions.
+**Shared schema module.** Read this file when a stage or gate instructs you to write `verification_record.json`. Stages 6, 7, 7b and 8 write claim fields; Gates 3, 4, 4b, 4R and 6 write status and decisions.
 
 ---
 
@@ -27,8 +27,9 @@ Three properties matter.
 | Stage 6 | creates one entry per labelled statement: `proposition_id`, `claim_text`, `claim_text_sha256`, `role`, `tier`, `depends_on`, `assumptions`, `source_files`; sets `proof_status: "NOT VERIFIED"` |
 | Stage 7 | appends to `source_files`; fills `independent_derivation` where it performed one; proposes nothing about status |
 | Stage 7b | fills `numerical_checks` including `independence_grade`, `grid`, `regime_matrix` |
-| Stage 8 | fills `counterexample_tests`; may set `proof_status: "INVALID"` on a valid counterexample |
+| Stage 8 | fills `counterexample_tests`, one entry per claim against its current text; may set `proof_status: "INVALID"` on a valid counterexample. A claim it rewrites gets a new ID at `NOT VERIFIED` |
 | Gates 3, 4, 4b, 6 | fill `entailment_ledger`, `support_checklist`, `gate_decision`; set `proof_status`; open and discharge `unresolved_issues` |
+| Gate 4R | the same fields, on revised claims only: every claim whose `claim_text_sha256` differs from the value at its last `gate_decision`, every claim created by a HiL-6 or HiL-N3 resolution, and every claim depending on one of those |
 
 `state.json → active_propositions` stays a list of claim IDs and indexes into this file, so `--resume` on a workspace created before this record existed keeps working. **A workspace with no `verification_record.json` is read as every claim at `NOT VERIFIED`.**
 
@@ -55,7 +56,7 @@ Status attaches to a **claim**. Gate verdicts stay at the document level and are
 3. `NUMERICALLY SUPPORTED` never promotes to `VERIFIED`. It accompanies `NOT VERIFIED` or `CONDITIONALLY VALID`.
 4. Absence of a counterexample never promotes anything. `NO COUNTEREXAMPLE FOUND` is evidence about the search.
 5. `INVALID` is terminal for the claim **as stated**. A revised statement is a new claim with a new ID at `NOT VERIFIED`.
-6. **Any edit to a claim's text resets its status to `NOT VERIFIED`.** Detected by comparing `claim_text_sha256`. This is why a proposition rewritten at Stage 8 or HiL-6 cannot carry an old verification forward.
+6. **Any edit to a claim's text resets its status to `NOT VERIFIED`.** Detected by comparing `claim_text_sha256`. This is why a proposition rewritten at Stage 8 or HiL-6 cannot carry an old verification forward. Gate 4R is where such a claim is re-checked, on the new text alone, before Stage 9.
 7. A claim may be `VERIFIED` and still hold open obligations. Obligations block manuscript inclusion, not the status.
 
 ### Conjectures are kept, and marked

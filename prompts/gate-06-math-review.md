@@ -85,6 +85,8 @@ Run the nine links, the support checklist, and the satisfiability procedure. Wri
 
 Also verify the three claim-status rules from `SKILL.md → Claim status inclusion rule`: a claim at `NOT VERIFIED` appears only as a labelled conjecture outside theorem-like environments, a claim at `INVALID` does not appear, and no `VERIFIED` or `CONDITIONALLY VALID` claim depends on a conjecture (trigger FT-10).
 
+**Counterexample search status.** Read `counterexample_tests` for every CORE claim in the manuscript. A CORE claim whose entry against the **current** text is `SEARCH NOT PERFORMED`, or which has no entry against the current text, may not hold or reach `VERIFIED`. It may hold `CONDITIONALLY VALID` with its conditions printed in the statement, or `NOT VERIFIED` and appear only as a labelled conjecture. A claim carrying `VERIFIED` on the strength of a search that ran against text the revision replaced is a DISCREPANCY (SUBSTANTIVE) under this check, and the record is corrected to `NOT VERIFIED` rather than the claim being re-blessed here. Gate 4R is where a revised claim's search status is meant to be settled; this check is the backstop for a claim that reached print without passing through it.
+
 ## Correction Protocol (differs from other gates)
 Low-level mathematical errors are objective; fixing them requires no researcher judgment, so this gate corrects them directly instead of pausing the pipeline.
 

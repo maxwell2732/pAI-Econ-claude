@@ -7,10 +7,65 @@ You are an adversarial mathematical economist. Your job is to try to BREAK each 
 
 ## Task
 Read `outputs/candidate_propositions.md`, `outputs/proof_sketches.md`, and `outputs/assumption_audit.md`.
+Read `verification_record.json`, including each claim's `entailment_ledger` and `support_checklist` as Gate 4 left them.
 **If Stage 7b (Numerical Simulation) ran**, also read `outputs/numerical_simulation_report.md` (especially its "Handoff to Stage 8" block) and consult `outputs/numerical_results/` as needed.
 Produce `outputs/counterexamples_and_edge_cases.md`.
 
+---
+
+## Required executable search
+
+**Every CORE claim gets one executable search attempt before the prose battery below runs.** Prose reasoning about whether a counterexample might exist does not satisfy this requirement. The attempt produces an explicit instance, or a stated search space over which no instance was found, or a recorded reason why it was not performed.
+
+This requirement exists because the prose battery has returned ROBUST on a claim that a seven-line script breaks. In one past run, nine prose attempts on one proposition concluded ROBUST; attempt 3 ("Degenerate distributions") reasoned that the claim "requires independence, which is the maximally non-degenerate case", and the counterexample was a degenerate *support* under independence. The reasoning was fluent and it never evaluated anything.
+
+### The search is directed by the ledger
+
+Read the claim's `entailment_ledger` and `support_checklist` from `verification_record.json` first. The flags map to search directions mechanically, and this is the reason the ledger comes before the search:
+
+| Ledger flag | Search direction |
+|---|---|
+| L1 `GAP` or `FAIL` (necessity) | construct a case satisfying the conclusion and violating the stated condition |
+| L3 `GAP` or `FAIL` (strictness) | construct the equality configuration, then test whether the hypotheses exclude it |
+| L4 `GAP` or `FAIL` (sign arithmetic) | solve for the parameter region where the terms carry opposite signs |
+| L5 `GAP` or `FAIL` (factor positivity) | set the flagged factor to zero within the hypotheses |
+| L6 `GAP` or `FAIL` (local to global) | find a point where the local condition reverses, then evaluate the global claim there |
+| L7 `GAP` (quantifier order) | fix the variable the claim quantifies last and vary the one it quantifies first |
+| L8 `GAP` (corner coverage) | drive the solution to each corner in turn |
+| S1 `MISSING` (density positivity) | place a zero-density interval where the threshold falls |
+| S2 `MISSING` (support connectedness) | insert a gap in the support spanning the relevant range |
+| S3 `MISSING` (threshold interiority) | push the threshold to the edge of the support |
+| S4 `MISSING` (product support) | make the joint support a strict subset of the product of the marginals |
+| S6 / S7 `MISSING` (positive variance, conditioning measure) | degenerate the distribution or empty the conditioning set within the hypotheses |
+
+Where the ledger returned every link `OK` and no `MISSING` support item, the search is still required. Direct it at the claim's binding assumption and at its corners, in that order.
+
+### What counts as executed
+
+One of the following, per CORE claim:
+
+- **Numeric.** A script under `verification/counterexamples/<claim_id>.py` that instantiates the model at explicit parameter values, evaluates every stated hypothesis at that instance, and evaluates the claim's conclusion. The script prints the hypothesis checks and the conclusion value. It may not import any module from `outputs/numerical_code/`; see `prompts/proof-code-independence.md`.
+- **Symbolic.** A closed-form construction, written out, in which each stated hypothesis is verified at the constructed object and the conclusion is evaluated. A two-line algebraic contradiction counts; a sentence asserting one does not.
+
+Either way, record the result in `verification_record.json → counterexample_tests` with `target` (the flag it was aimed at), `strategy`, `result`, `instance`, `hypotheses_verified_at_instance`, and `evidence_path`.
+
+### The three values
+
+| Value | Requires |
+|---|---|
+| `COUNTEREXAMPLE FOUND` | the instance, every stated hypothesis checked at it and holding, and the conclusion shown to fail there. Set `proof_status: "INVALID"` on the claim and stop the pipeline per the HARD STOP in `SKILL.md`. |
+| `NO COUNTEREXAMPLE FOUND` | the search space stated: which parameters were varied, over what ranges, at what resolution, and which structures were tried. Absence of an instance over a stated space is evidence about the search and promotes nothing. |
+| `SEARCH NOT PERFORMED` | a reason. A skipped search is recorded rather than omitted. A CORE claim carrying this value may not reach `VERIFIED` at any later gate; it may reach `CONDITIONALLY VALID`. |
+
+**Non-CORE claims:** the executable attempt is recommended. Where it is skipped, record `SEARCH NOT PERFORMED` with the reason.
+
+**A found counterexample does not end the stage.** Continue the prose battery on the remaining claims, then present everything at HiL-6 together.
+
+---
+
 ## What to Try
+
+The executable search above is one attempt per CORE claim, aimed at a specific flag. The battery below is the breadth pass, and it runs on every claim.
 
 For EACH proposition, attempt each of the following adversarial constructions. For each attempt, report: what you tried, what happened, and whether it breaks the claim.
 
@@ -106,15 +161,33 @@ Report: "INCONCLUSIVE — [Attempt type]. Could not determine in this case; reco
 
 ## Summary Table
 
-| Proposition | Attempts | Breaks Found | Severity | Status |
-|------------|---------|-------------|---------|--------|
-| P_E1 | [N attempted] | [N breaks] | [MAX severity] | ROBUST / NEEDS FIX |
-| P_C1 | [N attempted] | [N breaks] | [MAX severity] | ROBUST / NEEDS FIX |
-| ... | | | | |
+| Proposition | Role | Executable search | Attempts | Breaks Found | Severity | Status |
+|------------|------|-------------------|---------|-------------|---------|--------|
+| P_E1 | CORE | FOUND / NONE FOUND / NOT PERFORMED | [N attempted] | [N breaks] | [MAX severity] | ROBUST / NEEDS FIX |
+| P_C1 | SUPPORTING | … | [N attempted] | [N breaks] | [MAX severity] | ROBUST / NEEDS FIX |
+| ... | | | | | | |
+
+**CORE claims with `SEARCH NOT PERFORMED`:** [list, or "none"] — each may not reach `VERIFIED` at any later gate.
 
 ---
 
 ## [P_E1] — Counterexample Analysis
+
+### Attempt 0: Ledger-directed executable search (required for CORE claims)
+**Ledger flags on this claim:** [e.g. "L3 GAP, S2 MISSING", or "all links OK"]
+**Target:** [the flag the search was aimed at, or "binding assumption + corners"]
+**Strategy:** [the construction, in one line]
+**Form:** NUMERIC (`verification/counterexamples/P_E1.py`) / SYMBOLIC
+**Instance:** [explicit parameter values, or the constructed object]
+**Hypotheses evaluated at the instance:**
+| Hypothesis | Holds at instance? |
+|------------|--------------------|
+| [A_n / stated condition] | yes / no |
+
+**Conclusion at the instance:** [the value, and whether the claim's assertion holds there]
+**Result:** COUNTEREXAMPLE FOUND / NO COUNTEREXAMPLE FOUND / SEARCH NOT PERFORMED
+**Search space (if NONE FOUND):** [parameters varied, ranges, resolution, structures tried]
+**Reason (if NOT PERFORMED):** [the reason]
 
 ### Attempt 1: Two-Type Reduction
 **Tried:** [Describe the minimal case]
