@@ -10,6 +10,9 @@ Stage 6 (Proposition Generator)
 - `outputs/candidate_propositions.md`
 - `outputs/model_primitives.md`
 - `outputs/assumption_audit.md`
+- `verification_record.json`
+- `prompts/entailment-ledger.md` (read before Check F)
+- `prompts/verification-record.md` (status semantics and schema)
 
 ## Core Question
 For each CORE proposition, ask: **Would a careful economist have known the answer to this question before building the model?**
@@ -52,15 +55,45 @@ Apply this check to EVERY labeled statement in candidate_propositions.md (propos
 
 If a statement is MISLABELED, the fix is to reclassify it (move it into the model setup or relabel the environment) and then re-count the remaining genuine CORE propositions.
 
+**One more row for the content-to-home mapping:** a statement at `role: CONJECTURE`, or at `proof_status: NOT VERIFIED` with no route to a proof, belongs in a `remark` or in running text under the word "conjecture". It is MISLABELED (TYPE) in a `proposition`, `lemma`, or `corollary` environment.
+
+### Check F — The T1 battery
+
+Read `prompts/entailment-ledger.md` and run the **cheap tier** on every labelled statement, including SUPPORTING and EXTENSION. This is the first point in the pipeline at which claim text exists, so a defect caught here costs nothing downstream.
+
+Run exactly four things, and run them mechanically:
+
+1. **The assumption ledger.** Fill `declared`, `used`, `required_for_strength`, `undeclared_but_used`, `declared_but_unused`. `required_for_strength` diverges from `used` precisely where a strict claim rests on a weak argument, which is the point of the field.
+2. **Links L3, L4, L5, L9.** Strictness, sign arithmetic, factor positivity, definition identity. Write out the L4 term table and the L5 factor table where they apply.
+3. **The support checklist S1–S9.**
+4. **Satisfiability**, decomposing any compound assumption first.
+
+Links L1, L2, L6, L7 and L8 are not run here; Gate 4's Check 8 runs the full ledger once the proof sketches exist.
+
+- **PASS:** every link run is `OK` or `N/A`; no `MISSING` support item a conclusion depends on; `satisfiability = SATISFIABLE`
+- **FLAG:** a `GAP` on a SUPPORTING or EXTENSION statement
+- **FAIL:** any link `FAIL`; a `MISSING` support item a conclusion depends on (trigger FT-6); `INFEASIBLE_AT_STATED_POINT` (FT-4)
+
+**This check is a reading task, not a research task.** Read the claim for a strictness word; decompose the governing expression into terms and tabulate signs; list the factors and ask what makes each non-zero; decompose compound assumptions and evaluate at the distinguished point. A few minutes per claim. Where the hypotheses plainly name the assumption doing the work, the link is `OK` and you say which assumption. Flagging a correct claim is a cost, so do not reach for a `GAP` to look thorough.
+
+### Initialize the verification record
+
+Confirm that Stage 6 created one entry per labelled statement in `verification_record.json`, each at `proof_status: "NOT VERIFIED"`. Create any that are missing. Write this gate's Check F results into `entailment_ledger`, `support_checklist` and `assumptions`, and record the `gate_decision`.
+
+**This gate assigns no status above `NOT VERIFIED`.** It has no proof sketches to work from.
+
 ## Verdict Rules
 
 For the full set of CORE propositions:
+
+**⚠️ Precedence.** The FAIL triggers in `SKILL.md -> Objective FAIL triggers` take precedence over the arithmetic below. No verdict above FAIL may be issued while a trigger is live.
 
 **PASS:**
 - All CORE propositions are NON-TRIVIAL or BORDERLINE on Check A
 - No CORE proposition fails Check C (REFORMULATION) unless explicitly acknowledged
 - All CORE propositions have ECONOMIC CONTENT on Check D
 - All labeled statements are CORRECT on Check E
+- Check F: PASS for all statements
 
 **CONDITIONAL PASS:**
 - 1 CORE proposition is BORDERLINE on Check A, but the others are NON-TRIVIAL
@@ -68,7 +101,9 @@ For the full set of CORE propositions:
 - OR: a SUPPORTING statement is MISLABELED on Check E, has been reclassified in candidate_propositions.md, and enough genuine CORE propositions remain
 
 **FAIL:**
-- Any CORE proposition is TRIVIAL on Check A
+- Any FAIL trigger from `SKILL.md` is live
+- OR: Check F FAILs for any statement
+- OR: Any CORE proposition is TRIVIAL on Check A
 - OR: Any CORE proposition is REFORMULATION on Check C without acknowledgment
 - OR: Any CORE proposition is MISLABELED (CHARACTERIZATION) on Check E (an equilibrium condition or FOC presented as a core result)
 - OR: The full set of CORE propositions collectively fails to add up to a non-trivial contribution
@@ -88,14 +123,20 @@ Write the gate result to `gates/gate-03-non-triviality.md`:
 **Verdict:** PASS / CONDITIONAL PASS / FAIL
 
 **Per-proposition assessment:**
-| Proposition | Check A | Check B | Check C | Check D | Check E | Overall |
-|------------|---------|---------|---------|---------|---------|---------|
-| P_E1 | NON-TRIVIAL/BORDERLINE/TRIVIAL | HARD/SOFT/CIRCULAR | ORIGINAL/EXT/REFORM | ECON/MATH/DEF | CORRECT/MISLABELED | OK/FLAG |
+| Proposition | Check A | Check B | Check C | Check D | Check E | Check F | Overall |
+|------------|---------|---------|---------|---------|---------|---------|---------|
+| P_E1 | NON-TRIVIAL/BORDERLINE/TRIVIAL | HARD/SOFT/CIRCULAR | ORIGINAL/EXT/REFORM | ECON/MATH/DEF | CORRECT/MISLABELED | PASS/FLAG/FAIL | OK/FLAG |
 | P_C1 | ... | ... | ... | ... | ... | ... |
 | P_W1 | ... | ... | ... | ... | ... | ... |
 
 **Critical findings:**
 [List any TRIVIAL, REFORMULATION, or MISLABELED findings with specific details]
+
+**Check F — T1 battery, per statement:**
+[The per-claim block from `prompts/entailment-ledger.md` Part 4, restricted to L3, L4, L5, L9, the support checklist and satisfiability. Write out the L4 term table and the L5 factor table where they apply.]
+
+**FAIL conditions hit:** [by trigger ID, or "none"]
+**Downgrades proposed:** [or "none"]
 
 **Recommended action:**
 [If PASS: "Proceed to HiL-5."]

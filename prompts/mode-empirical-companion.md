@@ -262,7 +262,8 @@ table is the index; the addendum in each file is the operative text.
 | Stage 7 — Proof Sketch | Per-hypothesis derivability verdict; `TARGET HYPOTHESIS NOT DERIVED` where needed. |
 | Gate 4 — Proof Integrity | New check EC-D: is every target hypothesis actually derived? |
 | Stage 7b — Numerical Simulation | Recommend only on the three narrow triggers. |
-| Stage 8 — Counterexample Finder | Declared domain first. Inside-domain reversal is a failure; outside-domain goes to `scope_notes.md`. |
+| Stage 8 — Counterexample Finder | Declared domain first. Inside-domain reversal is a failure; outside-domain goes to `scope_notes.md`. The required executable search per CORE claim runs inside the declared domain first. |
+| Gate 4R — Revision Re-gate | Position unchanged (after HiL-6, before Stage 9). Three mode additions: an added hypothesis is re-checked against the `ADDED-FOR-TARGET` rule; a restricted domain must still contain the declared empirical domain; a revision that excludes an inside-domain counterexample by stepping outside the sample fails. Every revised claim's row in `empirical_theory_map.md` is updated. |
 | Stage 9 — Economic Interpretation | Proposition → Empirical hypothesis → Regression specification. |
 | Stage 10 — Manuscript Skeleton | Applied-paper Conceptual Framework section (3.1/3.2/3.3), hypotheses generated from the map. |
 | Gate 1 / Gate 3 | Do not fail for low standalone novelty alone. All other checks unchanged. |

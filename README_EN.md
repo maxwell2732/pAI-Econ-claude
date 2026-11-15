@@ -40,7 +40,9 @@ Xiaolu Wang (China Agricultural University)
 
 Weilong Zhang (University of Cambridge)
 
-**Last updated:** August 21, 2026 
+**Last updated:** November 16, 2026
+
+**v1.5.0 — reliability bug fix.** Fixes a defect in which the pipeline verified derivations and never verified whether a claim follows from them. Adds three shared check modules (entailment ledger, per-claim verification record, proof–code independence) and Gate 4R, which re-checks any claim whose text a revision changed; twelve objective FAIL triggers and five non-downgradable finding classes across the gates; one required executable counterexample search per CORE claim at Stage 8; a per-claim evidence block at three human checkpoints; and the artifact-protection hook that `settings.json` had registered without the script existing. See the [CHANGELOG](./CHANGELOG.md).
 
 ---
 
@@ -535,6 +537,21 @@ Low-level errors (mislabels, algebra slips that change no claim's direction) are
 
 Two matching checks were added upstream: Gate 3 now includes a statement-classification test (Check E) at the proposition-generation source, and Gate 4 now includes an independent re-derivation test (Check 7) for the key algebra in proof sketches.
 
+**About claim verification — the entailment ledger, the verification record, and Gate 4R (added in v1.5.0):**
+
+Gate 4's Check 7 and Gate 6's Check M2 both re-derive displayed formulas from the model primitives, and both do that competently. The step from a verified formula to the quantified claim stated against it was checked nowhere. In one past run, all four mathematical defects external review found had correct algebra.
+
+v1.5.0 separates verifying a derivation from verifying a claim, and adds the second:
+
+- **The entailment ledger** (`prompts/entailment-ledger.md`) — nine links per claim: L1 necessity, L2 sufficiency, L3 strictness, L4 sign arithmetic, L5 factor positivity, L6 local-to-global, L7 quantifier order, L8 corner coverage, L9 definition identity. Plus a nine-item support and distribution checklist (positive density, connected support, threshold interiority, product support, finite moments, positive variance, conditioning-set measure, atoms, policy invariance), twelve family-specific regularity rows, and a satisfiability procedure for claims evaluated at a boundary, a limit, or a completion point. L3, L4, L5 and satisfiability are mechanical, take minutes per claim, and catch all four of those defects.
+- **A per-claim verification record** (`verification_record.json`) — five statuses (`VERIFIED`, `CONDITIONALLY VALID`, `INVALID`, `NOT VERIFIED`, `NUMERICALLY SUPPORTED`), each with its minimum evidence. Every claim is created `NOT VERIFIED`, only a gate may raise a status, and any edit to a claim's text resets it, detected through `claim_text_sha256`. The same file carries the obligation ledger: every open item with its discharge condition and whether it blocks the manuscript.
+- **Proof–code independence** (`prompts/proof-code-independence.md`) — verification code may not inherit the author's classifiers or feasibility bounds; I0–I4 evidence grades; an optimality system and every constraint's binding condition derived per model variant; the grid usability ratio and the regime test matrix.
+- **Gate 4R, the revision re-gate** — between HiL-6 and Stage 9, running Gate 4's Checks 1, 3, 7 and 8 on changed claim text only, plus one check that takes the original counterexample instance and evaluates the new hypotheses at it. With no revised claims it records `NOT RUN` and costs nothing. Before it existed, a claim rewritten at Stage 8 or HiL-6 reached the manuscript with Gate 6 as its first reader, and Gate 6 is the last gate in the pipeline.
+
+Stage 8 also requires one **executable** counterexample search per CORE claim: a numeric script (instantiate the model at explicit parameter values, check every stated hypothesis at the instance, evaluate the conclusion) or a written symbolic construction, aimed by a mechanical mapping from each ledger flag to a search direction. Prose reasoning that a counterexample probably does not exist no longer satisfies it. `SEARCH NOT PERFORMED` stays a permitted, recorded value, and it caps that claim at `CONDITIONALLY VALID`.
+
+HiL-5, HiL-N3 and HiL-6 each display a per-claim status table with the independence grade, an entailment summary and the open-obligation count, a required `Checks not performed` line, and a `SHOW EVIDENCE [P_n]` option that prints one claim's record and derivation.
+
 ```mermaid
 flowchart TD
     A["0. Intake<br/>Research Idea"] --> A2["0-EC. Empirical Scope Lock<br/>(empirical-companion mode only)"]
@@ -553,7 +570,8 @@ flowchart TD
     N1 -- "YES / CUSTOM" --> N2["7b. Numerical Simulation<br/>plan → user approval → code<br/>CSV + PNG/PDF figures<br/>(Gate 4b)"]
     N1 -- "PLAN ONLY" --> NP["Plan written; pause<br/>(no code executed)"]
     N2 --> J
-    J --> K["9. Economic Interpretation"]
+    J --> JR{"Gate 4R<br/>Revision re-gate<br/>(revised claims only; NOT RUN if none)"}
+    JR --> K["9. Economic Interpretation"]
     K --> L["10. Manuscript Skeleton<br/>Markdown → Gate 6 Math Review → PDF"]
 ```
 
@@ -578,6 +596,10 @@ flowchart TD
 | 8 | Counterexample Finder | `counterexamples_and_edge_cases.md` |
 | 9 | Economic Interpretation | `economic_interpretation.md` |
 | 10 | Manuscript Skeleton | `manuscript_skeleton.md` + `manuscript_skeleton.tex` + `manuscript_skeleton.pdf` |
+
+A workspace carries two state files. `state.json` holds the pipeline position and the researcher's decisions. `verification_record.json` holds per-claim verification status and evidence: Stage 6 creates it, Stages 7, 7b and 8 fill claim fields, and Gates 3, 4, 4b, 4R and 6 write statuses and decisions. `state.json → active_propositions` stays a list of claim IDs indexing into it, so `--resume` on a workspace created before v1.5.0 keeps working (with no record file, every claim reads as `NOT VERIFIED`).
+
+Gate 4R sits between HiL-6 and Stage 9, runs on changed claim text only, and records `NOT RUN — no revised claims` at no cost when nothing changed.
 
 ---
 
@@ -676,10 +698,11 @@ The Skill includes multiple quality gates to avoid the problem of work that "loo
 | Gate 2c | Theory Lineage | Whether theoretical ancestors, inherited content, and new mechanisms are explicit | Return to canonical model matching |
 | Gate 2 | Model Coherence | Whether model primitives, timing, and information structure are consistent | Return to model primitives |
 | Gate 3 | Non-triviality | Whether propositions are non-trivial, not merely implied by assumptions | Return to assumptions or propositions |
-| Gate 4 | Proof Integrity | Whether proof sketches honestly flag gaps; whether key algebra (FOCs, closed forms, comparative-statics signs) survives independent re-derivation | Return to propositions or proofs |
+| Gate 4 | Proof Integrity | Whether proof sketches honestly flag gaps; whether key algebra (FOCs, closed forms, comparative-statics signs) survives independent re-derivation; Check 8, the entailment ledger: nine links, the support and distribution checklist, hypothesis-set satisfiability | Return to propositions or proofs |
 | Gate 4b | Numerical Integrity (optional; only if Stage 7b ran) | Equation–code consistency, reproducibility, parameter transparency, numerical robustness, result completeness, epistemic-status labels | Return to Stage 7b (fix code/parameters) or Stage 6 (revise proposition) |
+| Gate 4R | Revision Re-gate (after HiL-6, before Stage 9; changed claim text only) | Whether the revision is recorded as one (new ID, status reset), assumption usage and the entailment ledger on the new statement, re-derivation of changed algebra, whether the original counterexample is actually excluded by the new hypotheses, whether a CORE claim still has a search against its current text | Return to Stage 8 (the resolution was wrong) or Stage 6 (the claim needs restating) |
 | Gate 5 | Economic Meaning | Whether economic interpretation extends beyond formal results | Return to economic interpretation |
-| Gate 6 | Mathematical Review (after manuscript.tex is written, before PDF compilation) | Statement classification (equilibrium conditions and FOCs must never be labeled as Propositions), independent line-by-line re-derivation, notation consistency, statement–proof match, domain and boundary sanity | Low-level errors are corrected in place and back-propagated to upstream files; substantive errors return to propositions (Stage 6) or proofs (Stage 7) |
+| Gate 6 | Mathematical Review (after manuscript.tex is written, before PDF compilation) | Statement classification (equilibrium conditions and FOCs must never be labeled as Propositions), independent line-by-line re-derivation, notation consistency, statement–proof match, domain and boundary sanity; Check M6, the ledger re-run against the statements as printed | Low-level errors are corrected in place and back-propagated to upstream files; substantive errors return to propositions (Stage 6) or proofs (Stage 7) |
 | Gate EC | Empirical–Theory Alignment (empirical-companion mode only; after Stage 6 and Gate 3) | Whether every proposition corresponds to an empirical result, whether every target hypothesis is derivable, whether any mechanism serves no empirical result, whether assumptions exceed what the empirical paper needs, whether the heterogeneity proposition matches the empirical interaction, whether the mechanism proposition and the mechanism test measure the same object | Return to propositions (EC1/EC2/EC5), model primitives (EC3/EC4), or canonical matching (EC6) |
 
 Gate failures are never hidden or repackaged as passes. The Skill explicitly outputs:
@@ -688,6 +711,33 @@ Gate failures are never hidden or repackaged as passes. The Skill explicitly out
 - Severity
 - Recommended loopback stage
 - Whether a human override is possible
+
+### Objective FAIL triggers (v1.5.0)
+
+Each gate's "count the WARNINGs, then decide" arithmetic has the same agent raising the findings and counting them. v1.5.0 adds twelve triggers that depend on no count at all. **No verdict above FAIL may be issued while a trigger is live.**
+
+| ID | Trigger | Gates |
+|---|---|---|
+| FT-1 | A claim's entailment ledger returns `FAIL` on any link | 3, 4, 4R, 6 |
+| FT-2 | A claim is contradicted by an expression the gate itself verified | 4, 4R, 6 |
+| FT-3 | A valid counterexample satisfying the claim's stated hypotheses | 4, 4b, 4R, 6 |
+| FT-4 | A claim in use has `satisfiability == INFEASIBLE_AT_STATED_POINT` | 3, 4, 4R, 6 |
+| FT-5 | `undeclared_but_used` non-empty on a CORE claim (assumption laundering) | 4, 4R |
+| FT-6 | A `MISSING` support-checklist item the conclusion depends on | 3, 4, 4R, 6 |
+| FT-7 | Constraint-status disagreement between the verifier's and the author's implementation at any grid point | 4b |
+| FT-8 | `usability_ratio < 0.5`, or a grid exclusion not derived from the model | 4b |
+| FT-9 | Independence grade I3 or I4 offered as evidence for `VERIFIED` | 4, 4b, 4R, 6 |
+| FT-10 | A `VERIFIED` or `CONDITIONALLY VALID` claim depends on a `CONJECTURE` | 4, 4R, 6 |
+| FT-11 | The proof establishes a weaker claim than the statement asserts, strictness included | 6 |
+| FT-12 | A claim whose text changed still carries a status above `NOT VERIFIED` | 4, 4R, 6 |
+
+### Five non-downgradable finding classes
+
+Mathematical contradiction (ND-1), valid counterexample (ND-2), incorrect constraint classification (ND-3), missing load-bearing proof (ND-4), infeasible hypothesis set (ND-5). The researcher keeps final authority over the resolution. What the class removes is the option of the finding disappearing: for these, `PROCEED WITH CAVEAT` is available only in the variant that discloses the finding in the manuscript at the affected result.
+
+### Downgrade records and open obligations
+
+A gate that hits a FAIL trigger and judges it should not fail must name the trigger in `fail_conditions_hit` (filled whether or not a downgrade follows), record the rationale, and wait for `APPROVE DOWNGRADE` or `REVERSE DOWNGRADE`; an unapproved downgrade blocks manuscript inclusion of that claim. Every WARNING, every ledger `GAP`, and every CONDITIONAL PASS condition becomes an entry in the obligation ledger, and **every gate reads every open obligation before running its own checks**, recording each as `DISCHARGED` with an evidence path or `STILL OPEN`. A remedy that was applied is not thereby discharged: discharge requires evidence that the remedy closed the defect the obligation was raised against.
 
 ---
 
@@ -701,13 +751,17 @@ Critical judgments in theoretical economics should not be made automatically by 
 | HiL-2 | After Literature Positioning | Whether to accept the literature positioning |
 | HiL-3 | After Persona Council | Whether to accept the theory review conclusions |
 | HiL-4 | After Model Primitives | Confirm the equilibrium concept — this is a hard stop |
-| HiL-5 | After Proposition Generator | Which propositions to carry into subsequent analysis; in empirical-companion mode this is rendered as the EMPIRICAL COMPANION CHECKPOINT, showing empirical result → model mechanism → proposition → hypothesis, with APPROVE / EDIT / RETURN TO MODEL |
+| HiL-5 | After Proposition Generator | Which propositions to carry into subsequent analysis; in empirical-companion mode this is rendered as the EMPIRICAL COMPANION CHECKPOINT, showing empirical result → model mechanism → proposition → hypothesis, with APPROVE / EDIT / RETURN TO MODEL. Carries the per-claim verification table and `SHOW EVIDENCE [P_n]` |
 | HiL-N1 | After Proof Sketch | Whether to run numerical simulation at all (YES / NO / PLAN ONLY / CUSTOM) — Stage 7b never runs by default |
 | HiL-N2 | After the simulation plan is written | Approve the plan and parameter design — no code executes before APPROVE PLAN |
-| HiL-N3 | After simulation + Gate 4b | Accept/revise numerical results; authorize (or refuse) manuscript use of figures |
-| HiL-6 | After Counterexample Finder | How to handle counterexamples and boundary cases |
+| HiL-N3 | After simulation + Gate 4b | Accept/revise numerical results; authorize (or refuse) manuscript use of figures. Carries each result's epistemic label, independence grade, grid usability ratio, and regimes tested |
+| HiL-6 | After Counterexample Finder | How to handle counterexamples and boundary cases. Carries each claim's search result (FOUND / NONE FOUND / NOT PERFORMED) and states before the choice that every resolution creates a new claim for Gate 4R to re-check |
 
 **HiL-4 is a hard stop.** Equilibrium concepts — Nash, SPE, BNE, PBE, competitive equilibrium, etc. — must be confirmed by the researcher before advancing.
+
+Since v1.5.0, every checkpoint that reports a gate verdict (HiL-5, HiL-N3, HiL-6) carries an evidence block generated from `verification_record.json`. Three rules keep it readable: an empty column prints as empty (`—` means the field is null, which is information); `Checks not performed` is a required line and never an omission; `SHOW EVIDENCE [P_n]` is read-only and repeatable, so a researcher can audit one claim without reading every gate file.
+
+Two further hard stops: any claim reaching `INVALID` stops the pipeline at the stage or gate that found it, and a CORE claim still at `NOT VERIFIED` when Stage 10 begins stops it before `manuscript.tex` is written, with five named resolutions (prove, weaken, relabel as a conjecture, drop, or disclose the gap in the manuscript).
 
 ---
 
@@ -742,6 +796,11 @@ git add -f Exploration/Project_NNN_<Name>/
 Exploration/
 └── Project_NNN_<ModelAbbrev>/        ← e.g., Project_001_HumanCapitalAutomation
     ├── state.json
+    ├── verification_record.json        ← Per-claim status and evidence (from Stage 6)
+    ├── verification/
+    │   ├── derivations/                ← One file per re-derived claim: the working
+    │   ├── numerical/                  ← Optimality systems, independent reimplementations
+    │   └── counterexamples/            ← Search scripts and the instances found
     ├── initial_context/
     │   └── hypothesis.md
     ├── outputs/
@@ -778,6 +837,7 @@ Exploration/
     │   ├── gate-03-non-triviality.md
     │   ├── gate-04-proof-integrity.md
     │   ├── gate-04b-numerical-integrity.md     ← Stage 7b (optional): only if simulation ran
+    │   ├── gate-04r-revision-regate.md         ← After HiL-6: changed claim text only
     │   ├── gate-05-economic-meaning.md
     │   ├── gate-06-math-review.md              ← after manuscript.tex, before compilation
     │   └── gate-ec-empirical-alignment.md      ← after Stage 6: empirical-companion mode only
@@ -836,7 +896,9 @@ Stage 8 specifically searches for counterexamples and boundary cases, including:
 - Alternative equilibrium
 - Violation of key assumptions
 
-The goal of this step is not to make the model look better, but to find early where it might fail.
+The goal of this step is to find early where the model might fail. Making it look better is no part of the job.
+
+Every CORE claim additionally gets one **required executable search**: a numeric script (instantiate the model at explicit parameter values, check every stated hypothesis at the instance, evaluate the conclusion) or a written symbolic construction, aimed by the entailment ledger's flags (an L3 flag means construct the equality configuration; an S2 `MISSING` means insert a gap in the support). The requirement comes from one run in which nine prose attempts on a proposition concluded ROBUST and a seven-line script broke it. `SEARCH NOT PERFORMED` is permitted, must be recorded, and caps that claim below `VERIFIED`.
 
 ---
 
@@ -850,10 +912,13 @@ pAI-Econ-claude/
 ├── README_EN.md                          # English documentation (this file)
 ├── THEORETICAL_ECON_MIGRATION_PLAN.md    # Design record for migration from pAI/MSc
 ├── LICENSE
+├── settings.json                          # Claude Code hook registration (PreToolUse)
 ├── .claude/
-│   └── commands/
-│       ├── theoretical-economics-claude-skill.md  # slash command entry (default mode)
-│       └── mode.md                                # /mode <mode-name> entry
+│   ├── commands/
+│   │   ├── theoretical-economics-claude-skill.md  # slash command entry (default mode)
+│   │   └── mode.md                                # /mode <mode-name> entry
+│   └── hooks/
+│       └── protect-files.sh               # Artifact protection: no overwrite of hypothesis.md or a recorded verification artifact
 ├── model_library/                        # Canonical theoretical economics model library (structural models only)
 │   ├── consumer-choice.md
 │   ├── indirect-utility-expenditure-minimization.md
@@ -905,6 +970,9 @@ pAI-Econ-claude/
 │       ├── human-capital-adaptation-automation-ai.md
 │       └── directed-technical-change-sbtc.md
 ├── prompts/
+│   ├── entailment-ledger.md                   # Entailment check: nine links + support checklist + satisfiability (shared by Gates 3/4/4R/6)
+│   ├── verification-record.md                 # Schema and status rules for the per-claim record
+│   ├── proof-code-independence.md             # Proof–code independence, I0–I4 grades, grid honesty
 │   ├── mode-empirical-companion.md            # empirical-companion mode contract
 │   ├── ec-00-empirical-scope-lock.md          # Stage 0-EC (empirical-companion mode only)
 │   ├── ec-empirical-theory-map.md             # Empirical–theory map and minimality check
@@ -929,6 +997,7 @@ pAI-Econ-claude/
 │   ├── gate-03-non-triviality.md
 │   ├── gate-04-proof-integrity.md
 │   ├── gate-04b-numerical-integrity.md       # Optional Gate 4b (only if Stage 7b ran)
+│   ├── gate-04r-revision-regate.md           # Gate 4R revision re-gate (after HiL-6, before Stage 9)
 │   ├── gate-05-economic-meaning.md
 │   ├── gate-06-math-review.md                # Gate 6 Mathematical Review (before PDF compilation)
 │   └── gate-ec-empirical-alignment.md        # Gate EC (empirical-companion mode only)
@@ -946,6 +1015,7 @@ pAI-Econ-claude/
 │   └── demo-ec-domain-reversal.txt       # Test EC3 fixture
 ├── templates/
 │   ├── state.json
+│   ├── verification_record.json          # Per-claim verification record skeleton
 │   ├── academic-econ.latex               # Legacy PDF template (deprecated; pipeline now writes .tex directly)
 │   ├── author_style_guide_econ.md
 │   └── author_style_guide_default.md

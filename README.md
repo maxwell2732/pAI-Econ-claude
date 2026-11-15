@@ -36,7 +36,9 @@ Xiaolu Wang / 王晓璐（China Agricultural University）
 
 Weilong Zhang / 章维龙（University of Cambridge）  
 
-**最后更新：** 2026 年 8 月 21 日 
+**最后更新：** 2026 年 11 月 16 日
+
+**v1.5.0 — 可靠性 bug 修复。** 修复流水线只校验推导、不校验「断言是否由推导推出」的缺陷。新增三个共享检查模块（蕴含检查、逐命题验证记录、证明—代码独立规则）和一道 Gate 4R（修订后重新过门），为各 Gate 增加 12 条客观 FAIL 触发条件与 5 类不可降级发现，要求 Stage 8 对每条 CORE 声明做一次可执行反例搜索，在三个人类检查点显示逐命题证据，并补上 `settings.json` 中已注册却缺失的产物保护 hook。详见 [CHANGELOG](./CHANGELOG.md)。
 
 ---
 
@@ -513,6 +515,21 @@ pipeline 支持两种理论构建模式，共用同一套典范模型匹配、�
 
 上游同时增加了两道对应检查：Gate 3 新增陈述分类检查（Check E，在命题生成源头拦截误标），Gate 4 新增证明草图关键代数的独立重推导检查（Check 7）。
 
+**关于声明验证 — Entailment Ledger、验证记录与 Gate 4R（v1.5.0 新增）：**
+
+Gate 4 的 Check 7 与 Gate 6 的 Check M2 都从模型原语独立重推导展示公式，两者都做得称职。从一条已验证的公式，到写在它上面那句带量词的断言，这一步此前没有任何检查。一次实际运行中，外部评审找到的四处数学缺陷，代数全部正确。
+
+v1.5.0 把"验证推导"和"验证声明"拆成两件事，并补上后者：
+
+- **Entailment Ledger**（`prompts/entailment-ledger.md`）— 每条声明跑九条链：L1 必要性、L2 充分性、L3 严格性、L4 符号算术、L5 因子正性、L6 局部到整体、L7 量词顺序、L8 角点覆盖、L9 定义同一性。外加九项支撑与分布清单（密度正性、支撑连通性、门槛内点性、乘积支撑、有限矩、正方差、条件集测度、原子、政策不变性）、十二行按模型家族划分的正则性条件，以及在边界、极限或完备点处取值的声明的可满足性程序。L3、L4、L5 与可满足性都是机械检查，每条声明几分钟，上述四处缺陷全部在这一层被抓住。
+- **逐命题验证记录**（`verification_record.json`）— 五种状态：`VERIFIED`、`CONDITIONALLY VALID`、`INVALID`、`NOT VERIFIED`、`NUMERICALLY SUPPORTED`，每种状态写明最低证据要求。声明创建时一律 `NOT VERIFIED`，只有 gate 能提升状态；声明文本一经改动，`claim_text_sha256` 对不上，状态即重置。同一文件内还有 obligation ledger，记录每条未结事项的解除条件与是否阻塞稿件。
+- **证明—代码独立**（`prompts/proof-code-independence.md`）— 验证代码不得继承作者实现的分类器和可行域边界；I0–I4 证据分级；每个模型变体各自推导最优性系统与每个约束的绑定条件；网格可用率（usability ratio）与 regime 测试矩阵。
+- **Gate 4R（Revision Re-gate）** — 位于 HiL-6 之后、Stage 9 之前，只对文本改过的声明运行 Gate 4 的 Check 1/3/7/8，外加一项检查：把原反例实例代入新假设，确认新假设确实排除了它。没有声明改动时记 `NOT RUN`，不产生成本。此前在 Stage 8 或 HiL-6 改写的声明，第一个读到新措辞的审查者是 Gate 6，也就是流水线的最后一道门。
+
+Stage 8 另外要求对每条 CORE 声明做一次**可执行**反例搜索：数值脚本（实例化模型、逐条检验假设、算出结论）或写出来的符号构造，搜索方向由 Ledger 的 flag 机械映射得到。散文式的"想过了，应该没有反例"不再算完成；`SEARCH NOT PERFORMED` 是允许且必须记录的结果，它把该声明的上限封在 `CONDITIONALLY VALID`。
+
+HiL-5、HiL-N3、HiL-6 三个检查点都显示逐命题状态表、独立性等级、entailment 摘要与未结事项数，附一行必填的 `Checks not performed`，并提供 `SHOW EVIDENCE [P_n]` 查看单条声明的记录与推导。
+
 ```mermaid
 flowchart TD
     A["0. Intake<br/>研究想法摄入"] --> A2["0-EC. Empirical Scope Lock<br/>实证范围锁定<br/>（仅 empirical-companion 模式）"]
@@ -531,7 +548,8 @@ flowchart TD
     N1 -- "YES / CUSTOM" --> N2["7b. Numerical Simulation<br/>计划 → 用户批准 → 代码<br/>CSV + PNG/PDF 图形<br/>（Gate 4b）"]
     N1 -- "PLAN ONLY" --> NP["仅生成计划并暂停<br/>（不执行代码）"]
     N2 --> J
-    J --> K["9. Economic Interpretation<br/>经济学解释"]
+    J --> JR{"Gate 4R<br/>仅对改过文本的声明重新过门<br/>（无改动则 NOT RUN）"}
+    JR --> K["9. Economic Interpretation<br/>经济学解释"]
     K --> L["10. Manuscript Skeleton<br/>论文框架 → Gate 6 数学审查 → PDF"]
 ```
 
@@ -556,6 +574,10 @@ flowchart TD
 | 8 | Counterexample Finder | `counterexamples_and_edge_cases.md` |
 | 9 | Economic Interpretation | `economic_interpretation.md` |
 | 10 | Manuscript Skeleton | `manuscript_skeleton.md` + `manuscript_skeleton.tex` + `manuscript_skeleton.pdf` |
+
+工作区还有两个状态文件：`state.json` 记流水线位置与研究者决定；`verification_record.json` 记逐命题的验证状态与证据，由 Stage 6 创建，Stage 7/7b/8 填字段，Gate 3/4/4b/4R/6 写状态。`state.json → active_propositions` 仍是声明 ID 列表，索引到后者，所以 v1.5.0 之前创建的工作区 `--resume` 照旧可用（没有该文件时，所有声明按 `NOT VERIFIED` 读取）。
+
+Gate 4R 位于 HiL-6 与 Stage 9 之间，只对改过文本的声明运行，没有改动时记 `NOT RUN — no revised claims`，不产生成本。
 
 ---
 
@@ -654,10 +676,11 @@ Skill 内置多个质量门，用来避免"看起来像理论，其实没有理�
 | Gate 2c | Theory Lineage | 是否明确理论祖先、继承内容和新增机制 | 回到典范模型匹配 |
 | Gate 2 | Model Coherence | 模型原语、时序、信息结构是否一致 | 回到模型原语 |
 | Gate 3 | Non-triviality | 命题是否非平凡，是否只是从假设直接推出 | 回到假设或命题 |
-| Gate 4 | Proof Integrity | 证明草图是否诚实标注缺口；关键代数（FOC、闭式解、比较静态符号）是否通过独立重推导验算 | 回到命题或证明 |
+| Gate 4 | Proof Integrity | 证明草图是否诚实标注缺口；关键代数（FOC、闭式解、比较静态符号）是否通过独立重推导验算；Check 8 蕴含检查：九条链、支撑与分布清单、假设集可满足性 | 回到命题或证明 |
 | Gate 4b | Numerical Integrity（可选；仅当 Stage 7b 运行后） | 公式—代码一致性、可复现性、参数透明度、数值稳健性、结果完整性、认识论标签 | 回到 Stage 7b（修代码/参数）或 Stage 6（修改命题） |
+| Gate 4R | Revision Re-gate（HiL-6 之后、Stage 9 之前；只查改过文本的声明） | 修订是否被登记为修订（新 ID、状态重置）、新陈述的假设用量与蕴含检查、改动过的代数重推导、原反例是否被新假设真正排除、CORE 声明是否仍有针对新文本的反例搜索 | 回到 Stage 8（修订本身不对）或 Stage 6（声明需重述） |
 | Gate 5 | Economic Meaning | 经济解释是否超过形式结果 | 回到经济学解释 |
-| Gate 6 | Mathematical Review（manuscript.tex 写完后、编译 PDF 前） | 陈述分类是否正确（均衡条件、FOC 不得标成 Proposition）、逐条独立重推导、符号一致性、证明与命题是否匹配、定义域与边界情形 | 低级错误直接改正并回写到上游文件；实质性错误回到命题（Stage 6）或证明（Stage 7） |
+| Gate 6 | Mathematical Review（manuscript.tex 写完后、编译 PDF 前） | 陈述分类是否正确（均衡条件、FOC 不得标成 Proposition）、逐条独立重推导、符号一致性、证明与命题是否匹配、定义域与边界情形；Check M6 以稿件印出的措辞重跑蕴含检查 | 低级错误直接改正并回写到上游文件；实质性错误回到命题（Stage 6）或证明（Stage 7） |
 | Gate EC | Empirical–Theory Alignment（仅 empirical-companion 模式；Stage 6 与 Gate 3 之后） | 命题是否都对应实证结果、target hypotheses 是否都能推出、是否存在多余机制、假设是否超出实证论文所需、heterogeneity 命题是否对应实证 interaction、mechanism 命题与 mechanism test 是否测量同一对象 | 回到命题（EC1/EC2/EC5）、模型原语（EC3/EC4）或典范模型匹配（EC6） |
 
 Gate 失败不会被自动隐藏，也不会被包装成通过。Skill 会明确输出：
@@ -666,6 +689,33 @@ Gate 失败不会被自动隐藏，也不会被包装成通过。Skill 会明确
 - severity
 - recommended loopback stage
 - whether a human override is possible
+
+### 客观 FAIL 触发条件（v1.5.0）
+
+各 gate 原有的"WARNING 条数 → 判定"算术由同一个 agent 提出发现、又由它数条数，v1.5.0 在其上加了十二条与条数无关的客观触发条件。**任一条触发期间，不得给出高于 FAIL 的判定。**
+
+| ID | 触发条件 | 适用 gate |
+|---|---|---|
+| FT-1 | 某条声明的 Entailment Ledger 有任一链返回 `FAIL` | 3, 4, 4R, 6 |
+| FT-2 | 声明与本门自己验算出的表达式相矛盾 | 4, 4R, 6 |
+| FT-3 | 存在满足声明全部前提的有效反例 | 4, 4b, 4R, 6 |
+| FT-4 | 在用声明的假设集 `INFEASIBLE_AT_STATED_POINT` | 3, 4, 4R, 6 |
+| FT-5 | CORE 声明的 `undeclared_but_used` 非空（假设洗白） | 4, 4R |
+| FT-6 | 结论依赖的支撑清单项为 `MISSING` | 3, 4, 4R, 6 |
+| FT-7 | 验证者与作者实现在任一网格点上的约束绑定状态不一致 | 4b |
+| FT-8 | `usability_ratio < 0.5`，或存在无法由模型推出的网格排除规则 | 4b |
+| FT-9 | 用 I3 或 I4 级独立性充当 `VERIFIED` 的证据 | 4, 4b, 4R, 6 |
+| FT-10 | `VERIFIED` 或 `CONDITIONALLY VALID` 的声明依赖一条 `CONJECTURE` | 4, 4R, 6 |
+| FT-11 | 证明只立住了比陈述更弱的结论，严格性亦算在内 | 6 |
+| FT-12 | 文本已改（`claim_text_sha256` 变化）却仍挂着高于 `NOT VERIFIED` 的状态 | 4, 4R, 6 |
+
+### 五类不可降级发现
+
+数学矛盾（ND-1）、有效反例（ND-2）、约束分类错误（ND-3）、缺失承重证明（ND-4）、假设集不可满足（ND-5）。研究者仍然掌握最终处置权，被取消的是"发现自行消失"这个选项：对不可降级发现，`PROCEED WITH CAVEAT` 只在把该发现写进稿件对应结果处的那个版本中可用。
+
+### 降级记录与未结事项
+
+某个 gate 命中了 FAIL 触发条件却判断不应 FAIL 时，必须按名记入 `fail_conditions_hit`（无论后续是否降级）、写明降级理由，并等研究者 `APPROVE DOWNGRADE` 或 `REVERSE DOWNGRADE`；未获批准的降级禁止该声明进入稿件。每条 WARNING、每个 ledger `GAP`、每项 CONDITIONAL PASS 附带条件都写入 obligation ledger；**每个 gate 在跑自己的检查之前，先读完所有未结事项，逐条记 `DISCHARGED`（附证据路径）或 `STILL OPEN`。** 补救措施做过了并不等于事项已结，解除需要的是"该补救确实堵住了当初那个洞"的证据。
 
 ---
 
@@ -679,13 +729,17 @@ Gate 失败不会被自动隐藏，也不会被包装成通过。Skill 会明确
 | HiL-2 | Literature Positioning 后 | 是否接受文献定位 |
 | HiL-3 | Persona Council 后 | 是否接受理论评审结论 |
 | HiL-4 | Model Primitives 后 | 确认均衡概念；这是硬停点 |
-| HiL-5 | Proposition Generator 后 | 选择哪些命题进入后续分析；在 empirical-companion 模式下改为 EMPIRICAL COMPANION CHECKPOINT，展示 empirical result → model mechanism → proposition → hypothesis 的对应关系，选项为 APPROVE / EDIT / RETURN TO MODEL |
+| HiL-5 | Proposition Generator 后 | 选择哪些命题进入后续分析；在 empirical-companion 模式下改为 EMPIRICAL COMPANION CHECKPOINT，展示 empirical result → model mechanism → proposition → hypothesis 的对应关系，选项为 APPROVE / EDIT / RETURN TO MODEL。附逐命题验证状态表与 `SHOW EVIDENCE [P_n]` |
 | HiL-N1 | Proof Sketch 后 | 是否进行数值模拟（YES / NO / PLAN ONLY / CUSTOM）——Stage 7b 绝不默认运行 |
 | HiL-N2 | 数值模拟计划生成后 | 批准模拟计划与参数设计——未批准前禁止执行任何代码 |
-| HiL-N3 | 模拟执行 + Gate 4b 后 | 接受/修改数值结果；决定图形是否允许进入论文 |
-| HiL-6 | Counterexample Finder 后 | 如何处理反例与边界情形 |
+| HiL-N3 | 模拟执行 + Gate 4b 后 | 接受/修改数值结果；决定图形是否允许进入论文。附每条结果的认识论标签、独立性等级、网格可用率与已测 regime 数 |
+| HiL-6 | Counterexample Finder 后 | 如何处理反例与边界情形。附每条声明的反例搜索结果（FOUND / NONE FOUND / NOT PERFORMED），并在选择前说明：每一种处置都会生成一条新声明，随后由 Gate 4R 复查 |
 
 其中 **HiL-4 是 hard stop**。均衡概念，例如 Nash、SPE、BNE、PBE、competitive equilibrium 等，必须由研究者确认后才能进入下一阶段。
+
+自 v1.5.0 起，凡报告 gate 判定的检查点（HiL-5、HiL-N3、HiL-6）都附一个由 `verification_record.json` 生成的证据块。三条规则让它可读：空列按空列打印（`—` 表示该字段为 null，这本身是信息）；`Checks not performed` 是必填行，不是可省略项；`SHOW EVIDENCE [P_n]` 只读、可重复，让研究者查一条声明而不必翻遍 gate 文件。
+
+此外还有两处硬停：任一声明落到 `INVALID`，在发现它的那个 stage 或 gate 立即停下；进入 Stage 10 时仍有 CORE 声明停在 `NOT VERIFIED`，在写 `manuscript.tex` 之前停下，给出五个处置选项（证明 / 弱化 / 降为 conjecture / 删除 / 在稿件中披露缺口）。
 
 ---
 
@@ -701,7 +755,7 @@ Gate 失败不会被自动隐藏，也不会被包装成通过。Skill 会明确
 | Journal Positioning Referee | 更像投向哪个理论或应用理论期刊 |
 | Brutal Skeptic | 最强反对意见是什么 |
 
-Brutal Skeptic 的作用不是支持项目，而是专门攻击它。如果一个想法能经受住这个 persona 的质疑，才更值得继续推进。
+Brutal Skeptic 的职责是攻击项目。如果一个想法能经受住这个 persona 的质疑，才更值得继续推进。
 
 ---
 
@@ -720,6 +774,11 @@ git add -f Exploration/Project_NNN_<Name>/
 Exploration/
 └── Project_NNN_<ModelAbbrev>/        ← 例：Project_001_HumanCapitalAutomation
     ├── state.json
+    ├── verification_record.json        ← 逐命题状态与证据（Stage 6 起）
+    ├── verification/
+    │   ├── derivations/                ← 每条重推导声明一个文件：写过程，不写结论词
+    │   ├── numerical/                  ← 最优性系统、独立重实现
+    │   └── counterexamples/            ← 反例搜索脚本与找到的实例
     ├── initial_context/
     │   └── hypothesis.md
     ├── outputs/
@@ -756,6 +815,7 @@ Exploration/
     │   ├── gate-03-non-triviality.md
     │   ├── gate-04-proof-integrity.md
     │   ├── gate-04b-numerical-integrity.md    ← Stage 7b（可选）：仅当模拟运行后
+    │   ├── gate-04r-revision-regate.md        ← HiL-6 之后：只查改过文本的声明
     │   ├── gate-05-economic-meaning.md
     │   ├── gate-06-math-review.md             ← manuscript.tex 写完后、编译前
     │   └── gate-ec-empirical-alignment.md     ← Stage 6 之后：仅 empirical-companion 模式
@@ -814,7 +874,9 @@ Stage 8 专门寻找反例和边界情形，包括：
 - alternative equilibrium
 - violation of key assumptions
 
-这一步的目标不是让模型更好看，而是尽早发现它可能失败在哪里。
+这一步的目标是尽早发现模型可能失败在哪里。它不负责让模型更好看。
+
+每条 CORE 声明另有一次**必做的可执行搜索**：数值脚本（在显式参数点实例化模型、逐条检验每个前提、算出结论）或写出来的符号构造，方向由 Entailment Ledger 的 flag 决定（L3 flag → 构造等号成立的配置；S2 `MISSING` → 在支撑中挖一个洞）。这条要求来自一次实际运行：九次散文式尝试对某条命题得出 ROBUST，而一个七行脚本就把它推翻了。`SEARCH NOT PERFORMED` 允许出现、必须记录，并把该声明封在 `CONDITIONALLY VALID` 以下。
 
 ---
 
@@ -882,7 +944,13 @@ pAI-Econ-claude/
 │       ├── automation-displacement-reinstatement.md
 │       ├── human-capital-adaptation-automation-ai.md
 │       └── directed-technical-change-sbtc.md
+├── settings.json                         # Claude Code 钩子注册（PreToolUse）
+├── .claude/hooks/
+│   └── protect-files.sh                  # 产物保护钩子：禁止覆写 hypothesis.md 与已记录的验证产物
 ├── prompts/
+│   ├── entailment-ledger.md                   # 蕴含检查：九条链 + 支撑清单 + 可满足性（Gate 3/4/4R/6 共用）
+│   ├── verification-record.md                 # 逐命题验证记录的 schema 与状态规则
+│   ├── proof-code-independence.md             # 证明—代码独立规则、I0–I4 分级、网格诚实性
 │   ├── mode-empirical-companion.md            # empirical-companion 模式契约
 │   ├── ec-00-empirical-scope-lock.md          # Stage 0-EC（仅 empirical-companion 模式）
 │   ├── ec-empirical-theory-map.md             # 实证—理论映射与 minimality check
@@ -907,6 +975,7 @@ pAI-Econ-claude/
 │   ├── gate-03-non-triviality.md
 │   ├── gate-04-proof-integrity.md
 │   ├── gate-04b-numerical-integrity.md       # 可选 Gate 4b（仅当 Stage 7b 运行后）
+│   ├── gate-04r-revision-regate.md           # Gate 4R 修订重过门（HiL-6 之后、Stage 9 之前）
 │   ├── gate-05-economic-meaning.md
 │   ├── gate-06-math-review.md                # Gate 6 数学审查（编译 PDF 前）
 │   └── gate-ec-empirical-alignment.md        # Gate EC（仅 empirical-companion 模式）
@@ -924,6 +993,7 @@ pAI-Econ-claude/
 │   └── demo-ec-domain-reversal.txt       # Test EC3 fixture
 ├── templates/
 │   ├── state.json
+│   ├── verification_record.json          # 逐命题验证记录骨架
 │   ├── academic-econ.latex               # 旧版 PDF 模板（已弃用，现直接写 .tex）
 │   ├── author_style_guide_econ.md
 │   └── author_style_guide_default.md

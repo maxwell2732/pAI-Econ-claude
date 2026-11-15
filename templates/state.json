@@ -3,6 +3,9 @@
   "workspace": "",
   "hypothesis": "",
   "mode": "theory-development",
+  "skill_version": "v1.5.0",
+  "skill_commit": "",
+  "verification_record": "verification_record.json",
   "current_stage": 0,
   "stage_status": "not_started",
   "completed_stages": [],
@@ -16,6 +19,7 @@
     "gate_3": null,
     "gate_4": null,
     "gate_4b": null,
+    "gate_4r": null,
     "gate_5": null,
     "gate_6": null,
     "gate_ec": null
@@ -41,6 +45,7 @@
     "gate_3": 0,
     "gate_4": 0,
     "gate_4b": 0,
+    "gate_4r": 0,
     "gate_5": 0,
     "gate_6": 0,
     "gate_ec": 0

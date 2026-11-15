@@ -129,6 +129,43 @@ Changes made *after* observing results additionally require a written justificat
 
 ---
 
+## §4A — Optimality Systems, Before Any Code
+
+**⚠️ Read `prompts/proof-code-independence.md` in full before writing a line of code.**
+
+For every optimization problem in the model, **and separately for every model variant**, write an optimality system to `verification/numerical/<variant>_optimality.md` covering the eight items of that file's §6:
+
+1. objective and choice variables, copied from `model_primitives.md`
+2. every constraint, with its multiplier
+3. the full first-order / KKT system
+4. complementary slackness, one line per constraint
+5. **the binding condition for each constraint, in terms of primitives**
+6. the feasible region, with **each bound derived**, including bounds implied by non-negativity of consumption or of any other derived quantity
+7. second-order or concavity conditions, and what they guarantee
+8. the corner solutions the problem admits, enumerated
+
+**Variants are separate problems.** A variant's binding condition may not be inherited from, cited from, or assumed equal to another variant's. The two differ whenever the variants differ in what the agent is choosing. In the model this rule was written for, the risk-neutral variant binds when desired investment exceeds total resources, while the consumption-smoothing variant binds when desired *borrowing* exceeds the limit, because that agent borrows for first-period consumption as well as for investment. The two conditions disagreed on 29.8% of a grid, one-sidedly, and the whole study rested on the wrong one.
+
+Item 6 matters as much as item 5. A bracket or a search interval whose lower bound was picked by eye rather than derived will silently reject feasible points. In the same project a hardcoded lower bound of `1e-8` sat just below a derived feasible bound of about `2e-8`, and **every one of 3332 points reported as having no solution actually had one**.
+
+### Forbidden inheritance
+
+Verification and classification code may not import or copy from the author's implementation: a constraint or regime classifier; an unverified analytical intermediate; a predicate encoding an expected sign or regime; a feasibility bound that was asserted rather than derived; a load-bearing solver configuration. Permitted, with the dependency declared: the primitives as stated, parameter values, grids and seeds, and pure numerical utilities with no model content.
+
+Record `independence_grade`, `shared_from_author`, and `differing_axes` in `verification_record.json → numerical_checks`. A reimplementation must differ on at least one of method, library, formulation, or parameterization, and on two for grade I0. Renaming variables is not a difference.
+
+### Required per-point records
+
+For every reported solution point, record `objective_value`, `foc_residual` with its tolerance, `constraint_status` per constraint **derived from the recomputed multiplier**, `multiplier_signs`, full `feasibility`, `convergence`, and `agreement` against the author's value. A `constraint_status` disagreement at any point is a Gate 4b FAIL.
+
+### Grid honesty
+
+Every grid-based result reports `points_total`, `points_evaluated`, `points_usable`, `usability_ratio`, and one entry per exclusion **reason** with its count and whether the exclusion rule is **derived from the model**. A usability ratio below 0.5, or any exclusion not derived from the model, is a Gate 4b FAIL. `ROBUST ACROSS SEARCHED GRID` requires a ratio of at least 0.5 with model-derived exclusions; below that the strongest label is `INCONCLUSIVE`.
+
+### Regime coverage
+
+Produce the regime test matrix of `prompts/proof-code-independence.md` §8: interior, each constraint binding, each corner, infeasible, each regime boundary, degenerate distribution. A region with no test is recorded `NOT TESTED`, never omitted.
+
 ## §4 — Code Requirements
 
 Use Python. Preferred packages: `sympy` (symbolic derivative/formula checks), `numpy`, `scipy`, `pandas`, `matplotlib`.
@@ -163,9 +200,9 @@ Hard requirements:
 6. NaN values, unbounded solutions, failed optimizations, and non-convergence handled explicitly (flagged in the CSV, never silently dropped).
 7. When a local optimizer is used, compare against grid search or another global-search procedure where relevant; report disagreements.
 8. Record Python and major package versions (in the report and as a comment header in `run_simulation.py`).
-9. Map every implemented equation explicitly to its source artifact (docstring: "Implements Eq. (N) of model_primitives.md §M").
-10. Explicit, stable input/output paths (relative to `numerical_code/`); scripts rerunnable from a documented directory.
-11. Simulation code must never overwrite human-authored files or any earlier pipeline artifact.
+9. Map every implemented equation explicitly to its source artifact (docstring: "Implements Eq. (N) of model_primitives.md §M"). A docstring is a pointer for the reviewer; it is never evidence that the code matches the artifact, and Gate 4b will not accept it as such. A docstring must never state a mathematical equivalence as though it were a definition: "constrained in V1 means the V0 cap would bind" is a conjecture wearing the clothes of a comment, and in this pipeline it was false.
+10. Explicit, stable input/output paths (relative to `numerical_code/`); scripts rerunnable from a documented directory. **No script may contain an absolute path outside the workspace.** A path into a session scratchpad, a personal environment, or a machine-specific directory makes the results unreproducible, and it is a Gate 4b N2 FAIL rather than a warning. Declare dependencies in `outputs/numerical_code/requirements.txt`.
+11. Simulation code must never overwrite human-authored files or any earlier pipeline artifact. This is also enforced by `.claude/hooks/protect-files.sh`.
 
 ## §5 — User-Selectable Simulation Types
 
