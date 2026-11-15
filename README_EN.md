@@ -40,7 +40,9 @@ Xiaolu Wang (China Agricultural University)
 
 Weilong Zhang (University of Cambridge)
 
-**Last updated:** August 21, 2026 
+**Last updated:** November 15, 2026
+
+**v1.5.0 — reliability bug fix.** Fixes a defect in which the pipeline verified derivations and never verified whether a claim follows from them. Adds three shared check modules (entailment ledger, per-claim verification record, proof–code independence), twelve objective FAIL triggers and five non-downgradable finding classes across the gates, and the artifact-protection hook that `settings.json` had registered without the script existing. See the [CHANGELOG](./CHANGELOG.md).
 
 ---
 

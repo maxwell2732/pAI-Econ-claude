@@ -142,6 +142,11 @@ When the skill is first invoked:
 Exploration/
 └── Project_NNN_<ModelAbbrev>/          ← e.g. Project_003_RationalInattention
     ├── state.json
+    ├── verification_record.json                 # Per-claim status and evidence (from Stage 6)
+    ├── verification/
+    │   ├── derivations/                         # One file per re-derived claim: the working
+    │   ├── numerical/                           # Optimality systems; independent reimplementations
+    │   └── counterexamples/                     # Search scripts and the instances found
     ├── initial_context/
     │   └── hypothesis.md                        # Raw user input (verbatim, never modified)
     ├── outputs/
@@ -253,7 +258,80 @@ To loop back and revise, type: LOOP BACK TO STAGE [X]
 
 Wait for the researcher's explicit decision. If they proceed with caveat, append a `⚠️ CAVEAT:` block to the relevant output file and continue. If they loop back, re-run the indicated stage before continuing.
 
-**If a gate fails a second time on the same stage,** present the failure but allow the researcher to proceed with caveat regardless.
+**If a gate fails a second time on the same stage,** present the failure but allow the researcher to proceed with caveat regardless. This does not apply to a non-downgradable finding; see the table in `### Non-downgradable findings` below.
+
+---
+
+### Objective FAIL triggers
+
+A gate verdict is FAIL whenever any trigger below fires, independently of any WARNING-count arithmetic in that gate's own verdict rules. WARNING counts remain as a secondary path to CONDITIONAL PASS. **No verdict above FAIL may be issued while a trigger is live.**
+
+| ID | Trigger | Gates |
+|----|---------|-------|
+| FT-1 | A claim's Entailment Ledger returns `FAIL` on any link | 3, 4, 6 |
+| FT-2 | A claim is contradicted by an expression the gate itself verified | 4, 6 |
+| FT-3 | A valid counterexample satisfying the claim's stated hypotheses | 4, 4b, 6 |
+| FT-4 | `assumptions.satisfiability == "INFEASIBLE_AT_STATED_POINT"` for a claim in use | 3, 4, 6 |
+| FT-5 | `assumptions.undeclared_but_used` non-empty for a CORE claim (assumption laundering) | 4 |
+| FT-6 | A `MISSING` support-checklist item that the claim's conclusion depends on | 3, 4, 6 |
+| FT-7 | Constraint-status disagreement between the verifier's and the author's implementation at any grid point | 4b |
+| FT-8 | `usability_ratio < 0.5`, or any grid exclusion with `derived_from_model: false` | 4b |
+| FT-9 | `independence_grade` I3 or I4 offered as evidence for a `VERIFIED` status | 4, 4b, 6 |
+| FT-10 | A `VERIFIED` or `CONDITIONALLY VALID` claim depends on a `CONJECTURE` | 4, 6 |
+| FT-11 | A proof establishes a weaker claim than the statement asserts, strictness included | 6 |
+| FT-12 | A claim whose `claim_text_sha256` changed since its last gate decision still carries a status other than `NOT VERIFIED` | 4, 6 |
+
+The ledger, the support checklist, and the satisfiability procedure are defined in `prompts/entailment-ledger.md`. The independence grades and grid requirements are in `prompts/proof-code-independence.md`. Claim statuses are in `prompts/verification-record.md`.
+
+### Non-downgradable findings
+
+> A finding in a non-downgradable class may not be reclassified to a lower severity by the gate that found it, may not be resolved by `PROCEED WITH CAVEAT` alone, and may not reach the manuscript as an unqualified claim.
+
+| Class | Covers | Permitted resolutions |
+|-------|--------|----------------------|
+| **ND-1** Mathematical contradiction | FT-2 | correct the claim; withdraw it; or restate it as a `CONJECTURE` in a remark with the contradiction disclosed |
+| **ND-2** Valid counterexample | FT-3 | narrow the hypotheses to exclude the instance, with the narrowing audited; weaken the claim; split into regimes; drop it. Each produces a **new claim ID** at `NOT VERIFIED`. |
+| **ND-3** Incorrect constraint classification | FT-7 | fix the implementation and re-run. Every result derived from the defective classification is invalidated and re-derived. |
+| **ND-4** Missing load-bearing proof | a CORE claim at `NOT VERIFIED` entering the manuscript as a proposition | prove it; weaken it to what is proved; relabel as a `CONJECTURE` in a remark |
+| **ND-5** Infeasible hypothesis set | FT-4 | decompose the compound assumption and apply each clause where it holds |
+
+The researcher keeps final authority over which resolution is taken. What the class removes is the option of the finding disappearing: for a non-downgradable finding, `PROCEED WITH CAVEAT` is available only in the variant that **discloses the finding in the manuscript itself**, at the affected result, as a footnote or a stated limitation.
+
+### Recording a downgrade
+
+Where a gate judges that a live FAIL trigger should not produce a FAIL, and the finding's class is downgradable:
+
+1. Record the trigger by name in `verification_record.json → gate_decision.fail_conditions_hit`. **This field is filled whether or not a downgrade follows.**
+2. Record `gate_decision.downgrades` with `from`, `to`, `rationale`, `class`, and `researcher_approved: false`.
+3. Present this line in the gate output and at the next human checkpoint:
+
+```
+⚠️  FAIL CONDITION HIT AND DOWNGRADED
+Trigger:   [FT-n] — [one-line description]
+Downgrade: FAIL → [severity]
+Reason:    [the gate's rationale]
+Affected:  [claim IDs]
+
+To accept the downgrade, type: APPROVE DOWNGRADE
+To treat it as a FAIL, type: REVERSE DOWNGRADE
+```
+
+4. `researcher_approved` stays `false` until the researcher answers. **An unapproved downgrade blocks manuscript inclusion of the affected claim.**
+
+A gate keeps its mathematical judgment and loses the ability to exercise it invisibly.
+
+### Open obligations
+
+Every WARNING, every ledger `GAP`, and every condition a gate attaches to a CONDITIONAL PASS is written to `verification_record.json → unresolved_issues` with a `discharge_condition` and `blocks_manuscript`.
+
+**Every gate, before evaluating its own checks, reads every OPEN obligation on every claim in scope and records for each either `DISCHARGED` with an evidence path or `STILL OPEN`.** A gate may not pass with an obligation silently carried forward. A remedy that was applied is not thereby discharged: the discharge requires evidence that the remedy closed the defect the obligation was raised against.
+
+### Two additional HARD STOPs
+
+| Trigger | Behavior |
+|---------|----------|
+| Any claim reaches `INVALID` | **HARD STOP** at the gate or stage that found it. Present the error, the claim, every downstream claim from `depends_on`, and the ND-class resolutions. No further stage runs until the researcher chooses. |
+| A CORE claim is at `NOT VERIFIED` when Stage 10 begins | **HARD STOP** before `manuscript.tex` is written. See Completion step 2b. |
 
 | Gate | Name | Prompt File | Runs After | Recommended Loopback |
 |------|------|------------|-----------|----------------------|
@@ -269,7 +347,14 @@ Wait for the researcher's explicit decision. If they proceed with caveat, append
 | 6 | Mathematical Review Gate | `prompts/gate-06-math-review.md` | Stage 10 completion (after `manuscript.tex` is written, before pdflatex) | Stage 6 (proposition wrong as stated) or Stage 7 (proof wrong) |
 | EC | Empirical–Theory Alignment Gate (`empirical-companion` mode only) | `prompts/gate-ec-empirical-alignment.md` | Stage 6, after Gate 3 and before HiL-5 | Stage 6 (EC1/EC2/EC5), Stage 4 (EC3/EC4), Stage 3b or 4 (EC6) |
 
-**Gate 6 correction exception:** Gate 6 checks objective mathematics (statement classification, independent re-derivation, notation, statement–proof match, domain sanity). TYPO-LEVEL and LOW errors (e.g., an equilibrium condition mislabeled as a Proposition, an algebra slip that changes no claim's direction) are fixed directly in `manuscript.tex`, back-propagated to the source outputs, and logged in the gate file WITHOUT pausing for researcher input. Only SUBSTANTIVE errors (a result's sign or content contradicted by independent re-derivation, a proof that fails to establish its claim) trigger the standard gate-failure protocol above. See `prompts/gate-06-math-review.md` for the severity definitions.
+**Gate 6 correction exception:** Gate 6 checks objective mathematics (statement classification, independent re-derivation, notation, statement–proof match, domain sanity, entailment). TYPO-LEVEL and LOW errors (e.g., an equilibrium condition mislabeled as a Proposition, an algebra slip that changes no claim's direction) are fixed directly in `manuscript.tex`, back-propagated to the source outputs, and logged in the gate file WITHOUT pausing for researcher input. Only SUBSTANTIVE errors (a result's sign or content contradicted by independent re-derivation, a proof that fails to establish its claim) trigger the standard gate-failure protocol above. See `prompts/gate-06-math-review.md` for the severity definitions.
+
+**Limits on that exception.** The self-correction authority covers notation, labels, LaTeX, and algebra slips that change no claim's direction. It does NOT extend to:
+- any change to a claim's hypotheses, quantifiers, or strictness;
+- any reclassification of a statement that reduces the count of genuine CORE results;
+- any edit that would resolve an Entailment Ledger `FAIL` or `GAP`.
+
+Those are SUBSTANTIVE by definition and go to the researcher. Gate 6 is the last reviewer in the pipeline and it may edit the manuscript, so without this limit it could rewrite the claims it is reviewing.
 
 **Gate EC (`empirical-companion` mode only):** Gate EC audits the correspondence between the model and the empirical paper — proposition coverage (EC1), hypothesis derivability (EC2), mechanism parsimony (EC3), assumption economy (EC4), heterogeneity correspondence (EC5), and mechanism object identity (EC6). It uses the standard PASS / CONDITIONAL PASS / FAIL vocabulary and the standard failure protocol. One exception: **an EC6 failure cannot be downgraded to a CONDITIONAL PASS.** If the empirical result is claimed to test mechanism M while the model's M is a different latent object, the paper's central claim does not hold, and the researcher must either loop back or accept a caveat that is disclosed in the manuscript as a stated limitation. See `prompts/gate-ec-empirical-alignment.md`.
 
@@ -586,7 +671,9 @@ For each stage:
 6. Append a structured entry to `logs/stage-log.md`:
    `[STAGE N — Stage Name] <ISO timestamp> | completed`
 7. Update `state.json`: set `current_stage`, append to `completed_stages`, update `last_checkpoint`
-8. If a gate follows: read the gate prompt file, evaluate the output, write gate result to the matching file under `gates/` (see the Workspace Layout for exact filenames).
+7b. If the stage writes claim-level fields (Stages 6, 7, 7b, 8), update `verification_record.json` per `prompts/verification-record.md`. Stage 6 creates the entries; later stages amend them. A stage never raises a claim's `proof_status`.
+
+8. If a gate follows: **first** read every OPEN obligation in `verification_record.json → unresolved_issues` for the claims in scope and record each as `DISCHARGED` with an evidence path or `STILL OPEN`. Then read the gate prompt file, evaluate the output, write the gate result to the matching file under `gates/` (see the Workspace Layout for exact filenames), and write `proof_status`, `entailment_ledger`, `support_checklist` and `gate_decision` back to `verification_record.json`.
    Then append to `logs/stage-log.md`, where `<id>` is the gate id (1, 1b, 2b, 2c, 2, 3, 4, 4b, 5, 6, or EC):
    - On pass: `[GATE <id> — Gate Name] <ISO timestamp> | PASS`
    - On fail: `[GATE <id> — Gate Name] <ISO timestamp> | FAIL [SEVERITY] — <one-line reason>`
@@ -705,6 +792,7 @@ LLMs hallucinate plausible-sounding but nonexistent papers, especially for appli
 - Output: `outputs/candidate_propositions.md`
 - Inputs: `outputs/model_primitives.md`, `outputs/assumption_audit.md`
 - Gate: **Gate 3** | HiL: **HiL-5**
+- **Initializes `verification_record.json`** from `templates/verification_record.json`: one entry per labelled statement, each at `proof_status: "NOT VERIFIED"`, with `role`, `tier`, `depends_on`, `source_files`, and the `assumptions` ledger (`declared`, `used`, `required_for_strength`, `undeclared_but_used`, `declared_but_unused`). See `prompts/verification-record.md`. `required_for_strength` is where a strict claim's real requirements are recorded, so fill it from the claim's own wording rather than from the assumption list.
 - **EC mode:** also read the "Empirical-Companion Mode Addendum" at the end of the prompt file, and apply it. It relaxes the required proposition types to one per target hypothesis, defers the rest to `outputs/scope_notes.md`, and completes `outputs/empirical_theory_map.md`. **Gate EC runs after Gate 3 and before HiL-5** (`prompts/gate-ec-empirical-alignment.md`).
 - ⚠️ Citations in the "Connection to Prior Literature" sections must be reused from the VERIFIED entries in `literature_positioning.md`. Any NEW citation introduced here requires its own web verification (same rule as Stage 2) before it is written to the file.
 
@@ -713,6 +801,7 @@ LLMs hallucinate plausible-sounding but nonexistent papers, especially for appli
 - Output: `outputs/proof_sketches.md`
 - Inputs: `outputs/candidate_propositions.md`, `outputs/model_primitives.md`, `outputs/assumption_audit.md`
 - Gate: **Gate 4** | HiL: **HiL-N1** (Numerical Simulation Decision — always presented; Stage 7b runs only on explicit user opt-in)
+- Where this stage re-derives a load-bearing relation, write the working to `verification/derivations/<claim_id>.md` and record the path in `verification_record.json → independent_derivation`. A match/no-match table is not evidence; the derivation file holds the working so a third party can audit it.
 - **EC mode:** also read the "Empirical-Companion Mode Addendum" at the end of the prompt file, and apply it. It requires a per-hypothesis derivability verdict and the `TARGET HYPOTHESIS NOT DERIVED` block where a target cannot be established. Gate 4 gains check EC-D.
 
 ### Stage 7b — Numerical Simulation and Computational Illustration (OPTIONAL — USER-CONTROLLED)
@@ -720,6 +809,7 @@ LLMs hallucinate plausible-sounding but nonexistent papers, especially for appli
 - Outputs: `outputs/numerical_simulation_decision.md` (always, once HiL-N1 is answered); `outputs/numerical_simulation_plan.md` + `outputs/parameter_definitions.md` (PLAN ONLY / CUSTOM / YES); `outputs/numerical_code/`, `outputs/numerical_results/`, `outputs/numerical_figures/`, `outputs/numerical_simulation_report.md` (only after HiL-N2 APPROVE PLAN)
 - Inputs: `outputs/candidate_propositions.md`, `outputs/proof_sketches.md`, `outputs/model_primitives.md`, `outputs/assumption_audit.md`
 - Gate: **Gate 4b** (only if code ran) | HiL: **HiL-N1** (entry decision), **HiL-N2** (★ execution hard stop), **HiL-N3** (results review)
+- **⚠️ Read `prompts/proof-code-independence.md` in full before writing any code.** Before implementation, derive an optimality system per optimization problem **and per model variant** into `verification/numerical/<variant>_optimality.md`, including the binding condition for every constraint and every feasibility bound. A variant's binding condition may never be inherited from another variant. Record `independence_grade`, `shared_from_author`, the regime matrix, and the grid honesty block in `verification_record.json`.
 - **EC mode:** also read the "Empirical-Companion Mode Addendum" at the end of the prompt file, and apply it. It narrows the HiL-N1 *recommendation* to three triggers. The user-control rule is unchanged.
 
 **⚠️ This stage NEVER runs by default.** The pipeline must not decide on its own whether to simulate. Full branching logic:
@@ -757,6 +847,8 @@ Log every decision: `[HiL-N1 — Numerical Simulation Decision] <ts> | researche
 - Output: `outputs/counterexamples_and_edge_cases.md`
 - Inputs: `outputs/candidate_propositions.md`, `outputs/proof_sketches.md`, `outputs/assumption_audit.md`; **plus, if Stage 7b ran:** `outputs/numerical_simulation_report.md` (the "Handoff to Stage 8" block) and `outputs/numerical_results/`
 - Gate: none | HiL: **HiL-6**
+- Write one `counterexample_tests` entry per claim to `verification_record.json`, each `COUNTEREXAMPLE FOUND` (with the instance and a check that every stated hypothesis holds at it), `NO COUNTEREXAMPLE FOUND` (with the search space stated), or `SEARCH NOT PERFORMED` (with a reason). A skipped search is recorded rather than omitted. Direct the attempts at whatever the Entailment Ledger flagged: an L3 `FAIL` means construct the equality configuration; an L5 `FAIL` means set the factor to zero; a `MISSING` S1 means place a zero-density interval at the threshold; a `MISSING` S2 means insert a gap in the support.
+- **⚠️ A claim this stage rewrites is a new claim.** Set a new ID, status `NOT VERIFIED`, and a fresh `claim_text_sha256`. A split proposition yields one claim per regime. The old claim keeps its own status and stops being used. A rewritten claim carries no verification forward from the text it replaced, and nothing between here and the manuscript re-checks it, so state its evidence gap plainly at HiL-6.
 - **EC mode:** also read the "Empirical-Companion Mode Addendum" at the end of the prompt file, and apply it. The full adversarial battery still runs; findings inside the declared empirical domain are gate-failing, findings outside it go to `outputs/scope_notes.md`.
 - Note: Stage 7b does not replace this stage. If numerical counterexamples or suspicious regions were handed off, Stage 8 must diagnose each one (coding error / numerical optimization error / parameter issue / assumption failure / claim failure / proposition-domain issue) and recommend the proposition's fate (retain / weaken / restrict to functional-form class / split into regimes / relabel as illustrative / drop)
 
@@ -788,6 +880,14 @@ Prohibited manuscript language for numerical content: "we prove" for a numerical
 
 Any proposition listed in `state.json` → `numerical_simulation.blocked_propositions` must NOT appear in the manuscript in its original form — only the Stage-8/HiL-6-revised version may enter.
 
+**⚠️ Claim status inclusion rule (applies to the skeleton, `manuscript.tex`, and the PDF).** Read `verification_record.json` and honour these three rules, which are checked again at the Completion step 1b hard stop:
+
+1. A claim at `VERIFIED` or `CONDITIONALLY VALID` may appear in a `proposition`, `lemma`, `theorem`, or `corollary` environment. A `CONDITIONALLY VALID` claim appears with its `conditions` stated in the statement itself.
+2. A claim at `NOT VERIFIED` may appear only as a labelled conjecture, in a `remark` or in running prose, under the word "conjecture". It may not sit in a theorem-like environment, and no `VERIFIED` or `CONDITIONALLY VALID` claim may depend on it.
+3. A claim at `INVALID` may not appear.
+
+A `NUMERICALLY SUPPORTED` label accompanies its claim wherever that claim appears, together with the grid and the usability ratio. This rule is the reason an exploratory conjecture need not be deleted: it survives, marked, and nothing provable is allowed to rest on it.
+
 **Demonstration-figure default:** when the researcher authorizes `USE FIGURES IN MANUSCRIPT`, include **1–2 demonstration figures** in the main text — the headline mechanism/welfare figure, plus at most one parameter-sweep or regime-map figure — in a short "Numerical Illustration" subsection near the results they illustrate. Embed the PDF versions via `graphicx`; each caption must carry the type label, the baseline parameter values, a "not a proof" qualifier where applicable, and a pointer to the reproducing scripts (`numerical_code/`). All other figures remain in the workspace (or Appendix if authorized).
 
 ---
@@ -796,8 +896,12 @@ Any proposition listed in `state.json` → `numerical_simulation.blocked_proposi
 
 Initialize `state.json` from `templates/state.json`. Update after every stage and gate.
 
+**Two state files.** `state.json` holds pipeline position and researcher decisions. `verification_record.json` holds per-claim verification evidence and status; it is initialized from `templates/verification_record.json` at Stage 6 and is defined in `prompts/verification-record.md`. `state.json → active_propositions` stays a list of claim IDs and indexes into the record. A workspace with no `verification_record.json` is read as every claim at `NOT VERIFIED`, so `--resume` on a workspace created before v1.5.0 continues to work.
+
 Key fields to maintain:
 - `mode` — `"theory-development"` (default) or `"empirical-companion"`; set once at initialization from the `## Mode Routing` resolution and never changed mid-run. A state file without this key is read as `"theory-development"`.
+- `skill_version`, `skill_commit` — the skill release and the git short hash at initialization, so a workspace can be attributed to the prompt revision that produced it. Obtain the hash with `git rev-parse --short HEAD` in the repo root; write `"unknown"` if unavailable.
+- `verification_record` — relative path to the claim record, normally `"verification_record.json"`.
 - `current_stage` — integer 0–10; update after each stage starts. Stage 0-EC is recorded as `"0-EC"` in `completed_stages` and leaves `current_stage` at 0.
 - `stage_status` — `"in_progress"` | `"awaiting_hil"` | `"gate_failed"` | `"completed"`
 - `completed_stages` — append stage name on completion
@@ -836,6 +940,43 @@ If invoked with `--resume <workspace_path>`:
 
 When Stage 10 completes:
 1. Set `"finished": true` in `state.json`
+
+1b. **⚠️ CLAIM STATUS HARD STOP — mandatory before `manuscript.tex` is written.**
+
+   Read `verification_record.json` and compute three counts:
+
+   - CORE claims at `NOT VERIFIED`
+   - claims at `INVALID`
+   - OPEN obligations with `blocks_manuscript: true`
+
+   If all three are zero, continue to step 2. Otherwise **stop and present**:
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ★ HARD STOP | Claim Status Before Manuscript
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CORE claims at NOT VERIFIED:      [n]
+  [P_id] — [what is missing: which ledger link, which support item, which search]
+Claims at INVALID:                [n]
+  [P_id] — [the error or the counterexample]
+Open obligations blocking:        [n]
+  [OBL-id] — [discharge condition]
+Unapproved downgrades:            [n]
+
+A claim at NOT VERIFIED may not appear in a proposition, lemma, theorem or
+corollary environment. A claim at INVALID may not appear at all.
+
+For each, please choose:
+  PROVE [P_n]            — Loop back to Stage 7; I will attempt the proof
+  WEAKEN [P_n]           — Reduce the claim to what is established; specify or let me propose
+  CONJECTURE [P_n]       — Keep it as a labelled conjecture in a remark or in prose
+  DROP [P_n]             — Remove it from the manuscript
+  DISCLOSE [P_n]         — Keep the claim and state the gap in the manuscript at that result
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+   Record each decision in `logs/stage-log.md` and in `verification_record.json`. `DISCLOSE` is the `PROCEED WITH CAVEAT` variant required for a non-downgradable finding, and the disclosure must appear in the manuscript at the affected result.
 
 2. **⚠️ REFERENCE VERIFICATION GATE — mandatory before writing any bibliography.**
 

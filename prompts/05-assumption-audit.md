@@ -71,6 +71,30 @@ Common hidden assumptions to check for:
 - Existence of equilibrium (assumed but not verified)
 - Non-existence of other equilibria (uniqueness assumed implicitly)
 
+**Step 5b — Run the support and distribution checklist.**
+
+The list above misses an entire family of hidden assumptions: the regularity conditions a distribution must satisfy before a sign can be read off a derivative. That family is where this pipeline has actually failed. Run every item of the checklist in `prompts/entailment-ledger.md` Part 2 against the model, and answer each `SATISFIED` with the assumption ID that supplies it, `NOT REQUIRED`, or **`MISSING`**.
+
+| # | Condition |
+|---|---|
+| S1 | Density strictly **positive**, not merely bounded or existing |
+| S2 | Support **connected** |
+| S3 | A threshold lies in the **interior of the support** of the variable whose CDF is evaluated at it |
+| S4 | Support is a **product set**, wherever a sup or inf over a joint support is replaced by a corner |
+| S5 | Invoked moments **exist and are finite** |
+| S6 | Invoked variances are **strictly positive**, at the point where that is needed |
+| S7 | Conditional distributions are **well defined**, with the conditioning set of positive measure |
+| S8 | **No atoms** where differentiability is used |
+| S9 | The distribution is **policy-invariant** where a comparative static differentiates through it |
+
+**Absolute continuity with a bounded density is not positive density.** A bounded density may be zero on an interval, and a support may have a gap. Where the model needs positive density or connected support, say so as a numbered assumption; those two conditions have been silently assumed, and silently false, in this pipeline's output.
+
+**Step 5b-ii — Run the family row.** S1–S9 is the regularity family for models whose conclusions are statements about distributions and moments. Other families break elsewhere: a game needs its fixed-point theorem's conditions verified rather than the theorem named, a dynamic model needs steady-state stability separately from existence, a screening model needs single-crossing, a principal–agent model needs the first-order approach validated globally. Identify the model's family from `canonical_model_match.md` and run the matching row of `prompts/entailment-ledger.md` Part 2b, recording each condition and the assumption that supplies it. A condition the results need and no assumption supplies is a hidden assumption, which is what this stage exists to find.
+
+**Step 5c — Decompose compound assumptions.**
+
+Where a single numbered assumption bundles several restrictions, list the individual restrictions. A bundle is convenient to state and it hides infeasibility: clauses that always travel together under a marginal experiment can part at a boundary, a limit, or a completion point, and a proposition evaluated there may invoke a bundle one of whose clauses cannot hold. Audit each restriction on its own, and note which results need which clause.
+
 ---
 
 ## Output Template
@@ -109,6 +133,42 @@ Common hidden assumptions to check for:
 [Same structure]
 
 [... repeat for all assumptions]
+
+---
+
+## Support and Distribution Checklist
+
+| # | Condition | Status | Supplied by | Note |
+|---|-----------|--------|-------------|------|
+| S1 | Density strictly positive | SATISFIED / NOT REQUIRED / **MISSING** | A_ | |
+| S2 | Support connected | | | |
+| S3 | Threshold interior to the support | | | |
+| S4 | Product support | | | |
+| S5 | Moments finite | | | |
+| S6 | Variances strictly positive | | | |
+| S7 | Conditioning sets of positive measure | | | |
+| S8 | No atoms where differentiability is used | | | |
+| S9 | Policy-invariant distribution | | | |
+
+**MISSING items:** [list, with the result each one would affect, or "none"]
+
+## Family-Specific Regularity Conditions
+
+**Model family:** [from canonical_model_match.md]
+
+| Condition (from entailment-ledger Part 2b) | Status | Supplied by | Result it affects |
+|--------------------------------------------|--------|-------------|-------------------|
+|  | SATISFIED / NOT REQUIRED / **MISSING** | A_ | |
+
+---
+
+## Compound Assumption Decomposition
+
+| Bundled assumption | Individual restrictions | Which results need which clause | Clauses that may fail at a boundary or limit |
+|--------------------|------------------------|---------------------------------|---------------------------------------------|
+| A_ | (i) … (ii) … (iii) … | | |
+
+[Write "No compound assumptions" if each numbered assumption carries one restriction.]
 
 ---
 

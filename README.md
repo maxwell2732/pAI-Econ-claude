@@ -36,7 +36,9 @@ Xiaolu Wang / 王晓璐（China Agricultural University）
 
 Weilong Zhang / 章维龙（University of Cambridge）  
 
-**最后更新：** 2026 年 8 月 21 日 
+**最后更新：** 2026 年 11 月 15 日
+
+**v1.5.0 — 可靠性 bug 修复。** 修复流水线只校验推导、不校验「断言是否由推导推出」的缺陷。新增三个共享检查模块（蕴含检查、逐命题验证记录、证明—代码独立规则），为各 Gate 增加 12 条客观 FAIL 触发条件与 5 类不可降级发现，并补上 `settings.json` 中已注册却缺失的产物保护 hook。详见 [CHANGELOG](./CHANGELOG.md)。
 
 ---
 

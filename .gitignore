@@ -41,3 +41,7 @@ env/
 *.toc
 *.synctex.gz
 manuscript.log
+
+# Internal reliability analysis: quotes an unpublished workspace in detail.
+# Kept local; the generalizable rules live in prompts/ instead.
+reliability_audit/

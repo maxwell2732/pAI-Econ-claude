@@ -64,6 +64,40 @@ data alone with no pipeline backing. All three were removed before the final PDF
 
 ---
 
+## ⚠️ CRITICAL: No Unverified Claims — Ever
+
+**LLMs produce correct algebra under false propositions. This is the harder sibling of the citation problem.**
+
+A hallucinated citation and an unverified entailment look alike from the inside: everything checks out locally. The difference is that a wrong citation is caught by one web search, while a proposition whose derivation is correct and whose *claim* does not follow from it survives every check that re-derives formulas. This pipeline has shipped four such propositions.
+
+### The rule
+
+**Every claim carries a status in `verification_record.json`, and the status governs where the claim may appear.**
+
+| Status | Where it may appear |
+|--------|---------------------|
+| `VERIFIED` | a `proposition`, `lemma`, `theorem`, or `corollary` environment |
+| `CONDITIONALLY VALID` | the same, with its conditions stated in the statement itself |
+| `NOT VERIFIED` | only as a labelled conjecture, in a `remark` or in running prose, under the word "conjecture" |
+| `NUMERICALLY SUPPORTED` | as a companion label, with the grid and the usability ratio stated |
+| `INVALID` | nowhere |
+
+No `VERIFIED` or `CONDITIONALLY VALID` claim may depend on a conjecture. Only a gate assigns a status above `NOT VERIFIED`, and only with the evidence listed in `prompts/verification-record.md`.
+
+### What this means in practice
+
+- **A verified formula does not make the proposition built on it true.** Re-deriving a displayed equation and checking the claim stated against it are different tasks. Run `prompts/entailment-ledger.md`.
+- **"Strictly" needs an argument.** Name the configuration in which equality holds, then name the assumption that excludes it. If none does, write the weak version.
+- **Absolute continuity with a bounded density is not positive density.** A bounded density may be zero on an interval; a support may have a gap.
+- **Verification code may not import the author's classifiers.** Read `prompts/proof-code-independence.md` before writing any Stage 7b code. Each model variant gets its own KKT derivation and its own binding condition.
+- **A claim rewritten after its last gate returns to `NOT VERIFIED`.** Revisions written at Stage 8 or HiL-6 carry no verification forward.
+
+### The modules
+
+`prompts/entailment-ledger.md` (claim checks) · `prompts/verification-record.md` (status and schema) · `prompts/proof-code-independence.md` (code independence, grids, variants). The reliability analysis these came from lives in a local, untracked `reliability_audit/` directory, because it quotes an unpublished workspace in detail.
+
+---
+
 ## PDF Output Standard
 
 Final PDFs for theoretical framework papers follow the style of

@@ -55,6 +55,29 @@ For each candidate proposition:
 - Rate its novelty: LOW (likely known), MEDIUM (probably new), HIGH (definitely new)
 - Assign it an ID: P_E1, P_U1, P_C1, P_C2, P_W1, P_M1, P_B1, etc.
 
+**Step 1b — Build the assumption ledger for each proposition.**
+
+Labelling the assumptions a proposition cites is not the same as establishing that they suffice for it. Record four lists per proposition:
+
+| List | Content |
+|---|---|
+| `declared` | the assumptions the statement cites |
+| `used` | the assumptions the intended argument actually invokes |
+| `required_for_strength` | **the assumptions needed for the claim at the strength you have written it** |
+| `undeclared_but_used` | `used \ declared` |
+
+`required_for_strength` is the field that matters, and it is filled from the claim's own wording rather than from the assumption list. Three questions fill it:
+
+1. **Does the statement say "strictly", "unique", "if and only if", "necessary", or "for all"?** If so, name the configuration in which the weak version holds with equality, or the converse fails, and name the assumption that excludes it. Where no assumption excludes it, either add one or write the weak version. A strict claim resting on a weak argument is the most common way a correct derivation becomes a false proposition.
+2. **Does the conclusion depend on a distribution?** Then check the S1–S9 checklist in `prompts/entailment-ledger.md` Part 2 against this proposition. Absolute continuity with a bounded density does not give positive density, and nothing gives connected support unless it is assumed.
+3. **Is the proposition evaluated at a boundary, a limit, or a completion point?** Then check that the assumptions it invokes are jointly satisfiable there, decomposing any compound assumption first.
+
+**Step 1c — Initialize `verification_record.json`.**
+
+Copy `templates/verification_record.json` into the workspace and create one entry per labelled statement, including SUPPORTING, EXTENSION, LEMMA and COROLLARY. Each entry carries `proposition_id`, `claim_text` (verbatim), `claim_text_sha256`, `role`, `tier` (T1 for every statement, T2 for CORE), `depends_on`, `source_files`, the `assumptions` ledger from Step 1b, and `proof_status: "NOT VERIFIED"`.
+
+Every claim starts at `NOT VERIFIED`. This stage proposes claims and assigns no verification status. See `prompts/verification-record.md`.
+
 **Step 2 — Identify the dependency structure.**
 Some propositions will depend on others. An existence result is often a prerequisite for comparative statics. Map the dependencies.
 
@@ -120,10 +143,20 @@ $(\sigma^*_P, \sigma^*_A)$ such that [property].
 ```
 
 **Required assumptions:** A1, A2, A3 (list from assumption_audit.md)
+**Assumption ledger:**
+- `declared`: [A1, A2, A3]
+- `used`: [A1, A2, A3, …]
+- `required_for_strength`: [A1, A2, A3, … plus any unnumbered condition, e.g. `density_positive_at_threshold`]
+- `undeclared_but_used`: [list, or "none"]
+- Strictness: [the claim is strict / weak. If strict: the equality configuration, and the assumption excluding it]
+- Support items this claim needs: [S1…S9, with what supplies each, or "none required"]
+- Satisfiability at a distinguished point: [SATISFIABLE at … / not evaluated at a distinguished point]
+
 **Expected proof technique:** [e.g., Kakutani's fixed-point theorem applied to the best-response correspondence]
 **Proof difficulty:** [EASY / MEDIUM / HARD]
 **Novelty:** [LOW / MEDIUM / HIGH]
-**Role:** [CORE / SUPPORTING / EXTENSION]
+**Role:** [CORE / SUPPORTING / EXTENSION / CONJECTURE]
+**Verification status:** NOT VERIFIED (set by a gate, never here)
 
 **Economic content:** [1–2 sentences: what does this tell us?]
 
