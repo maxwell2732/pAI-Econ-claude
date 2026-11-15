@@ -82,7 +82,7 @@ When a platform serves two distinct groups of users whose value depends on parti
 ## Comparative Statics Usually Available
 - Higher cross-side externality from side 2 to side 1 → lower price to side 2 (subsidize the side that attracts the valuable side)
 - More elastic own-side demand → lower price to that side (standard markup result)
-- Multi-homing on side 2 → intensifies competition for side 2; price to side 2 approaches cost; side 1 (bottleneck) pays more
+- **Competitive bottleneck (side 1 single-homes, side 2 multi-homes):** Platforms compete for side 1 and may subsidize it; they have local monopoly power over side 2's access to their side-1 users. Multi-homing does not by itself drive side-2 prices to cost ([Armstrong 2006, Section 5, p. 680](https://discovery.ucl.ac.uk/id/eprint/4324/1/competitionintwosidedmarkets.pdf#page=13)).
 - Market expansion: adding more agents on either side → higher platform profits if cross-side effects are positive
 
 ## Welfare Implications
